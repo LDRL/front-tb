@@ -1,0 +1,268 @@
+.aside {
+    /* padding-left: 1.25rem; 20px */
+    /* padding-right: 1.25rem; 20px */
+    /* padding-top: 2.5rem; 40px */
+    /* padding-bottom: 2.5rem; 40px */    
+      display: none;
+}
+    
+/* Medium screens and up */
+@media (min-width: 768px) {
+  .aside {
+    display: block;
+  }
+}
+
+.aside_open {
+  width: 220px;
+}
+
+.aside_close {
+  width: 65px;
+}
+
+.nav {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #21252B;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); 
+}
+
+.span {
+  position: fixed;
+  top: 60px;
+  left: 42px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%; /* Bordes redondeados para hacer circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 2;
+
+
+  background-color: #000; /* Negro */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Sombra moderada */
+  /* : #fff; Blanco */
+  color: rgb(255 255 255);
+}
+
+
+.span_open {
+  /* transform: translateX(36px) rotate(180deg); */
+  transform: translateX(162px) rotate(3.142rad)
+}
+
+.span_close{
+  transform: initial;
+}
+
+
+/* Estilos base */
+.container {
+  color: #fff; /* Asigna el valor de color del tema */
+  background: #272727; /* Asigna el valor de fondo del tema */
+  position: fixed;
+  padding-top: 20px;
+  z-index: 1;
+  height: 100%;
+
+  transition: width 0.1s ease-in-out; /* Solo aplicar transición a la propiedad width */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* .container:active {
+  width: 220px;
+} */
+
+.container::-webkit-scrollbar {
+  width: 6px;
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  /* background-color: var(--scrollbar-color); Asigna el valor de color de la barra de desplazamiento del tema */
+  background-color: #434343;
+  border-radius: 10px;
+}
+
+.container_close {
+  width: 65px;
+
+}
+/* Estado activo */
+.container_open {
+  width: 220px;
+}
+
+.Logocontent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 60px;
+}
+
+
+/* Estilos para .Logocontent */
+.Logocontent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 60px;
+}
+
+/* Estilos para .Logocontent .imgcontent */
+.Logocontent .imgcontent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  cursor: pointer;
+  transition: transform 0.3s ease; /* Solo aplicar transición a la transformación */
+  transform: scale(1.5) rotate(var(--logorotate)); /* Inicialmente escala de 1.5 y se rota según la variable */
+}
+
+/* Estilos para .Logocontent .imgcontent img */
+.Logocontent .imgcontent img {
+  width: 100%;
+  animation: flotar 1.7s ease-in-out infinite alternate;
+}
+
+/* Mostrar u ocultar h2 dentro de .Logocontent según el valor de $isopen */
+.Logocontent_close {
+  display: none;
+}
+
+.Logocontent_open {
+  display: block;
+}
+
+
+
+/* Definición de animación flotar */
+@keyframes flotar {
+  0% {
+    transform: translateY(0px); /* Cambio de translate a translateY */
+  }
+  50% {
+    transform: translateY(4px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+
+.LinkContainer {
+  margin: 5px 0;
+  transition: all 0.3s ease-in-out;
+  padding: 0 5%;
+  position: relative;
+}
+
+.LinkContainer:hover{
+  background: rgba(0, 0, 0, 0.144);
+}
+
+.LinkContainer_active{
+  padding: 0
+}
+
+.LinkLi {
+  list-style: none;/**/
+}
+
+/* Estilos para .Links */
+.Links {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: calc(8px - 2px) 0; /* Se asume que v.smSpacing es una variable CSS personalizada */
+  color: var(--text-color); /* Asigna el valor de color del tema */
+  height: 60px;
+
+  
+}
+
+/* Estilos para .Links .Linkicon */
+.linkicon {
+  padding: 8px 16px; /* Se asume que v.mdSpacing es una variable CSS personalizada */
+  display: flex;
+}
+
+/* Estilos para .Links .Linkicon svg */
+.linkicon svg {
+  font-size: 25px;
+}
+
+/* Estilos para .Links .label_ver */
+.label_ver {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+}
+
+/* Estilos para .Links .label_oculto */
+.label_oculto {
+  opacity: 0;
+}
+
+/* Estilos para .Links.active */
+.Links.active {
+  color: #f76f3a; /* Asigna el valor de color del tema */
+  font-weight: 600;
+}
+
+.Links.active::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  background: #f76f3a; /* Asigna el valor de color del tema */
+  width: 4px;
+  border-radius: 10px;
+  left: 0;
+}
+
+/* .Links_active{}
+
+.Links_active{
+
+} */
+.parrafo {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700; /* Bold */
+}
+
+.link{
+    background-color: #0284c7; /* Color correspondiente a bg-sky-600 */
+    width: 100%;
+    padding: 0.75rem; /* 12px */
+    color: white;
+    text-transform: uppercase;
+    font-weight: 700; /* Bold */
+    display: block;
+    margin-top: 1.25rem; /* 20px */
+    text-align: center;
+    border-radius: 0.5rem; /* 8px */
+}
+
+
+.LinkSub {
+  background: #252831;
+  height: 60px;
+  padding-left: 3rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #f5f5f5;
+  font-size: 18px;
+
+}
+.LinkSub:hover{
+  background: green;
+  cursor: pointer;
+}

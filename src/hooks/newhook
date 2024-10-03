@@ -1,0 +1,79 @@
+import { useState, useEffect, useCallback, useRef } from 'react';
+// import { fetchProductList, productUrl } from "../../services/product";
+// import { Product, ProductList } from '../../models';
+import { PaginationModel, pageSize } from '@/utils';
+import { ProductList, ProductListAdapter, fetchProductList, productUrl } from '@/pages/product';
+import { useSelector } from 'react-redux';
+import { useFetchProducts } from '@/pages/product/hooks/useProductOption';
+
+export const useProducts = (initialPage: number = 1) => {
+    const search = useSelector((state:any) => state.product.search);
+
+    const [products, setProducts] = useState<ProductList>([]);
+    const [totalProduct, setTotal] = useState<number>(0);
+    const [page, setPage] = useState<number>(initialPage);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [error, setError] = useState<Error | null>(null);
+
+    const previousSearch = useRef(search)
+
+    const [paginationModel, setPaginationModel] = useState<PaginationModel>({
+        page: initialPage - 1,
+        pageSize: pageSize,
+    });
+
+
+    const { data, error, isLoading } = useFetchProducts(page,search);
+
+
+    const getProducts = useCallback(async () => {
+
+        if(search)
+            if(search === previousSearch.current) return
+        try {
+            if (isLoading){
+                return;
+            }          
+                
+            if(data){
+                const adaptedProducts = data ? ProductListAdapter(data.data) : [];
+               
+                setProducts(adaptedProducts || []);
+                setTotal(data?.total || 0);
+            }
+
+            //useFetchProducts
+
+            // if (error) {
+            //     setError(error);
+            // } else {
+            //     setProducts(data?.data || []);
+            //     setTotal(data?.total || 0);
+            // }
+        } catch (error) {
+            console.log(error)
+            // setError(error as Error);
+        } finally {
+            // setIsLoading(false);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        getProducts();
+    }, [getProducts]);
+
+    const handlePaginationModelChange = (newPaginationModel: PaginationModel) => {
+        setPaginationModel(newPaginationModel);
+        const newPage = newPaginationModel.page + 1;
+        setPage(newPage);
+    };
+
+    return {
+        products,
+        totalProduct,
+        isLoading,
+        error,
+        paginationModel,
+        handlePaginationModelChange,
+    };
+};

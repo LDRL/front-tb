@@ -1,0 +1,24 @@
+.custom_bg_gray {
+    background-color: #f3f4f6; /* Color correspondiente a bg-gray-100 */
+    min-height: 100vh; /* 100% del alto de la ventana */
+}
+
+@media (min-width: 768px) {
+  .custom_bg_gray{
+    display: flex;
+  }
+    .custom_flex_min_h {
+      display: flex;
+      flex: 1 1 0%;
+      flex-direction: column;
+      width: calc(100% - 220px);
+
+      background-color: rgb(255 255 255); /* Abarca la pantalla del main */
+      
+
+    }
+}
+
+.custom_padding_flex {
+  padding-left: 2rem; 
+}
