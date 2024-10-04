@@ -21,7 +21,7 @@ export const useFetchBrands = (page: number = 1, search: string) => {
 //Hook for list brands and search for name
 
 export const useBrand = (initialPage: number = 1) => {
-    const search = useSelector((state:any) => state.product.search);
+    const search = useSelector((state:any) => state.brand.search);
 
     const [brands, setBrands] = useState<BrandList>([]);
     const [totalBrand, setTotal] = useState<number>(0);

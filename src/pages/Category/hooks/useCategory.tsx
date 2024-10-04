@@ -22,7 +22,7 @@ export const useFetchCategories = (page: number = 1, search: string) => {
 //Hook for list categories and search for name
 
 export const useCategory = (initialPage: number = 1) => {
-    const search = useSelector((state:any) => state.product.search);
+    const search = useSelector((state:any) => state.category.search);
 
     const [categories, setCategories] = useState<CategoryList>([]);
     const [totalCategory, setTotal] = useState<number>(0);
