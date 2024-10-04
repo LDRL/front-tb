@@ -6,7 +6,9 @@ import userSliceReducer  from './user';
 import productSliceReducer from './productSlice';
 import sidebarSlice  from './sidebar';
 import categorySlice from './categorySlice';
-import { Category } from '@/pages/Category';
+import { CategoryState } from '@/pages/Category';
+import { BrandState } from '@/pages/Brand';
+import brandSlice from './brandSlice';
 
 
 interface sidebarInfo {
@@ -19,16 +21,12 @@ interface ProductState {
   search: string;
 }
 
-interface CategoryState {
-  open: boolean;
-  currentCategory: Category | null;
-  search: string;
-}
 
 export interface AppStore {
   sidebar: sidebarInfo
   user: UserInfo
   category: CategoryState
+  brand: BrandState
   product: ProductState
 }
 
@@ -37,8 +35,8 @@ export const store = configureStore<AppStore>({
     user : userSliceReducer,
     sidebar: sidebarSlice,
     category: categorySlice,
+    brand: brandSlice,
     product: productSliceReducer,
-    
   },
 });
 

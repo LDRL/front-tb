@@ -25,7 +25,7 @@ export const CategoryEmptyState: Category = {
 export type CategoryList = Array<Category>
 
 /// Slice 
-interface CategoryState {
+export interface CategoryState {
     currentCategory: Category | null;
     search: string;
 }

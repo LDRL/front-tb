@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import { CategoryTable } from "./components";
+import { BrandTable } from "./components";
 import { Header } from "./components/Header";
 import { AppStore } from "@/redux/store";
 
-export default function Category(){
+export default function Brand(){
     const sidebarState = useSelector((store: AppStore) => store.sidebar)
 
     return(
@@ -14,7 +14,7 @@ export default function Category(){
             </CustomDialog> */}
 
             <div>
-                <h2>Listado de categorías</h2>
+                <h2>Listado de marcas</h2>
                 <hr />
             </div>
 
@@ -24,7 +24,7 @@ export default function Category(){
             
             {/* 94 */}
             <div style={{width:  sidebarState.state ? "86vw" : "94vw"}}>
-                <CategoryTable />
+                <BrandTable />
             </div>
         </div>
 

@@ -62,10 +62,16 @@ export const LinksArray = [
     path: "/private/category",
   },
   {
-    label: "Productos",
+    label: "Marcas",
     icon: <ProductionQuantityLimitsIcon />,
-    to: "/private/producto",
-    path: "/categorias",
+    to: "/private/brand",
+    path: "/private/brand",
+  },
+  {
+    label: "Presentaciones",
+    icon: <ProductionQuantityLimitsIcon />,
+    to: "/private/presentation",
+    path: "/private/presentation",
   },
   {
     label: "Reportes",

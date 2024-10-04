@@ -12,4 +12,7 @@ export const PrivateRoutes = {
     CATEGORY: 'category',
     CATEGORY_CREATE: 'category/create',
     CATEGORY_EDIT: 'category/:id/editar',
+    BRAND: 'brand',
+    BRAND_CREATE: 'brand/create',
+    BRAND_EDIT: 'brand/:id/editar',
 }
