@@ -34,7 +34,6 @@ export const useBrand = (initialPage: number = 1) => {
     });
 
     const { data, error, isLoading } = useFetchBrands(page,search);
-    console.log(data)
 
     useEffect(() => {
         if(data){
@@ -45,7 +44,6 @@ export const useBrand = (initialPage: number = 1) => {
     }, [data]);
 
     const handlePaginationModelChange = (newPaginationModel: PaginationModel) => {
-        console.log(newPaginationModel, "////////")
         setPaginationModel(newPaginationModel);
         const newPage = newPaginationModel.page + 1;
         setPage(newPage);

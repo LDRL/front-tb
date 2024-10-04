@@ -21,8 +21,6 @@ export const sidebarSlice = createSlice({
         },
         updateSidebar: (state, action)=>{
             const result = {...state, ...action.payload}
-            console.log(state, "state ///",  action.payload, "action ///")
-            console.log(result, "result--")
             persistLocalStorage<SidebarInfo>(sidebarKey, result);
             return result;
         },

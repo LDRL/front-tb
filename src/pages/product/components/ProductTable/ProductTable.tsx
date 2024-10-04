@@ -28,11 +28,7 @@ const ListOfProducts: React.FC = () => {
     } = useProducts();
 
     const handleEditProduct = (product: Product) => {
-        console.log(product, "/---------- listado de un producto a editar")
         dispatch(openModal(product));
-        console.log(product.productCode)
-        // dialogOpenSubject$.setSubject = true;
-        // navigate(`${product.codigoProducto}/editar`)
         navigate(`${product.productCode}/editar`)
     };
 

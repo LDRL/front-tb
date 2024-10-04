@@ -24,7 +24,6 @@ export const useProducts = (initialPage: number = 1) => {
     useEffect(() => {
         if(data){
             const adaptedProducts = data ? ProductListAdapter(data.data) : [];
-            console.log(data?.data, "-data////////")
             setProducts(adaptedProducts || []);
             setTotal(data?.total || 0);
         }

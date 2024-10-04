@@ -76,7 +76,6 @@ export const fetchProductCreate = async (url: string, productoN: Product):  Prom
 
 ////////UPDATE
 export const fetchProductUpdate = async (url: string, productU: Product):  Promise<[Error?, Product?]> => {
-    console.log(productU, "fetch product")
     try {
         const product: Omit<ApiProduct, "_id" | "codigoprod"| "precio" | "Marca" | "Categoria" | "Presentacion" > ={
             nombre:productU.name,

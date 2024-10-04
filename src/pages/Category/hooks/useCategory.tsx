@@ -45,7 +45,6 @@ export const useCategory = (initialPage: number = 1) => {
     }, [data]);
 
     const handlePaginationModelChange = (newPaginationModel: PaginationModel) => {
-        console.log(newPaginationModel, "////////")
         setPaginationModel(newPaginationModel);
         const newPage = newPaginationModel.page + 1;
         setPage(newPage);

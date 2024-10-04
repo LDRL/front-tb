@@ -15,4 +15,7 @@ export const PrivateRoutes = {
     BRAND: 'brand',
     BRAND_CREATE: 'brand/create',
     BRAND_EDIT: 'brand/:id/editar',
+    PRESENTATION: 'presentation',
+    PRESENTATION_CREATE: 'presentation/create',
+    PRESENTATION_EDIT: 'presentation/:id/editar'
 }

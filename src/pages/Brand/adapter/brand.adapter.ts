@@ -1,12 +1,12 @@
 import { ApiBrand, Brand} from "../models";
 
-export const BrandAdapter = (category: ApiBrand): Brand => {
+export const BrandAdapter = (brand: ApiBrand): Brand => {
     return{
-        id: category._id,
-        name: category.nombre,
+        id: brand._id,
+        name: brand.nombre,
     }
 }
 
-export function BrandListAdapter(apiCategoryList: ApiBrand[]): Brand[] {
-    return apiCategoryList.map(BrandAdapter);
+export function BrandListAdapter(apiBrandList: ApiBrand[]): Brand[] {
+    return apiBrandList.map(BrandAdapter);
 }

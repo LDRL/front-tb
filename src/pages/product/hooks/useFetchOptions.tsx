@@ -45,8 +45,6 @@ export const useFetchOptions = () => {
         queryKey: ['dropdownOptions'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
             const response = await fetch(apiUrl+"categorias/");
-
-            console.log(response, "aweww")
             if(!response.ok){
                 throw new Error('Errr al cargar las opciones')
             }

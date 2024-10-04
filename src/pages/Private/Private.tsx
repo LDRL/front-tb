@@ -6,12 +6,15 @@ import { ProductCreate } from '../product'
 import { CategoryCreate } from '../Category'
 // import CategoryCreate from '../Category/components/CategoryCreate/CategoryCreate'
 import BrandCreate from '../Brand/components/BrandCreate/BrandCreate';
+import { PresentationCreate } from '../Presentation'
 
 const Dashboard = lazy(() => import('./Dashboard/Dashboard'))
 const Home = lazy(() => import('./Home/Home'))
 const Category = lazy(()=> import('../Category/Category'))
 const Product = lazy(()=> import('../product/Product'))
 const Brand = lazy(() => import('../Brand/Brand'))
+const Presentation = lazy(() => import('../Presentation/Presentation'))
+
 
 
 function Private() {
@@ -31,6 +34,10 @@ function Private() {
         <Route path = {PrivateRoutes.BRAND} element={<Brand />} />
         <Route path = {PrivateRoutes.BRAND_CREATE} element={<BrandCreate />} />
         <Route path = {PrivateRoutes.BRAND_EDIT} element={<BrandCreate />} />
+
+        <Route path = {PrivateRoutes.PRESENTATION} element={<Presentation />} />
+        <Route path = {PrivateRoutes.PRESENTATION_CREATE} element={<PresentationCreate />} />
+        <Route path = {PrivateRoutes.PRESENTATION_EDIT} element={<PresentationCreate />} />
 
     </RoutesWithNotFound>
     

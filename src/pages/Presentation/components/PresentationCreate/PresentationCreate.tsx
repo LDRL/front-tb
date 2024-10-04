@@ -7,12 +7,14 @@ import { FormInputText } from '@/components';
 import { Box, Button} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
-import { Brand } from '../../models';
+import { Presentation } from '../../models';
 import { PrivateRoutes } from '@/models';
 import { ClipLoader } from 'react-spinners';
-import "./BrandCreate.css"
-import { useCreateBrand, useGetBrand, useUpdateBrand } from '../../hooks/useBrand';
-import { clearBrand, editBrand } from '@/redux/brandSlice';
+import { useCreatePresentation, useGetPresentation, useUpdatePresentation } from '../../hooks/usePresentation';
+import { clearPresentation, editPresentation } from '@/redux/presentationSlice';
+
+
+import "./PresentationCreate.css"
 
 
 const override: CSSProperties = {
@@ -21,7 +23,7 @@ const override: CSSProperties = {
   borderColor: "red",
 };
 
-const BrandCreate: React.FC = () => {
+const PresentationCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
   const [color] = useState("#ffffff")
@@ -29,49 +31,49 @@ const BrandCreate: React.FC = () => {
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const dispatch = useDispatch();
-  const { currentBrand } = useSelector((state: RootState) => state.brand);
+  const { currentPresentation } = useSelector((state: RootState) => state.presentation);
 
-  const { control, handleSubmit, reset} = useForm<Brand>({
+  const { control, handleSubmit, reset} = useForm<Presentation>({
     defaultValues: { id: 0, name: ''},
   });
 
 
  // Llamar al hook aquí
- const { data, isLoading, isError } = id ? useGetBrand(id) : { data: null, isLoading: false, isError: false };
+ const { data, isLoading, isError } = id ? useGetPresentation(id) : { data: null, isLoading: false, isError: false };
 
- const createBrandMutation = useCreateBrand();
- const updateBrandMutation = useUpdateBrand();
+ const createPresentationMutation = useCreatePresentation();
+ const updatePresentationMutation = useUpdatePresentation();
 
  useEffect(() => {
   if (id && data) {
-    dispatch(editBrand(data));
+    dispatch(editPresentation(data));
     return
   }
 
-  dispatch(clearBrand())
+  dispatch(clearPresentation())
  }, [dispatch, data]); // Agregar 'data' e 'isError' a las dependencias
 
 
   useEffect(() => {
-    if (currentBrand) {
-      reset(currentBrand);
+    if (currentPresentation) {
+      reset(currentPresentation);
       setSubtitulo("Editar")
     } else {
       reset({ id: 0, name: ''});
       setSubtitulo("Nuevo")
     }
-  }, [currentBrand, reset]);
+  }, [currentPresentation, reset]);
 
 
-  const onSubmit = async (data: Brand) => {
+  const onSubmit = async (data: Presentation) => {
     setLoading(true);
     try {
-      if (currentBrand) {
-        await updateBrandMutation.mutateAsync(data);
-      } else { // Create a new Brand
-        await createBrandMutation.mutateAsync(data);
+      if (currentPresentation) {
+        await updatePresentationMutation.mutateAsync(data);
+      } else { // Create a new Presentation
+        await createPresentationMutation.mutateAsync(data);
       }
-      navigate(`/private/${PrivateRoutes.BRAND}`, {replace:true})
+      navigate(`/private/${PrivateRoutes.PRESENTATION}`, {replace:true})
     } catch (error) {
       console.log(error)
     }
@@ -96,7 +98,7 @@ const BrandCreate: React.FC = () => {
       )}
 
       <CardForm
-        titulo='Marca'
+        titulo='Presentación'
         subtitulo={subtitulo}
       >
         <LoadMask/>
@@ -127,7 +129,7 @@ const BrandCreate: React.FC = () => {
               type="button"
               sx={{ mt: 2 }}
               color='error'
-              onClick={() => navigate('/private/brand')}
+              onClick={() => navigate('/private/presentation')}
             >
               Cancelar
             </Button>
@@ -138,4 +140,4 @@ const BrandCreate: React.FC = () => {
   );
 };
 
-export default BrandCreate;
+export default PresentationCreate;
