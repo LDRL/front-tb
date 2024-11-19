@@ -1,6 +1,9 @@
 import HomeIcon from '@mui/icons-material/Home';
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
+import CategoryIcon from '@mui/icons-material/Category';
 import SummarizeIcon from '@mui/icons-material/Summarize';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 export const DesplegableUser = [
   {
     text: "Mi perfil",
@@ -51,13 +54,13 @@ export const LinksArray = [
   },
   {
     label: "Producto",
-    icon: <HomeIcon />,
+    icon: <ProductionQuantityLimitsIcon />,
     to: "/private/product",
     path: "/private/product",
   },
   {
     label: "Categorias",
-    icon: <ProductionQuantityLimitsIcon />,
+    icon: <CategoryIcon />,
     to: "/private/category",
     path: "/private/category",
   },
@@ -72,6 +75,18 @@ export const LinksArray = [
     icon: <ProductionQuantityLimitsIcon />,
     to: "/private/presentation",
     path: "/private/presentation",
+  },
+  {
+    label: "Ventas",
+    icon: <PointOfSaleIcon />,
+    to: "/private/sale",
+    path: "/private/sale",
+  },
+  {
+    label: "Compras",
+    icon: <ShoppingBagIcon />,
+    to: "/private/buy",
+    path: "/private/buy",
   },
   {
     label: "Reportes",
