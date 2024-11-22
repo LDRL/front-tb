@@ -61,8 +61,9 @@ const ListOfBuys: React.FC = () => {
         },*/
     ];
 
+    
     if (isLoading) {
-        return <Loading />;
+        return <Loading loading={isLoading}/>;
     }
 
     return (

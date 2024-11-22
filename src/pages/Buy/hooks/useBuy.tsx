@@ -6,6 +6,7 @@ import { BuyAdapter, BuyListAdapter } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
+import { fetchBuyCreate } from '../services/buy';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -44,7 +45,6 @@ export const useBuy = (initialPage: number = 1) => {
     });
 
     const { data, error, isLoading } = useFetchBuys(page,search);
-    console.log("data ---", data)
 
     useEffect(() => {
         if(data){
@@ -102,23 +102,25 @@ export const useCreateBuy = () => {
 
     return useMutation<Buy, Error, Buy>({
         mutationFn: async (newBuy) => {
-            const buy = {
-                nombre: newBuy.date,
-                idcategoria: newBuy.direction,
-                idmarca: newBuy.idProvider,
-                ///Agregar el detalle ///
-            };
 
-            const response = await axios.post<{ message: string, producto: ApiBuy }>(apiUrl, buy);
+            // const response = await axios.post<{ message: string, producto: ApiBuy }>(`${apiUrl}compras`, buy);
+            const [error, producto] = await fetchBuyCreate(`${apiUrl}compras`,newBuy);
 
-            if (response.status !== 201) {
+            if (error){
                 throw new Error('Error al crear el producto');
             }
 
-            return BuyAdapter(response.data.producto);
+            if (!producto) {
+                throw new Error('Producto no creado');
+            }
+
+            return producto;
+
+
+            // return BuyAdapter(response.data.producto);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['products'] });
+            queryClient.invalidateQueries({ queryKey: ['buys'] });
         },
         onError: (error) => {
             console.error(`Error creating product: ${error}`);

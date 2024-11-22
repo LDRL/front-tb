@@ -14,7 +14,6 @@ export const fetchBuyList = async (url: string, page: number, search: string): P
 
         const response: AxiosResponse<{ compras: ApiBuy[], total: number }> = await axios.get(url, config);
 
-        console.log(response, "response---");
 
         if (response.statusText !== 'OK') return [new Error(`Error fetching buys: ${response.statusText}`)];
 
@@ -44,7 +43,7 @@ export const fetchBuy = async (url: string): Promise<[Error?, Buy?]> => {
 
 
 // CREATE
-export const fetchBuyCreate = async (url: string, buyN: Buy):  Promise<[Error?, Buy?]> => {
+export const fetchBuyCreate = async (url: string, buyN: Buy):  Promise<[Error?, Buy?, any?]> => {
     try {
         const detalles: ApiDetail[] = [];
 
@@ -76,10 +75,10 @@ export const fetchBuyCreate = async (url: string, buyN: Buy):  Promise<[Error?, 
             detalles: detalles
         };
 
-        const response: AxiosResponse<{message: string, producto: ApiBuy}> = await axios.post(url, buy);
-        const {producto} = response.data
+        const response: AxiosResponse<{message: string, compra: ApiBuy}> = await axios.post(url, buy);
+        const {compra} = response.data
         
-        return [undefined, BuyAdapter(producto)]
+        return [undefined, BuyAdapter(compra), response]
 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

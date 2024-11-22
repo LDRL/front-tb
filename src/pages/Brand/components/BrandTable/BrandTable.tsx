@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, useMediaQuery,useTheme} from '@mui/material';
@@ -16,6 +16,8 @@ const ListOfBrands: React.FC = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+    // const [loading , setLoading] = useState<boolean>(false);
 
     const {
         brands,
@@ -68,7 +70,7 @@ const ListOfBrands: React.FC = () => {
 
 
     if (isLoading) {
-        return <Loading />;
+        return <Loading loading={isLoading}/>;
     }
 
     return (

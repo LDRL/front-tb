@@ -1,6 +1,7 @@
 export interface ApiBuy {
     _id: number;
-    fecha: Date;
+    // fecha: Date;
+    fecha: string;
     direccion: string;
     estado: boolean;
     idproveedor: number;
@@ -24,6 +25,7 @@ export interface ApiDetail {
     costo: number,
     codigoprod: number,
     idsucursal: number
+    nombre?: string,
 }
 
 export interface Detail{
@@ -31,6 +33,11 @@ export interface Detail{
     cost: number, 
     codProduct: number, 
     idBranch: number,
+    name?: string,
+    subtotal?: number,
+
+    id?: number,
+
 }
 
 
@@ -45,13 +52,22 @@ export interface ApiProvider {
 
 
 export interface Buy {
-    id: number;
-    date: Date;
+    id?: number;
+    // date: Date;
+    date: string;
     direction: string;
     state: boolean;
     idProvider: number;
     provider: Provider;
     detail?: Detail[];
+
+    //
+    amount?: number,
+    cost?: number, 
+    codProduct?: number, 
+    idBranch?: number,
+    name?: string,
+    subtotal?: number,
 }
 
 export type BuyList = Array<Buy>

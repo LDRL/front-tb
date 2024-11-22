@@ -1,10 +1,12 @@
+import { ApiPresentation } from "@/pages/Presentation";
+
 export interface ApiProduct {
     _id: number;
     codigoprod: number;
     nombre: string;
     precio: number;
     Marca: ApiMarca;
-    Presentacion: ApiPresentacion;
+    Presentacion: ApiPresentation;
     Categoria: ApiCategoria;
     idmarca: number;
     idpresentacion: number;
@@ -50,10 +52,10 @@ interface Presentacion {
     name: string;
 }
 
-export interface ApiPresentacion {
-    _id: number;
-    nombre:string;
-}
+// export interface ApiPresentacion {
+//     _id: number;
+//     nombre:string;
+// }
 
 interface Categoria {
     id:number;
