@@ -119,6 +119,7 @@ interface DropwdownProps {
     name: string;
     control: Control<any>;
     rules?: any;
+    externalOnChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export const FormDropdown: React.FC<DropwdownProps> = ({
@@ -126,7 +127,8 @@ export const FormDropdown: React.FC<DropwdownProps> = ({
     control,
     label, 
     rules,
-    options
+    options, 
+    externalOnChange
 
 }) => {
     return (
@@ -147,6 +149,22 @@ export const FormDropdown: React.FC<DropwdownProps> = ({
                             label={label}
                             {...field}
                             error={!!error}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                // Actualizar el valor en react-hook-form
+                                field.onChange(value);
+
+                                // Si existe una función externa, llamarla
+                                if (externalOnChange) {
+                                    externalOnChange(value);
+                                }
+                                
+                            }}
+
+                            // onChange={(e) => {
+                            //     onChange(e);
+                            //     if (externalOnChange) externalOnChange(e);
+                            // }}
                         >
                             {options.map((option) => (
                                 <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>

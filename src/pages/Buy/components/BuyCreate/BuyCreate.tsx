@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import CardForm from '../../../../components/Cards/CardForm'
 import { useNavigate } from 'react-router-dom';
 import LoadMask from '@/components/LoadMask/LoadMask';
@@ -6,7 +6,7 @@ import { FormDate, FormDropdown, FormInputNumber, FormInputText } from '@/compon
 import { Box, Button, FormHelperText} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { PrivateRoutes } from '@/models';
-import { ClipLoader, GridLoader } from 'react-spinners';
+
 import "./BuyCreate.css"
 import {useCreateBuy} from '../../hooks/useBuy'
 import { Buy, Detail } from '../../models';
@@ -31,6 +31,8 @@ const BuyCreate: React.FC = () => {
   }, []);
 
   const [rows, setRows] = useState<Detail[]>([]);
+  const [total, setTotal] = useState<number>(0);
+
   const [errors, setErrors] = useState({
     amount: false,
     cost: false,
@@ -41,6 +43,15 @@ const BuyCreate: React.FC = () => {
 
   const {data: providerOptions, isLoading: isProviderLoading, isError: isProviderError} = useFetchProviderOptions();
   const {data: productOptions, isLoading: isProductLoading, isError: isProductError} = useFetchProductOptions();
+
+  const calculateTotal = (updatedRows: Detail[]) => {
+    const newTotal = updatedRows.reduce((acc, row) => acc + (row.subtotal ?? 0), 0);
+    setTotal(newTotal);
+  };
+
+  const filterProduct = (product: Detail) => rows.filter(p => p.id !== product.id);
+  const findProvider = (provider: number) => providerOptions?.find(p=> p.value !== provider)
+  
 
   const onSubmit = async (data: Buy) => {
     setErrors({
@@ -115,8 +126,6 @@ const BuyCreate: React.FC = () => {
     },
   ];
   
-  
-
   const handleAddProduct = () => {
     const formValues = getValues(); 
   
@@ -124,16 +133,13 @@ const BuyCreate: React.FC = () => {
     const cost = formValues.cost;
     const idProduct = formValues.codProduct;
   
-    // Resetear errores al comienzo
     setErrors({
       amount: false,
       cost: false,
       idProduct: false,
       detailProduct: false,
     });
-  
-  
-    // Validar campos y actualizar los errores
+    
     let formHasErrors = false;
   
     if (amount === undefined || amount <= 0) {
@@ -152,10 +158,10 @@ const BuyCreate: React.FC = () => {
     }
   
     if (formHasErrors) {
-      return; // Si hay errores, no continuar
+      return;
     }
   
-    // Si no hay errores, continuar con la lógica
+
     const selectedProduct = productOptions?.find(product => product.value === idProduct);
     const newAmount = amount ?? 0;
     const newCost = cost ?? 0;
@@ -171,7 +177,13 @@ const BuyCreate: React.FC = () => {
   
     const newRow = { ...newDetail, id: rows.length };
   
-    setRows([...rows, newRow]);
+    // setRows([...rows, newRow]);
+
+    setRows(prevRows => {
+      const updatedRows = [...prevRows, newRow];
+      calculateTotal(updatedRows);
+      return updatedRows;
+    });
   
     // Resetear los valores del formulario
     setValue('amount', 0);
@@ -179,11 +191,10 @@ const BuyCreate: React.FC = () => {
     setValue('codProduct', undefined);
   };
 
-  const filterProduct = (product: Detail) => rows.filter(p => p.id !== product.id);
-
   const handleDeleteProduct = (product: Detail) => {
     const filteredProduct = filterProduct(product);
     setRows(filteredProduct);
+    calculateTotal(filteredProduct);
   }
 
   return (    
@@ -209,6 +220,11 @@ const BuyCreate: React.FC = () => {
               label="proveedor"
               rules={{ required: 'proveedor es un campo requerido' }}
               options={providerOptions || []}
+              externalOnChange={(value) => {
+                const numericValue = Number(value);
+                const n = findProvider(numericValue)
+                setValue("direction",  `${n?.direction}`)
+              }}
             /> 
           </div>
           
@@ -305,8 +321,8 @@ const BuyCreate: React.FC = () => {
                 autoHeight
                 getRowId={(row:any) => row.id}
               />
+                <h3>Total: Q {total.toFixed(2)}</h3>
               </Box>
-
             </div>
           </div>
 
@@ -316,7 +332,6 @@ const BuyCreate: React.FC = () => {
               type="submit"
               sx={{ mt: 2 }}
               disabled={createBrandMutation.isPending}
-
             >
               Guardar
             </Button>
