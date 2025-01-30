@@ -58,10 +58,10 @@ export const fetchProductCreate = async (url: string, productoN: Product):  Prom
             idpresentacion: productoN.idPresentation,
             descripcion: productoN.description
         }
-        const response: AxiosResponse<{message: string, producto: ApiProduct}> = await axios.post(url, product);
-        const {producto} = response.data
+        const response: AxiosResponse<{message: string, data: ApiProduct}> = await axios.post(url, product);
+        const {data} = response.data
         
-        return [undefined, ProductAdapter(producto)]
+        return [undefined, ProductAdapter(data)]
 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

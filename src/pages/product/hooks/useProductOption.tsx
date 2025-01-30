@@ -48,13 +48,13 @@ export const useFetchProduct = (productId: string) => {
     return useQuery<Product, Error>({
         queryKey: ['product', productId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<{ producto: ApiProduct }>(`${productUrl}${productId}/`);
+            const response = await axios.get<{ data: ApiProduct }>(`${productUrl}${productId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar el producto');
             }
 
-            return ProductAdapter(response.data.producto); // Adaptamos y devolvemos el producto
+            return ProductAdapter(response.data.data); // Adaptamos y devolvemos el producto
         },
         enabled: !!productId, // Solo se ejecuta si productId está disponible
         // onError: (error) => {

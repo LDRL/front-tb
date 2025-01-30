@@ -8,6 +8,8 @@ import { CategoryCreate } from '../Category'
 import BrandCreate from '../Brand/components/BrandCreate/BrandCreate';
 import { PresentationCreate } from '../Presentation'
 import { BuyCreate } from '../Buy'
+import { SaleCreate } from '../Sale'
+
 
 const Dashboard = lazy(() => import('./Dashboard/Dashboard'))
 const Home = lazy(() => import('./Home/Home'))
@@ -16,6 +18,8 @@ const Product = lazy(()=> import('../product/Product'))
 const Brand = lazy(() => import('../Brand/Brand'))
 const Presentation = lazy(() => import('../Presentation/Presentation'))
 const Buy = lazy(() => import('../Buy/Buy'))
+const Sale = lazy(() => import('../Sale/Sale'))
+
 
 
 
@@ -44,6 +48,9 @@ function Private() {
 
         <Route path = {PrivateRoutes.BUY} element={<Buy />} />
         <Route path = {PrivateRoutes.BUY_CREATE} element={<BuyCreate />} />
+
+        <Route path = {PrivateRoutes.SALE} element={<Sale />} />
+        <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />
 
 
     </RoutesWithNotFound>

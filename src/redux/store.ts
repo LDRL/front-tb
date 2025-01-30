@@ -11,6 +11,8 @@ import { BrandState } from '@/pages/Brand';
 import brandSlice from './brandSlice';
 import presentationSlice from './presentationSlice';
 import { PresentationState } from '@/pages/Presentation';
+import saleSlice from './saleSlice';
+import { SaleState } from '@/pages/Sale';
 
 interface sidebarInfo {
   state: boolean;
@@ -30,6 +32,7 @@ export interface AppStore {
   brand: BrandState
   presentation: PresentationState
   product: ProductState
+  sale: SaleState
 }
 
 export const store = configureStore<AppStore>({
@@ -40,6 +43,7 @@ export const store = configureStore<AppStore>({
     brand: brandSlice,
     presentation: presentationSlice,
     product: productSliceReducer,
+    sale: saleSlice,
   },
 });
 

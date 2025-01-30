@@ -21,4 +21,7 @@ export const PrivateRoutes = {
     BUY: 'buy',
     BUY_CREATE: 'buy/create',
 
+    SALE: 'sale',
+    SALE_CREATE: 'sale/create',
+
 }
