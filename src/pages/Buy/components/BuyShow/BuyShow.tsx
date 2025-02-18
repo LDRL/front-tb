@@ -1,9 +1,9 @@
-import { Form, useParams } from "react-router-dom";
+import { Form, useNavigate, useParams } from "react-router-dom";
 import { useShowBuy } from "../../hooks/useBuy";
 import { CSSProperties, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import LoadMask from "@/components/LoadMask/LoadMask";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import CardForm from "@/components/Cards/CardForm";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { HeaderBuyAdapter } from "../../adapter";
@@ -19,6 +19,7 @@ const override: CSSProperties = {
 }
 
 function BuyShow() {
+  const navigate = useNavigate();
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const { data, isLoading, isError } = id ? useShowBuy(id) : { data: null, isLoading: false, isError: false };
   const adaptedData = data ? HeaderBuyAdapter(data.compra):null;
@@ -157,6 +158,18 @@ function BuyShow() {
               getRowId={(row: any) => row._id}
               paginationMode="server"
           />
+
+          <div className='container_button'>
+            <Button
+              variant="contained"
+              type="button"
+              sx={{ mt: 2 }}
+              color='error'
+              onClick={() => navigate('/private/buy')}
+            >
+              Regresar
+            </Button>
+          </div>
         </Box>
       </CardForm>
     </div>

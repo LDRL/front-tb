@@ -197,24 +197,25 @@ const CreateProduct: React.FC = () => {
               placeholder="Escribe algo aquí..."
               helperText="Máximo 500 caracteres"
               />
-            </div>
-            <div className='container_button'>
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{ mt: 2 }}
-              >
-                Guardar
-              </Button>
-              <Button
-                variant="contained"
-                type="button"
-                sx={{ mt: 2 }}
-                color='error'
-              >
-                Cancelar
-              </Button>
-            </div>
+          </div>
+          <div className='container_button'>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{ mt: 2 }}
+            >
+              Guardar
+            </Button>
+            <Button
+              variant="contained"
+              type="button"
+              sx={{ mt: 2 }}
+              color='error'
+              onClick={() => navigate('/private/product')}
+            >
+              Cancelar
+            </Button>
+          </div>
         </Box>
       </CardForm>
     </div>

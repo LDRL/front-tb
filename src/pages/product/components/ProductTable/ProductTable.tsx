@@ -83,7 +83,7 @@ const ListOfProducts: React.FC = () => {
                     color="success"
                     onClick={() => handleEditProduct(params.row as Product)}
                 >
-                    Edit
+                    Editar
                 </Button>
             ),
         },
