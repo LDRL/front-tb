@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosRequestConfig } from 'axios';
 
-import {Total, ApiBuy, BuyList, Buy } from "../models";
+import {Total, ApiBuy, BuyList, Buy, ApiHeaderBuy } from "../models";
 import { BuyAdapter, BuyListAdapter } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -17,6 +17,10 @@ interface ApiResponse {
     currentPage: number;
 }
 
+interface ApiResponseHeader {
+    compra: ApiHeaderBuy;
+}
+
 // Hook para obtener la lista de compras
 
 export const useFetchBuys = (page: number = 1, search: string) => {
@@ -30,7 +34,6 @@ export const useFetchBuys = (page: number = 1, search: string) => {
 };
 
 //Hook for list brands and search for name
-
 export const useBuy = (initialPage: number = 1) => {
     const search = useSelector((state:any) => state.brand.search);
 
@@ -69,11 +72,6 @@ export const useBuy = (initialPage: number = 1) => {
         handlePaginationModelChange,
     };
 };
-
-
-
-
-
 
 
 // Hook para obtener un producto específico
@@ -115,8 +113,6 @@ export const useCreateBuy = () => {
             }
 
             return producto;
-
-
             // return BuyAdapter(response.data.producto);
         },
         onSuccess: () => {
@@ -128,18 +124,12 @@ export const useCreateBuy = () => {
     });
 };
 
-
-
-
-// export const useFetchBuys = (page: number = 1, search: string) => {
-//     return useQuery<ApiResponse, Error>({
-//         queryKey: ['buys', page, search],
-//         queryFn: async () => {
-//             const response = await axios.get<ApiResponse>(`${apiUrl}?page=${page}&search=${search}`);
-//             return response.data;
-            
-//         },
-//         // staleTime: 60000, // 1 minuto
-//         // cacheTime: 300000, // 5 minutos
-//     });
-// };
+export const useShowBuy = (id:string) => {
+    return useQuery<ApiResponseHeader, Error>({
+        queryKey: ['showBuy',id],
+        queryFn: async () => {
+            const response = await axios.get<ApiResponseHeader>(`${apiUrl}compras/${id}/`);
+            return response.data;   
+        }
+    });
+};

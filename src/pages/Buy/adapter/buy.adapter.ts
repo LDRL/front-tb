@@ -1,4 +1,5 @@
-import { ApiBuy, ApiDetail, Buy, Detail } from "../models";
+import dayjs from "dayjs";
+import { ApiBuy, ApiDetail, ApiHeaderBuy, ApiHeaderDetail, Buy, Detail, HeaderBuy, HeaderDetail } from "../models";
 
 export const BuyAdapter = (buy: ApiBuy): Buy => {
     return{
@@ -30,4 +31,24 @@ export const BuyAdapter = (buy: ApiBuy): Buy => {
 
 export function BuyListAdapter(apiBuyList: ApiBuy[]): Buy[] {
     return apiBuyList.map(BuyAdapter);
+}
+
+export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy =>{
+    return {
+        header: buy.encabezado ? {
+            _id: buy.encabezado.idcompra,
+            date: dayjs(buy.encabezado.fecha),
+            direction:buy.encabezado.direccion,
+            provedorId: buy.encabezado["Proveedor.idproveedor"],
+            proveedorName: buy.encabezado["Proveedor.nombre"]
+        }: {_id: 0, date: dayjs(), direction: '', provedorId: 0, proveedorName: ''},
+        details: buy.detalles && buy.detalles.length > 0 
+        ?  buy.detalles.map((d: ApiHeaderDetail): HeaderDetail => ({
+            _id: d.idcompra_detalle,
+            amount:d.cantidad,
+            cost:d.costo,
+            product:d["Producto.nombre"],
+        }))
+        :[]
+    }
 }

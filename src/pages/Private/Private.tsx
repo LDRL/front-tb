@@ -7,8 +7,9 @@ import { CategoryCreate } from '../Category'
 // import CategoryCreate from '../Category/components/CategoryCreate/CategoryCreate'
 import BrandCreate from '../Brand/components/BrandCreate/BrandCreate';
 import { PresentationCreate } from '../Presentation'
-import { BuyCreate } from '../Buy'
+import { BuyCreate, BuyShow } from '../Buy'
 import { SaleCreate } from '../Sale'
+
 
 
 const Dashboard = lazy(() => import('./Dashboard/Dashboard'))
@@ -48,6 +49,7 @@ function Private() {
 
         <Route path = {PrivateRoutes.BUY} element={<Buy />} />
         <Route path = {PrivateRoutes.BUY_CREATE} element={<BuyCreate />} />
+        <Route path = {PrivateRoutes.BUY_SHOW} element={<BuyShow />} />
 
         <Route path = {PrivateRoutes.SALE} element={<Sale />} />
         <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />

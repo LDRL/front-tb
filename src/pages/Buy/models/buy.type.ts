@@ -1,24 +1,4 @@
-export interface ApiBuy {
-    _id: number;
-    // fecha: Date;
-    fecha: string;
-    direccion: string;
-    estado: boolean;
-    idproveedor: number;
-    Proveedor: ApiProvider;
-    detalles?: ApiDetail[]; 
-    // updatedAt: Date
-}
-
-
-interface Provider {
-    id:number;
-    name: string;
-    direction: string;
-    telphone: string;
-    email: string;
-    state: string;
-}
+import { Dayjs } from "dayjs";
 
 export interface ApiDetail {
     cantidad: number,
@@ -35,9 +15,7 @@ export interface Detail{
     idBranch: number,
     name?: string,
     subtotal?: number,
-
     id?: number,
-
 }
 
 
@@ -50,6 +28,26 @@ export interface ApiProvider {
     estado: string;
 }
 
+interface Provider {
+    id:number;
+    name: string;
+    direction: string;
+    telphone: string;
+    email: string;
+    state: string;
+}
+
+export interface ApiBuy {
+    _id: number;
+    // fecha: Date;
+    fecha: string;
+    direccion: string;
+    estado: boolean;
+    idproveedor: number;
+    Proveedor: ApiProvider;
+    detalles?: ApiDetail[]; 
+    // updatedAt: Date
+}
 
 export interface Buy {
     id?: number;
@@ -68,6 +66,47 @@ export interface Buy {
     idBranch?: number,
     name?: string,
     subtotal?: number,
+}
+
+
+// View buy show
+export interface ApiHeader {
+    idcompra: number,
+    fecha: string,
+    direccion: string,
+    "Proveedor.idproveedor": number,
+    "Proveedor.nombre": string
+}
+export interface HeaderH {
+    _id: number;
+    date: Dayjs;
+    direction: string;
+    provedorId:number;
+    proveedorName: string;
+}
+
+export interface ApiHeaderDetail{
+    idcompra_detalle: number,
+    cantidad: number,
+    costo: number,
+    "Producto.nombre": string
+}
+
+export interface HeaderDetail {
+    _id: number;
+    amount:number;
+    cost: number;
+    product: string;
+}
+
+export interface ApiHeaderBuy{
+    encabezado: ApiHeader,
+    detalles: ApiHeaderDetail[]
+}
+
+export interface HeaderBuy {
+    header: HeaderH,
+    details: HeaderDetail[],
 }
 
 export type BuyList = Array<Buy>

@@ -19,9 +19,10 @@ interface FormInputProps {
     label: string;
     rules?: any;
     externalOnChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    disabled?:boolean;
 }
 
-export const FormInputText = ({ name, control, label, rules, externalOnChange }: FormInputProps) => {
+export const FormInputText = ({ name, control, label, rules, externalOnChange,disabled }: FormInputProps) => {
     return (
         <Controller
             name={name}
@@ -48,6 +49,7 @@ export const FormInputText = ({ name, control, label, rules, externalOnChange }:
                         color: 'red', // Puedes cambiar esto por el color que prefieras
                         },
                     }}
+                    disabled={disabled}
                 />
             )}
         />
@@ -65,6 +67,7 @@ interface TextAreaProps {
   fullWidth?: boolean;
   error?: boolean;
   helperText?: string;
+  disabled?:boolean;
 }
 
 export const FormTextArea: React.FC<TextAreaProps> = ({
@@ -76,6 +79,7 @@ export const FormTextArea: React.FC<TextAreaProps> = ({
   rows = 4,
   placeholder,
   fullWidth = true,
+  disabled
 }) => {
   return (
     
@@ -102,6 +106,7 @@ export const FormTextArea: React.FC<TextAreaProps> = ({
                 rows={rows}
                 placeholder={placeholder}
                 fullWidth={fullWidth}
+                disabled={disabled}
             />
         )}
     />
@@ -120,6 +125,7 @@ interface DropwdownProps {
     control: Control<any>;
     rules?: any;
     externalOnChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    disabled?:boolean;
 }
 
 export const FormDropdown: React.FC<DropwdownProps> = ({
@@ -128,7 +134,8 @@ export const FormDropdown: React.FC<DropwdownProps> = ({
     label, 
     rules,
     options, 
-    externalOnChange
+    externalOnChange,
+    disabled
 
 }) => {
     return (
@@ -158,6 +165,7 @@ export const FormDropdown: React.FC<DropwdownProps> = ({
                                     externalOnChange(value);
                                 }
                             }}
+                            disabled={disabled}
                         >
                             {options.map((option) => (
                                 <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
@@ -180,12 +188,15 @@ interface DateProps {
     name: string;
     control: Control<any>;
     rules?: any;
+    disabled? : boolean;
 }
 export const FormDate: React.FC<DateProps> = ({
     label,
     name, 
     control, 
-    rules
+    rules,
+    disabled
+
 }) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
@@ -205,6 +216,7 @@ export const FormDate: React.FC<DateProps> = ({
                             onChange={(date) =>{
                                 field.onChange(date);
                             }}
+                            disabled={disabled}
                             // views={['day', 'month', 'year']}
                         />
                         {error && ( <FormHelperText sx={{color: 'red'}}>{error.message}</FormHelperText> )}
@@ -222,9 +234,10 @@ interface FormNumberProps {
     label: string;
     rules?: any;
     externalOnChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    disabled?:boolean;
 }
 
-export const FormInputNumber = ({ name, control, label, rules, externalOnChange }: FormNumberProps) => {
+export const FormInputNumber = ({ name, control, label, rules, externalOnChange,disabled }: FormNumberProps) => {
     return (
         <Controller
             name={name}
@@ -247,6 +260,7 @@ export const FormInputNumber = ({ name, control, label, rules, externalOnChange 
                     label={label}
                     variant="outlined"
                     type="number"
+                    disabled={disabled}
                 />
             )}
         />

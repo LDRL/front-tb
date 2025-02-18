@@ -11,12 +11,8 @@ export const fetchBuyList = async (url: string, page: number, search: string): P
     };
     
     try {
-
         const response: AxiosResponse<{ compras: ApiBuy[], total: number }> = await axios.get(url, config);
-
-
         if (response.statusText !== 'OK') return [new Error(`Error fetching buys: ${response.statusText}`)];
-
         const {compras, total} = response.data
 
         return [undefined, BuyListAdapter(compras), total];
@@ -57,15 +53,7 @@ export const fetchBuyCreate = async (url: string, buyN: Buy):  Promise<[Error?, 
                 });
             });
         }
-        // } else if (buyN.detail) {
-        //     // Si 'buyN.detail' es un único objeto, lo convierte en un array de un solo elemento
-        //     detalles.push({
-        //         cantidad: buyN.detail.amount,
-        //         costo: buyN.detail.cost,
-        //         codigoprod: buyN.detail.codProduct,
-        //         idsucursal: buyN.detail.idBranch
-        //     });
-        // }
+      
 
         const buy: Omit<ApiBuy, "_id" | "estado" | "Proveedor"> = {
             // fecha: buyN.date.toISOString(), // Convertir la fecha a formato ISO

@@ -3,8 +3,15 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import Loading from '@/components/Loading';
 import { useBuy } from '../../hooks/useBuy';
+import { Button } from '@mui/material';
+import { Buy } from '../../models';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 const ListOfBuys: React.FC = () => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     
     const {
         buys,
@@ -13,6 +20,11 @@ const ListOfBuys: React.FC = () => {
         paginationModel,
         handlePaginationModelChange,
     } = useBuy();
+
+    const handleShowBuy = (buy: Buy) => {
+        // dispatch(editCategory(category));
+        navigate(`${buy.id}/show`)
+    };
 
 
     const columns: GridColDef[] = [
@@ -42,23 +54,23 @@ const ListOfBuys: React.FC = () => {
             // renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
             renderCell: (params: GridRenderCellParams) => <>{params.value ? params.value.name : 'Sin Proveedor'}</>,
         },
-        /*
+        
         {
             field: 'actions',
             type: 'actions',
             sortable: false,
-            headerName: 'Actions',
+            headerName: '',
             width: 200,
             renderCell: (params: GridRenderCellParams) => (
                 <Button
                     variant="contained"
-                    color="success"
-                    onClick={() => handleEditProduct(params.row as Product)}
+                    color="info"
+                    onClick={() => handleShowBuy(params.row as Buy)}
                 >
-                    Edit
+                    Detalle
                 </Button>
             ),
-        },*/
+        },
     ];
 
     
