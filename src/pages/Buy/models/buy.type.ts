@@ -45,7 +45,8 @@ export interface ApiBuy {
     estado: boolean;
     idproveedor: number;
     Proveedor: ApiProvider;
-    detalles?: ApiDetail[]; 
+    detalles?: ApiDetail[];
+    total?: number;
     // updatedAt: Date
 }
 
@@ -58,6 +59,7 @@ export interface Buy {
     idProvider: number;
     provider: Provider;
     detail?: Detail[];
+    total?:number;
 
     //
     amount?: number,

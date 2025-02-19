@@ -60,6 +60,7 @@ export const fetchBuyCreate = async (url: string, buyN: Buy):  Promise<[Error?, 
             fecha: buyN.date,
             direccion: buyN.direction,
             idproveedor: buyN.idProvider,
+            total: buyN.total,
             detalles: detalles
         };
 

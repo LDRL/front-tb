@@ -8,6 +8,7 @@ export const BuyAdapter = (buy: ApiBuy): Buy => {
         direction: buy.direccion,
         state: buy.estado,
         idProvider: buy.idproveedor,
+        total: buy.total,
         provider: buy.Proveedor ? {
             id: buy.Proveedor._id,
             name: buy.Proveedor.nombre,

@@ -22,7 +22,7 @@ const BuyCreate: React.FC = () => {
 
   const createBrandMutation = useCreateBuy();
   const { control, handleSubmit, reset, getValues, setValue} = useForm<Buy>({
-    defaultValues: { id: 0, direction: '', detail:[]},
+    defaultValues: { id: 0, direction: '', detail:[], total:0},
   });
 
   useEffect(() => {
@@ -61,10 +61,12 @@ const BuyCreate: React.FC = () => {
       detailProduct: false,
     });
     
+    
 
     if (data.date) {
       data.date = dayjs(data.date).toISOString();
     }
+    data.total = parseFloat(total.toFixed(2));
 
     if (rows.length === 0) {
       setErrors(prev => ({ ...prev, detailProduct: true }));
