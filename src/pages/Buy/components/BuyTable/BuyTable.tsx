@@ -6,11 +6,13 @@ import { useBuy } from '../../hooks/useBuy';
 import { Button } from '@mui/material';
 import { Buy } from '../../models';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import moment from 'moment';
+
+// import { useDispatch } from 'react-redux';
 
 const ListOfBuys: React.FC = () => {
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const navigate = useNavigate();
     
     const {
@@ -39,7 +41,7 @@ const ListOfBuys: React.FC = () => {
             field: 'date',
             headerName: 'Fecha',
             flex: 1,
-            renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+            renderCell: (params: GridRenderCellParams) => <>{moment(params.value).format("DD/MM/YYYY")}</>,
         },
         {
             field: 'direction',
@@ -53,6 +55,12 @@ const ListOfBuys: React.FC = () => {
             flex: 1,
             // renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
             renderCell: (params: GridRenderCellParams) => <>{params.value ? params.value.name : 'Sin Proveedor'}</>,
+        },
+        {
+            field: 'total',
+            headerName: 'Total',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
         },
         
         {

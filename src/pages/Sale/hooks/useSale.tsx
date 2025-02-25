@@ -12,7 +12,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ApiResponse {
     msg: string;
-    ventas: ApiSale[];
+    ordenes: ApiSale[];
     total: number;
     currentPage: number;
 }
@@ -31,7 +31,7 @@ export const useFetchSales = (page: number = 1, search: string) => {
 
 //Hook for list brands and search for name
 
-export const useBuy = (initialPage: number = 1) => {
+export const useSale = (initialPage: number = 1) => {
     const search = useSelector((state:any) => state.sale.search);
 
     const [sales, setSales] = useState<SaleList>([]);
@@ -48,7 +48,9 @@ export const useBuy = (initialPage: number = 1) => {
 
     useEffect(() => {
         if(data){
-            const adaptedSales = data ? SaleListAdapter(data.ventas) : []; // Todo cambiar a data cuando en la api mande data en ves de ventas
+            const adaptedSales = data ? SaleListAdapter(data.ordenes) : []; // Todo cambiar a data cuando en la api mande data en ves de ventas
+            console.log(adaptedSales, "adapted")
+
             setSales(adaptedSales || []);
             setTotal(data?.total || 0);
         }
@@ -103,7 +105,6 @@ export const useCreateSale = () => {
     return useMutation<string, Error, Sale>({
         mutationFn: async (newSale) => {
 
-            // const response = await axios.post<{ message: string, producto: ApiBuy }>(`${apiUrl}compras`, buy);
             const [error, orden, msg] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
 
             console.log(orden, msg);
@@ -117,9 +118,6 @@ export const useCreateSale = () => {
             }
 
             return "creado ";
-
-
-            // return BuyAdapter(response.data.producto);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['sales'] });
@@ -133,15 +131,3 @@ export const useCreateSale = () => {
 
 
 
-// export const useFetchBuys = (page: number = 1, search: string) => {
-//     return useQuery<ApiResponse, Error>({
-//         queryKey: ['buys', page, search],
-//         queryFn: async () => {
-//             const response = await axios.get<ApiResponse>(`${apiUrl}?page=${page}&search=${search}`);
-//             return response.data;
-            
-//         },
-//         // staleTime: 60000, // 1 minuto
-//         // cacheTime: 300000, // 5 minutos
-//     });
-// };

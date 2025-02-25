@@ -2,9 +2,10 @@ import React from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import Loading from '@/components/Loading';
-import { useBuy } from '../../hooks/useSale';
+import {useSale } from '../../hooks/useSale';
+import moment from 'moment';
 
-const ListOfBuys: React.FC = () => {
+const ListOfSales: React.FC = () => {
     
     const {
         sales,
@@ -12,7 +13,7 @@ const ListOfBuys: React.FC = () => {
         isLoading,
         paginationModel,
         handlePaginationModelChange,
-    } = useBuy();
+    } = useSale();
 
 
     const columns: GridColDef[] = [
@@ -27,7 +28,13 @@ const ListOfBuys: React.FC = () => {
             field: 'date',
             headerName: 'Fecha',
             flex: 1,
-            renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+            renderCell: (params: GridRenderCellParams) => <>{moment(params.value).format("DD/MM/YYYY")}</>,
+        },
+        {
+            field: 'client',
+            headerName: 'Cliente',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams) =>  <>{params.value ? `${params.value.name} ${params.value.lastName}` : 'Sin Proveedor'}</>,
         },
         {
             field: 'direction',
@@ -35,30 +42,12 @@ const ListOfBuys: React.FC = () => {
             flex: 1,
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
         },
-        // {
-        //     field: 'provider',
-        //     headerName: 'Proveedor',
-        //     flex: 1,
-        //     // renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
-        //     renderCell: (params: GridRenderCellParams) => <>{params.value ? params.value.name : 'Sin Proveedor'}</>,
-        // },
-        /*
         {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditProduct(params.row as Product)}
-                >
-                    Edit
-                </Button>
-            ),
-        },*/
+            field: 'total',
+            headerName: 'Total',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+        },
     ];
 
     
@@ -90,6 +79,6 @@ const ListOfBuys: React.FC = () => {
     );
 };
 
-export default ListOfBuys;
+export default ListOfSales;
 
 

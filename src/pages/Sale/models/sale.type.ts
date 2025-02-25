@@ -1,14 +1,3 @@
-export interface ApiSale {
-    _id: number;
-    // fecha: Date;
-    fecha: string;
-    direccion: string;
-    // estado: boolean;
-    detalles?: ApiDetail[]; 
-    // updatedAt: Date
-}
-
-
 export interface ApiDetail {
     cantidad: number,
     precio: number,
@@ -27,12 +16,46 @@ export interface Detail{
     idBranch?: number,
 }
 
+export interface ApiClient {
+    _id: number;
+    nombres:string;
+    apellidos:string;
+    telefono: string;
+    email: string;
+    estado: string;
+}
+
+interface Client {
+    id:number;
+    name: string;
+    lastName: string;
+    telphone: string;
+    email: string;
+    state: string;
+}
+
+export interface ApiSale {
+    _id: number;
+    // fecha: Date;
+    fecha: string;
+    direccion: string;
+    // estado: boolean;
+    idcliente: number;
+    Cliente: ApiClient;
+    total?:number;
+    detalles?: ApiDetail[]; 
+    // updatedAt: Date
+}
 
 export interface Sale {
     id?: number;
     // date: Date;
     date: string;
     direction: string;
+    idClient: number;
+    client: Client;
+    total?: number;
+    
     // state: boolean;
     detail?: Detail[];
 
