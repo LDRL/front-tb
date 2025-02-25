@@ -10,8 +10,8 @@ import { FormDate, FormInputText } from "@/components";
 
 import { useForm } from 'react-hook-form';
 import dayjs from "dayjs";
-import { HeaderSale, Sale } from "../../models";
-import { HeadeSaleAdapter, SaleAdapter } from "../../adapter";
+import { HeaderSale } from "../../models";
+import { HeadeSaleAdapter } from "../../adapter";
 
 const override: CSSProperties = {
   display: "block",
@@ -25,7 +25,7 @@ function BuyShow() {
   const { data, isLoading, isError } = id ? useShowSale(id) : { data: null, isLoading: false, isError: false };
   const adaptedData = data ? HeadeSaleAdapter(data.orden):null;
 
-  const { control, reset, getValues, setValue} = useForm<HeaderSale>({
+  const { control, reset, getValues} = useForm<HeaderSale>({
     defaultValues: { _id: 0, date: dayjs(), direction: '', total:0 }
   });
 
@@ -100,7 +100,7 @@ function BuyShow() {
       )}
 
       <CardForm
-        titulo='Compra'
+        titulo='Venta'
         subtitulo='Detalle'
       >
         <LoadMask/>
@@ -112,7 +112,7 @@ function BuyShow() {
               <FormInputText
                 name="_id"
                 control={control}
-                label="Numero de compra"
+                label="Numero de venta"
                 disabled
               />
               <FormDate
@@ -124,9 +124,9 @@ function BuyShow() {
             </div>
 
             <FormInputText
-              name="proveedorName"
+              name="client.fullName"
               control={control}
-              label="Proveedor"
+              label="Cliente"
               disabled
             />
 
@@ -171,7 +171,7 @@ function BuyShow() {
               type="button"
               sx={{ mt: 2 }}
               color='error'
-              onClick={() => navigate('/private/buy')}
+              onClick={() => navigate('/private/sale')}
             >
               Regresar
             </Button>

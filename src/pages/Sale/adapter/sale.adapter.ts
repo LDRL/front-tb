@@ -47,9 +47,10 @@ export const HeadeSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
             lastName: sale.Cliente.apellidos,
             telphone: sale.Cliente.telefono,
             email: sale.Cliente.email,
-            state: sale.Cliente.estado
+            state: sale.Cliente.estado,
+            fullName: sale.Cliente.nombres + ' ' + sale.Cliente.apellidos
             
-        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: ''},
+        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: '', fullName: ''},
         details: sale.Detalles && sale.Detalles.length > 0 
         ?  sale.Detalles.map((d: ApiHeaderDetailSale): HeaderDetailSale => ({
             _id: d._id,

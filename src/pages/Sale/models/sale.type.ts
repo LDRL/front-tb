@@ -34,6 +34,7 @@ interface Client {
     telphone: string;
     email: string;
     state: string;
+    fullName?: string;
 }
 
 export interface ApiSale {
