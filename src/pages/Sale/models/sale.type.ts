@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export interface ApiDetail {
     cantidad: number,
     precio: number,
@@ -67,6 +69,72 @@ export interface Sale {
     subtotal?: number,
 }
 
+
+// View buy show
+export interface ApiPay {
+    idpagos: number,
+    importe: number,
+    idorden: number,
+    idtipopago: number,
+    fecha_pago: string,
+}
+
+export interface Pay {
+    _id: number,
+    amount: number,
+    idOrden: number,
+    idPaymentType: number,
+    paymentDate: Dayjs,
+}
+
+interface ApiProduct {
+    _id : number,
+    codigoprod: number,
+    nombre: string,
+}
+
+interface Product {
+    _id: number;
+    productCode: number,
+    name: string;
+}
+export interface ApiHeaderDetailSale{
+    _id: number,
+    cantidad: number,
+    precio: number,
+    codigoprod:number,
+    Producto: ApiProduct,
+    
+}
+
+export interface HeaderDetailSale {
+    _id: number;
+    amount:number;
+    cost: number;
+    productCode: number,
+    product: Product;
+}
+
+export interface ApiHeaderSale {
+    _id: number,
+    fecha: Dayjs,
+    direccion: string,
+    total:number,
+    Cliente: ApiClient,
+    Detalles: ApiHeaderDetailSale[]
+    Pago: ApiPay,
+}
+export interface HeaderSale {
+    _id: number;
+    date: Dayjs;
+    direction: string;
+    total: number
+    client:Client;
+    details: HeaderDetailSale[]
+    pay: Pay;
+}
+
+////////
 export type SaleList = Array<Sale>
 
 export type Total = number;

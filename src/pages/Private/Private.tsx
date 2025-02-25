@@ -8,7 +8,7 @@ import { CategoryCreate } from '../Category'
 import BrandCreate from '../Brand/components/BrandCreate/BrandCreate';
 import { PresentationCreate } from '../Presentation'
 import { BuyCreate, BuyShow } from '../Buy'
-import { SaleCreate } from '../Sale'
+import { SaleCreate, SaleShow } from '../Sale'
 
 
 
@@ -53,6 +53,7 @@ function Private() {
 
         <Route path = {PrivateRoutes.SALE} element={<Sale />} />
         <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />
+        <Route path = {PrivateRoutes.SALE_SHOW} element={<SaleShow />} />
 
 
     </RoutesWithNotFound>

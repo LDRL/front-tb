@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
-import {ApiSale, SaleList, Sale } from "../models";
+import {ApiSale, SaleList, Sale, ApiHeaderSale } from "../models";
 import { SaleAdapter, SaleListAdapter } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,10 @@ interface ApiResponse {
     ordenes: ApiSale[];
     total: number;
     currentPage: number;
+}
+
+interface ApiResponseHeader {
+    orden: ApiHeaderSale;
 }
 
 // Hook para obtener la lista de ventas
@@ -49,7 +53,6 @@ export const useSale = (initialPage: number = 1) => {
     useEffect(() => {
         if(data){
             const adaptedSales = data ? SaleListAdapter(data.ordenes) : []; // Todo cambiar a data cuando en la api mande data en ves de ventas
-            console.log(adaptedSales, "adapted")
 
             setSales(adaptedSales || []);
             setTotal(data?.total || 0);
@@ -107,8 +110,6 @@ export const useCreateSale = () => {
 
             const [error, orden, msg] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
 
-            console.log(orden, msg);
-
             if (error){
                 throw new Error('Error al vender el producto');
             }
@@ -128,6 +129,15 @@ export const useCreateSale = () => {
     });
 };
 
+export const useShowSale = (id:string) => {
+    return useQuery<ApiResponseHeader, Error>({
+        queryKey: ['showSale',id],
+        queryFn: async () => {
+            const response = await axios.get<ApiResponseHeader>(`${apiUrl}ordenes/${id}/`);
+            return response.data;   
+        }
+    });
+};
 
 
 

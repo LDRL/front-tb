@@ -30,7 +30,6 @@ const Header: React.FC = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     debouncedGetPresentations(event.target.value)
-    console.log(event.target.value, "......")
   };
 
   return (

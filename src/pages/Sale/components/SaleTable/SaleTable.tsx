@@ -4,8 +4,12 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Loading from '@/components/Loading';
 import {useSale } from '../../hooks/useSale';
 import moment from 'moment';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Sale } from '../../models';
 
 const ListOfSales: React.FC = () => {
+    const navigate = useNavigate();
     
     const {
         sales,
@@ -14,6 +18,11 @@ const ListOfSales: React.FC = () => {
         paginationModel,
         handlePaginationModelChange,
     } = useSale();
+
+    const handleShowBuy = (sale: Sale) => {
+            // dispatch(editCategory(category));
+            navigate(`${sale.id}/show`)
+        };
 
 
     const columns: GridColDef[] = [
@@ -47,6 +56,22 @@ const ListOfSales: React.FC = () => {
             headerName: 'Total',
             flex: 1,
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            sortable: false,
+            headerName: '',
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => (
+                <Button
+                    variant="contained"
+                    color="info"
+                    onClick={() => handleShowBuy(params.row as Sale)}
+                >
+                    Detalle
+                </Button>
+            ),
         },
     ];
 

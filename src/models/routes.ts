@@ -24,5 +24,5 @@ export const PrivateRoutes = {
 
     SALE: 'sale',
     SALE_CREATE: 'sale/create',
-
+    SALE_SHOW: 'sale/:id/show',
 }
