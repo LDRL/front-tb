@@ -25,9 +25,10 @@ export interface ApiClient {
     telefono: string;
     email: string;
     estado: string;
+    nit: string;
 }
 
-interface Client {
+export interface Client {
     id:number;
     name: string;
     lastName: string;
@@ -35,6 +36,17 @@ interface Client {
     email: string;
     state: string;
     fullName?: string;
+    nit: string;
+}
+
+interface ApiClientPost {
+    idcliente?: string;
+    direccion: string;
+}
+
+interface ApiPago {
+    estado:string;
+    idtipopago: number;
 }
 
 export interface ApiSale {
@@ -48,6 +60,9 @@ export interface ApiSale {
     total?:number;
     detalles?: ApiDetail[]; 
     // updatedAt: Date
+    //Para guardar el programador backend uso cliente en minuscula
+    cliente?: ApiClientPost;
+    pago?: ApiPago;
 }
 
 export interface Sale {
@@ -68,6 +83,7 @@ export interface Sale {
     codProduct?: number, 
     name?: string,
     subtotal?: number,
+    nit?: string,
 }
 
 
@@ -140,14 +156,18 @@ export type SaleList = Array<Sale>
 
 export type Total = number;
 
+export type ClientOrden = Client;
+
 
 /// Slice 
 export interface SaleState {
     currentSale: Sale | null;
     search: string;
+    nit: string;
 }
 
 export const EmptySaleState: SaleState = {
     currentSale: null,
-    search: ''
+    search: '',
+    nit: ''
 };

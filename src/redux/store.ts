@@ -12,7 +12,8 @@ import brandSlice from './brandSlice';
 import presentationSlice from './presentationSlice';
 import { PresentationState } from '@/pages/Presentation';
 import saleSlice from './saleSlice';
-import { SaleState } from '@/pages/Sale';
+import { Client, SaleState } from '@/pages/Sale';
+import clientSlice from './clientSlice';
 
 interface sidebarInfo {
   state: boolean;
@@ -24,6 +25,14 @@ interface ProductState {
   search: string;
 }
 
+// Todo mover en un futruo
+interface ClientState {
+    currentClient: Client | null;
+    search: string;
+    nit: string;
+    fullName: string;
+}
+
 
 export interface AppStore {
   sidebar: sidebarInfo
@@ -33,6 +42,7 @@ export interface AppStore {
   presentation: PresentationState
   product: ProductState
   sale: SaleState
+  client:ClientState
 }
 
 export const store = configureStore<AppStore>({
@@ -44,6 +54,7 @@ export const store = configureStore<AppStore>({
     presentation: presentationSlice,
     product: productSliceReducer,
     sale: saleSlice,
+    client: clientSlice
   },
 });
 

@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 import { Product, fetchProductCreate, fetchProductUpdate, productUrl } from '@/pages/product';
 import { RootState } from '@/redux/store';
-import { closeModal } from '@/redux/productSlice';
+import { clearProduct } from '@/redux/productSlice';
 import { dialogCloseSubject$ } from '@/components/CustomDialog/CustomDialog';
 import { FormInputDropdown, FormInputText } from '@/components';
 
@@ -44,12 +44,12 @@ const ProductModal: React.FC = () => {
       // Create a new product
       const [err, responseData] = await fetchProductCreate(productUrl, data);
     }
-    dispatch(closeModal());
+    dispatch(clearProduct());
     dialogCloseSubject$.setSubject = true;
   };
 
   const handleClose = () => {
-    dispatch(closeModal());
+    dispatch(clearProduct());
     dialogCloseSubject$.setSubject = true;
   };
 

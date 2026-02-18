@@ -23,7 +23,7 @@ const productSlice = createSlice({
     openModal: (state, action: PayloadAction<Product | null>) => {
       state.currentProduct = action.payload;
     },
-    closeModal: (state) => {
+    clearProduct: (state) => {
       state.currentProduct = null;
     },
     setSearch: (state, action: PayloadAction<string>) => {
@@ -32,7 +32,7 @@ const productSlice = createSlice({
   },
 });
 
-export const { openModal, closeModal,setSearch } = productSlice.actions;
+export const { openModal, clearProduct, setSearch } = productSlice.actions;
 
 export default productSlice.reducer;
 

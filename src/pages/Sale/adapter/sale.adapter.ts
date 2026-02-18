@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { ApiSale, ApiDetail, Sale, Detail, ApiHeaderSale, HeaderSale, ApiHeaderDetailSale, HeaderDetailSale } from "../models";
+import { ApiSale, ApiDetail, Sale, Detail, ApiHeaderSale, HeaderSale, ApiHeaderDetailSale, HeaderDetailSale, ApiClient, Client } from "../models";
 
 export const SaleAdapter = (sale: ApiSale): Sale => {
     return{
@@ -14,9 +14,10 @@ export const SaleAdapter = (sale: ApiSale): Sale => {
             lastName: sale.Cliente.apellidos,
             telphone: sale.Cliente.telefono,
             email: sale.Cliente.email,
-            state: sale.Cliente.estado
+            state: sale.Cliente.estado,
+            nit: sale.Cliente.nit,
             
-        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: ''},
+        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: '', nit:''},
         // state: sale.estado,
 
         detail: sale.detalles && sale.detalles.length > 0
@@ -48,9 +49,10 @@ export const HeadeSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
             telphone: sale.Cliente.telefono,
             email: sale.Cliente.email,
             state: sale.Cliente.estado,
-            fullName: sale.Cliente.nombres + ' ' + sale.Cliente.apellidos
+            fullName: sale.Cliente.nombres + ' ' + sale.Cliente.apellidos,
+            nit: sale.Cliente.nit
             
-        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: '', fullName: ''},
+        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: '', fullName: '', nit:''},
         details: sale.Detalles && sale.Detalles.length > 0 
         ?  sale.Detalles.map((d: ApiHeaderDetailSale): HeaderDetailSale => ({
             _id: d._id,
@@ -72,6 +74,20 @@ export const HeadeSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
             paymentDate: dayjs(sale.Pago.fecha_pago),
             
         }: {_id: 0, amount:0, idOrden:0, idPaymentType:0, paymentDate:dayjs()},
+    }
+}
+
+
+//Todo cambiar a adapter Client
+export const SaleClientAdapter = (client: ApiClient): Client => {
+    return{
+            id: client._id,
+            name: client.nombres,
+            lastName: client.apellidos,
+            telphone: client.telefono,
+            email: client.email,
+            state: client.estado,
+            nit: client.nit
     }
 }
 

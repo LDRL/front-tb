@@ -7,6 +7,7 @@ import { RoutesWithNotFound } from './utils'
 import { Suspense, lazy } from 'react'
 import { Provider } from 'react-redux'
 import { store } from './redux/store.ts'
+import Loading from './components/Loading.tsx'
 
 const Login = lazy(() => import('./pages/Login/Login'))
 const Private = lazy(() => import('./pages/Private/Private'))
@@ -15,7 +16,7 @@ function App() {
 
   return (
     <>
-      <Suspense fallback={<>Cargando</>}>
+      <Suspense fallback={<Loading loading={true} />}>
         <Provider store ={store}>
         <BrowserRouter>
           <RoutesWithNotFound>

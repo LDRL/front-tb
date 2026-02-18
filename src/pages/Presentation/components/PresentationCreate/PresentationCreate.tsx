@@ -9,24 +9,16 @@ import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
 import { Presentation } from '../../models';
 import { PrivateRoutes } from '@/models';
-import { ClipLoader } from 'react-spinners';
 import { useCreatePresentation, useGetPresentation, useUpdatePresentation } from '../../hooks/usePresentation';
 import { clearPresentation, editPresentation } from '@/redux/presentationSlice';
 
 
 import "./PresentationCreate.css"
-
-
-const override: CSSProperties = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "red",
-};
+import Loading from '@/components/Loading';
 
 const PresentationCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
-  const [color] = useState("#ffffff")
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
@@ -85,16 +77,7 @@ const PresentationCreate: React.FC = () => {
   return (    
     <div className='container'>
       {loading && (
-        <div className="sweet-loading">
-          <ClipLoader
-            color={color}
-            loading={loading}
-            cssOverride={override}
-            size={150}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-        </div>
+        <Loading loading/>
       )}
 
       <CardForm

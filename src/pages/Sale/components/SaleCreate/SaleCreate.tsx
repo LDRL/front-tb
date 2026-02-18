@@ -2,33 +2,42 @@ import React, {useEffect, useState } from 'react';
 import CardForm from '../../../../components/Cards/CardForm'
 import { useNavigate } from 'react-router-dom';
 import LoadMask from '@/components/LoadMask/LoadMask';
-import { FormDate, FormDropdown, FormInputNumber, FormInputText } from '@/components';
+import { CustomDialog, FormDate, FormDropdown, FormInputNumber, FormInputText } from '@/components';
 import { Box, Button, FormHelperText} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { PrivateRoutes } from '@/models';
 
 import "./SaleCreate.css"
-import {useCreateSale} from '../../hooks/useSale'
+import {useClientSearch, useCreateSale} from '../../hooks/useSale'
 import { Sale, Detail } from '../../models';
 import { useFetchProductOptions } from '@/hooks/useOption';
 import dayjs from 'dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { ToastContainer, toast } from 'react-toastify'; 
+////
+
+
 import Loading from '@/components/Loading';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchNit } from '@/redux/saleSlice';
+import { dialogOpenSubject$ } from '@/components/CustomDialog/CustomDialog';
+import { ClientCreate } from '../ClientCreate';
+
 
 const SaleCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
+
   const createSaleMutation = useCreateSale();
   const { control, handleSubmit, reset, getValues, setValue} = useForm<Sale>({
     defaultValues: { id: 0, direction: '', detail:[]},
   });
 
-  useEffect(() => {
-    reset({ direction: '', date:undefined});
-    setSubtitulo("Nuevo")    
-  }, []);
+
 
   const [rows, setRows] = useState<Detail[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -40,8 +49,15 @@ const SaleCreate: React.FC = () => {
     detailProduct: false
   });
 
-
   const {data: productOptions, isLoading: isProductLoading, isError: isProductError} = useFetchProductOptions();
+  const {client, isLoading: isClientLoading, error: isClientError} =  useClientSearch();
+  
+
+  const nombreCliente = useSelector((state:any) => state.client.fullName);
+  const nitCliente = useSelector((state:any) => state.client.nit);
+
+  console.log(nombreCliente, nitCliente, "estados globales");
+  console.log(client, isClientLoading, isClientError, "----")
 
   const calculateTotal = (updatedRows: Detail[]) => {
     const newTotal = updatedRows.reduce((acc, row) => acc + (row.subtotal ?? 0), 0);
@@ -52,6 +68,7 @@ const SaleCreate: React.FC = () => {
   
 
   const onSubmit = async (data: Sale) => {
+
     setErrors({
       amount: false,
       cost: false,
@@ -82,6 +99,18 @@ const SaleCreate: React.FC = () => {
       setLoading(false); // Desactiva el loader
     }
   };
+
+  const searchClient = () => {
+    const nit = getValues("nit");
+    console.log(nit, "---")
+    if(nit)
+      dispatch(setSearchNit(nit));
+  }
+
+  const showModal = () =>{
+    console.log("open modal");
+    dialogOpenSubject$.setSubject = true;
+  }
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
     {
@@ -195,11 +224,43 @@ const SaleCreate: React.FC = () => {
     calculateTotal(filteredProduct);
   }
 
+  useEffect(() => {
+    reset({ direction: '', date:undefined});
+    setSubtitulo("Nuevo")    
+  }, []);
+   
+  useEffect(() => {
+    if (client) {
+      setValue('name', client.name);
+    }
+  }, [client, setValue]);
+
+  useEffect(() => {
+    if (isClientError) {
+      toast.error(isClientError);
+      setValue('name', '');
+      setValue('client', {id:0, name:'', lastName:'', telphone:'', state:'', email:'', nit:''})
+    }
+    
+  }, [isClientError]);
+
+  //UseEffect(para cuando se manda el nit desde el modal)
+
+  useEffect(()=>{
+    'cambio de estado global, ---'
+    setValue('nit', nitCliente);
+    setValue('name', nombreCliente);
+  },[nitCliente,nombreCliente])
+
   return (    
     <div className='container'>
       {loading && (
         <Loading loading/>
       )}
+
+      <CustomDialog>
+        <ClientCreate />
+      </CustomDialog>
 
       <CardForm
         titulo='Venta'
@@ -211,7 +272,46 @@ const SaleCreate: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
+
+          <div className='container_selector'>
+            <FormInputText
+              name="nit"
+              control={control}
+              label="Nit"
+              rules={{ required: 'Direccion es un campo requerido' }}
+            />
+
+            <Button
+              variant="contained"
+              type="button"
+              // sx={{ mt: 2 }}
+              color='primary'
+              onClick={searchClient}
+            >
+              Buscar
+            </Button>
+            <Button
+              variant="contained"
+              type="button"
+              // sx={{ mt: 2 }}
+              color='success'
+              onClick={showModal}
+            >
+              Agregar
+            </Button>
+          </div>
           
+          <div className='section'>
+
+            <FormInputText
+              name="name"
+              control={control}
+              label="Nombre"
+              rules={{ required: 'Nombre es un campo requerido' }}
+              disabled={isClientLoading}
+            />
+          </div>
+
           <div className='section'>
             <FormInputText
               name="direction"
@@ -331,6 +431,8 @@ const SaleCreate: React.FC = () => {
           </div>
         </Box>
       </CardForm>
+
+      <ToastContainer />
     </div>
   );
 };

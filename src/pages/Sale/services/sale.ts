@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
-import { ApiSale, ApiDetail, Sale, SaleList, Total } from "../models";
+import { ApiSale, ApiDetail, Sale, SaleList, Total, ApiClient } from "../models";
 import { SaleAdapter, SaleListAdapter } from "../adapter";
 
 export const fetchSaleList = async (url: string, page: number, search: string): Promise<[Error?, SaleList?, Total?]> => {
@@ -57,27 +57,40 @@ export const fetchSaleCreate = async (url: string, saleN: Sale):  Promise<[Error
                 });
             });
         }
-        // } else if (buyN.detail) {
-        //     // Si 'buyN.detail' es un único objeto, lo convierte en un array de un solo elemento
-        //     detalles.push({
-        //         cantidad: buyN.detail.amount,
-        //         costo: buyN.detail.cost,
-        //         codigoprod: buyN.detail.codProduct,
-        //         idsucursal: buyN.detail.idBranch
-        //     });
+
+        // export interface ApiClient {
+        //     _id: number;
+        //     nombres:string;
+        //     apellidos:string;
+        //     telefono: string;
+        //     email: string;
+        //     estado: string;
+        //     nit: string;
         // }
 
-        const sale: Omit<ApiSale, "_id"> = {
-            // fecha: buyN.date.toISOString(), // Convertir la fecha a formato ISO
-            fecha: saleN.date,
-            direccion: saleN.direction,
-            detalles: detalles
+    
+
+        const newCliente  = {
+            idcliente: saleN.nit,
+            direccion: saleN.direction
         };
 
-        const response: AxiosResponse<{message: string, orden: ApiSale}> = await axios.post(url, sale);
-        const {orden} = response.data
+        const newPago = {
+            estado: "Pagado",
+            idtipopago: 1
+        }
+
+
+        const sale: Omit<ApiSale, "_id" | "fecha" | "direccion" | "idcliente" | "Cliente" > = {
+            cliente: newCliente,
+            detalles: detalles,
+            pago: newPago
+        };
+
+        const response: AxiosResponse<{message: string, nuevaOrden: ApiSale}> = await axios.post(url, sale);
+        const {nuevaOrden} = response.data
         
-        return [undefined, SaleAdapter(orden), response]
+        return [undefined, SaleAdapter(nuevaOrden), response]
 
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

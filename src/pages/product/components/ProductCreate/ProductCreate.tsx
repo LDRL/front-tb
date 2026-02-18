@@ -14,21 +14,14 @@ import LoadMask from '@/components/LoadMask/LoadMask';
 import { useFetchMarcaOptions, useFetchOptions, useFetchPresentacionOptions } from '../../hooks/useFetchOptions';
 
 import "./ProductCreate.css"
-import { ClipLoader } from 'react-spinners';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/models';
-import { openModal } from '@/redux/productSlice';
-
-const override: CSSProperties = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "red",
-};
+import { openModal, clearProduct } from '@/redux/productSlice';
+import Loading from '@/components/Loading';
 
 const CreateProduct: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
-  const [color] = useState("#ffffff")
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
@@ -44,42 +37,47 @@ const CreateProduct: React.FC = () => {
   const {data: presentacionOptions, isLoading: isPresentacionLoading, isError: isPresentacionError} = useFetchPresentacionOptions();
   
   useEffect(() => {
-    const fetchProductData = async () => {
-      if (id) {
-        try {
-          // Si hay un ID, carga el producto
-          const productId = productUrl + id
-          const [err, responseData] = await fetchProduct(productId);
-          if (err) {
-            // Manejo de errores si es necesario
-            console.error("Error fetching product:", err);
-            return;
-          }
+  if (!id) {
+    dispatch(clearProduct());
 
-          // Abre el modal con los datos del producto
-          if (responseData) {
-            dispatch(openModal(responseData));
-          } else {
-            console.log("No product data found.");
-          }
-        } catch (error) {
-          console.log("Error occurred:", error);
-        }
+    reset({
+      id: 0,
+      name: '',
+      price: 0,
+      description: '',
+      idCategory: undefined,
+      idBrand: undefined,
+      idPresentation: undefined,
+    });
+
+    setSubtitulo("Nuevo");
+    return;
+  }
+
+  const fetchProductData = async () => {
+    try {
+      const productId = productUrl + id;
+      const [err, responseData] = await fetchProduct(productId);
+
+      if (!err && responseData) {
+        dispatch(openModal(responseData));
       }
-    };
-
-    fetchProductData();
-  }, [dispatch, id]);
-
-  useEffect(() => {
-    if (currentProduct) {
-      reset(currentProduct);
-      setSubtitulo("Editar")
-    } else {
-      reset({ id: 0, name: '', price: 0});
-      setSubtitulo("Nuevo")
+    } catch (error) {
+      console.log(error);
     }
-  }, [currentProduct, reset]);
+  };
+
+  fetchProductData();
+}, [id, dispatch, reset]);
+
+
+useEffect(() => {
+  if (currentProduct && id) {
+    reset(currentProduct);
+    setSubtitulo("Editar");
+  }
+}, [currentProduct, id, reset]);
+
 
 
   const onSubmit = async (data: Product) => {
@@ -128,16 +126,7 @@ const CreateProduct: React.FC = () => {
   return (    
     <div className='container'>
       {loading && (
-        <div className="sweet-loading">
-          <ClipLoader
-            color={color}
-            loading={loading}
-            cssOverride={override}
-            size={150}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-        </div>
+        <Loading loading/>
       )}
 
       <CardForm

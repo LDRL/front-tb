@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
-import {ApiSale, SaleList, Sale, ApiHeaderSale } from "../models";
-import { SaleAdapter, SaleListAdapter } from '../adapter';
+import {ApiSale, SaleList, Sale, ApiHeaderSale, ClientOrden, ApiClient } from "../models";
+import { SaleAdapter, SaleClientAdapter, SaleListAdapter } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
@@ -21,6 +21,10 @@ interface ApiResponseHeader {
     orden: ApiHeaderSale;
 }
 
+interface ApiResponseClient {
+    msg: string;
+    cliente: ApiClient;
+}
 // Hook para obtener la lista de ventas
 
 export const useFetchSales = (page: number = 1, search: string) => {
@@ -41,7 +45,6 @@ export const useSale = (initialPage: number = 1) => {
     const [sales, setSales] = useState<SaleList>([]);
     const [totalSale, setTotal] = useState<number>(0);
     const [page, setPage] = useState<number>(initialPage);
-
 
     const [paginationModel, setPaginationModel] = useState<PaginationModel>({
         page: initialPage - 1,
@@ -108,13 +111,13 @@ export const useCreateSale = () => {
     return useMutation<string, Error, Sale>({
         mutationFn: async (newSale) => {
 
-            const [error, orden, msg] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
+            const [error, nuevaOrden, msg] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
 
             if (error){
                 throw new Error('Error al vender el producto');
             }
 
-            if (!orden) {
+            if (!nuevaOrden) {
                 throw new Error('Orden no creado');
             }
 
@@ -130,7 +133,7 @@ export const useCreateSale = () => {
 };
 
 export const useShowSale = (id:string) => {
-    return useQuery<ApiResponseHeader, Error>({
+    return useQuery<ApiResponseHeader, AxiosError>({
         queryKey: ['showSale',id],
         queryFn: async () => {
             const response = await axios.get<ApiResponseHeader>(`${apiUrl}ordenes/${id}/`);
@@ -138,6 +141,54 @@ export const useShowSale = (id:string) => {
         }
     });
 };
+
+// hook para obtener un cliente por nit
+export const useFetchClients = (nit: string) => {
+    return useQuery<ApiResponseClient, AxiosError>({
+        queryKey: ['sales', nit],
+        queryFn: async () => {
+            const response = await axios.get<ApiResponseClient>(`${apiUrl}clientes/${nit}`);
+            return response.data;   
+        },
+        enabled: !!nit,
+        retry: false,
+    });
+};
+
+
+
+//hook para buscar cliente por nit
+export const useClientSearch = () => {
+    const search = useSelector((state:any) => state.sale.nit);
+    const [client, setClient] = useState<ClientOrden>();
+    const { data, error, isLoading } = useFetchClients(search);
+
+    useEffect(() => {
+        if(data){
+            console.log(data?.cliente)
+
+            const adaptedSales = SaleClientAdapter(data.cliente); // Todo cambiar a data cuando en la api mande data en ves de ventas
+            setClient(adaptedSales || "");
+        }
+    }, [data]);
+
+    const errorMessage = error ? (
+        // Verificamos si el error es de tipo AxiosError y si tiene 'response'
+        (error instanceof AxiosError && error.response)
+            ? ` ${(error as AxiosError).response?.data?.error || 'Cliente no encontrado'}`
+            : `Error desconocido: ${(error instanceof Error ? error.message : 'No se pudo obtener el cliente')}`
+    ) : null;
+
+    
+
+
+    return {
+        client,
+        isLoading,
+        error: errorMessage
+    };
+};
+
 
 
 

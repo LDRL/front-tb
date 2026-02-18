@@ -44,13 +44,15 @@ const BuyCreate: React.FC = () => {
   const {data: providerOptions, isLoading: isProviderLoading, isError: isProviderError} = useFetchProviderOptions();
   const {data: productOptions, isLoading: isProductLoading, isError: isProductError} = useFetchProductOptions();
 
+  console.log (providerOptions);
+
   const calculateTotal = (updatedRows: Detail[]) => {
     const newTotal = updatedRows.reduce((acc, row) => acc + (row.subtotal ?? 0), 0);
     setTotal(newTotal);
   };
 
   const filterProduct = (product: Detail) => rows.filter(p => p.id !== product.id);
-  const findProvider = (provider: number) => providerOptions?.find(p=> p.value !== provider)
+  const findProvider = (provider: number) => providerOptions?.find(p=> p.value === provider)
   
 
   const onSubmit = async (data: Buy) => {
@@ -225,7 +227,12 @@ const BuyCreate: React.FC = () => {
               externalOnChange={(value) => {
                 const numericValue = Number(value);
                 const n = findProvider(numericValue)
-                setValue("direction",  `${n?.direction}`)
+                //setValue("direction",  `${n?.direction}`)
+
+                setValue("direction", n?.direction ?? "", {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
               }}
             /> 
           </div>

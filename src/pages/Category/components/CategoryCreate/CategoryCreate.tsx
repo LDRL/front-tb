@@ -11,20 +11,14 @@ import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
 import { Category } from '../../models';
 import { PrivateRoutes } from '@/models';
-import { ClipLoader } from 'react-spinners';
 import "./CategoryCreate.css"
+import Loading from '@/components/Loading';
 
 
-const override: CSSProperties = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "red",
-};
 
 const CreateCategory: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
-  const [color] = useState("#ffffff")
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
@@ -84,16 +78,7 @@ const CreateCategory: React.FC = () => {
   return (    
     <div className='container'>
       {loading && (
-        <div className="sweet-loading">
-          <ClipLoader
-            color={color}
-            loading={loading}
-            cssOverride={override}
-            size={150}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-        </div>
+        <Loading loading/>
       )}
 
       <CardForm

@@ -14,10 +14,13 @@ const saleSlice = createSlice({
     setSearchSale: (state, action: PayloadAction<string>) => {
       state.search = action.payload;
     },
+    setSearchNit: (state, action: PayloadAction<string>) => {
+      state.nit = action.payload;
+    },
   },
 });
 
-export const { editSale, clearSale,setSearchSale } = saleSlice.actions;
+export const { editSale, clearSale,setSearchSale, setSearchNit } = saleSlice.actions;
 
 export default saleSlice.reducer;
 

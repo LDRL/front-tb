@@ -9,22 +9,14 @@ import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
 import { Brand } from '../../models';
 import { PrivateRoutes } from '@/models';
-import { ClipLoader } from 'react-spinners';
 import "./BrandCreate.css"
 import { useCreateBrand, useGetBrand, useUpdateBrand } from '../../hooks/useBrand';
 import { clearBrand, editBrand } from '@/redux/brandSlice';
-
-
-const override: CSSProperties = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "red",
-};
+import Loading from '@/components/Loading';
 
 const BrandCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
-  const [color] = useState("#ffffff")
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
@@ -83,16 +75,7 @@ const BrandCreate: React.FC = () => {
   return (    
     <div className='container'>
       {loading && (
-        <div className="sweet-loading">
-          <ClipLoader
-            color={color}
-            loading={loading}
-            cssOverride={override}
-            size={150}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-        </div>
+        <Loading loading/>
       )}
 
       <CardForm
