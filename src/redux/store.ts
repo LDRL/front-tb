@@ -1,19 +1,25 @@
 // redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import { UserInfo } from '@/models';
-import { Product } from '@/pages/product';
-import userSliceReducer  from './user';
+
+import authSliceReducer  from './user';
 import productSliceReducer from './productSlice';
 import sidebarSlice  from './sidebar';
 import categorySlice from './categorySlice';
-import { CategoryState } from '@/pages/Category';
-import { BrandState } from '@/pages/Brand';
 import brandSlice from './brandSlice';
 import presentationSlice from './presentationSlice';
-import { PresentationState } from '@/pages/Presentation';
 import saleSlice from './saleSlice';
-import { Client, SaleState } from '@/pages/Sale';
 import clientSlice from './clientSlice';
+import userSlice from './userSlice';
+
+
+import { Product } from '@/pages/product';
+import { CategoryState } from '@/pages/Category';
+import { BrandState } from '@/pages/Brand';
+import { PresentationState } from '@/pages/Presentation';
+import { Client, SaleState } from '@/pages/Sale';
+import { UserState } from '@/pages/User';
+import { AuthState } from '@/modules/auth/models/login.type';
+
 
 interface sidebarInfo {
   state: boolean;
@@ -36,25 +42,27 @@ interface ClientState {
 
 export interface AppStore {
   sidebar: sidebarInfo
-  user: UserInfo
+  auth: AuthState
   category: CategoryState
   brand: BrandState
   presentation: PresentationState
   product: ProductState
   sale: SaleState
   client:ClientState
+  user:UserState
 }
 
 export const store = configureStore<AppStore>({
   reducer: {
-    user : userSliceReducer,
+    auth : authSliceReducer,
     sidebar: sidebarSlice,
     category: categorySlice,
     brand: brandSlice,
     presentation: presentationSlice,
     product: productSliceReducer,
     sale: saleSlice,
-    client: clientSlice
+    client: clientSlice,
+    user: userSlice
   },
 });
 

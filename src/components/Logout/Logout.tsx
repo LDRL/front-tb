@@ -1,22 +1,23 @@
 import { PublicRoutes } from "@/models";
-import { resetUser, userKey } from "@/redux/user"
+import { logout, userKey } from "@/redux/user"
 import { clearLocalStorage } from "@/utils/localStorage.utility"
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import "./Logout.css"
 
 function Logout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const logout = () => {
+  const handleLogout = () => {
     clearLocalStorage(userKey);
-    dispatch(resetUser());
+    dispatch(logout());
     navigate(PublicRoutes.LOGIN, {replace: true})
     
   }
 
 
-  return <button onClick={logout}> Log Out</button>;
+  return <button onClick={handleLogout} className="btn-logout"> Cerrar Sessión</button>;
 }
 
 export default Logout

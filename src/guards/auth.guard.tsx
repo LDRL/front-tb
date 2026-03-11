@@ -6,21 +6,25 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
 import styles from "./auth.module.css"
+
 export const AuthGuard = () => {
-    const userState = useSelector((store: AppStore) => store.user);
+    const userState = useSelector((store: AppStore) => store.auth);    
+    if (!userState.usuario?._id) {
+    return <Navigate replace to={`/${PublicRoutes.LOGIN}`} />;
+  }
 
-    return userState.name ?  (
-        <div className={styles.custom_bg_gray}>
-            <Sidebar />
+   return (
+    <div className={styles.custom_bg_gray}>
+      <Sidebar />
 
-            <div className={styles.custom_flex_min_h}>
-                <Header />
-                <main className={styles.custom_padding_flex}>
-                    <Outlet />
-                </main>
-            </div>
-        </div>
-    ) : <Navigate replace to = {PublicRoutes.LOGIN} />
+      <div className={styles.custom_flex_min_h}>
+        <Header />
+        <main className={styles.custom_padding_flex}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }
 
 export default AuthGuard;

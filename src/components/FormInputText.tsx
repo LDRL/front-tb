@@ -2,7 +2,7 @@
 import { Controller, Control } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import React from 'react';
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
 
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -20,9 +20,10 @@ interface FormInputProps {
     rules?: any;
     externalOnChange?: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     disabled?:boolean;
+    type?:string;
 }
 
-export const FormInputText = ({ name, control, label, rules, externalOnChange,disabled }: FormInputProps) => {
+export const FormInputText = ({ name, control, label, rules, externalOnChange,disabled, type="text"}: FormInputProps) => {
     return (
         <Controller
             name={name}
@@ -33,6 +34,7 @@ export const FormInputText = ({ name, control, label, rules, externalOnChange,di
                 fieldState: { error },
             }) => (
                 <TextField
+                    type={type}
                     helperText={error ? error.message : null}
                     size="small"
                     error={!!error}
@@ -266,3 +268,4 @@ export const FormInputNumber = ({ name, control, label, rules, externalOnChange,
         />
     );
 };
+

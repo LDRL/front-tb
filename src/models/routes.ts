@@ -1,5 +1,5 @@
 export const PublicRoutes = {
-    LOGIN: 'login'
+    LOGIN: 'login',
 }
 
 export const PrivateRoutes = {
@@ -25,4 +25,9 @@ export const PrivateRoutes = {
     SALE: 'sale',
     SALE_CREATE: 'sale/create',
     SALE_SHOW: 'sale/:id/show',
+    USER: 'user',
+    USER_CREATE:'user/create',
+    USER_EDIT:'user/:id/editar'
+
+    
 }

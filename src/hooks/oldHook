@@ -31,7 +31,6 @@ export const useProducts = (initialPage: number = 1) => {
             previousSearch.current  = search
             const [err, data, total] = await fetchProductList(productUrl, page, search);
 
-            console.log(data, "data ---")
             if (err) {
                 setError(err);
             } else {

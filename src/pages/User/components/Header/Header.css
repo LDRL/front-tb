@@ -1,0 +1,14 @@
+.header{
+    display: flex; 
+    gap: 20px;
+    flex-direction: column;
+}
+
+@media (min-width: 1024px) /* and (max-width: 1200px) */ {
+    .header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0;
+    }    
+}

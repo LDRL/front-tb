@@ -56,9 +56,6 @@ const SaleCreate: React.FC = () => {
   const nombreCliente = useSelector((state:any) => state.client.fullName);
   const nitCliente = useSelector((state:any) => state.client.nit);
 
-  console.log(nombreCliente, nitCliente, "estados globales");
-  console.log(client, isClientLoading, isClientError, "----")
-
   const calculateTotal = (updatedRows: Detail[]) => {
     const newTotal = updatedRows.reduce((acc, row) => acc + (row.subtotal ?? 0), 0);
     setTotal(newTotal);
@@ -102,13 +99,11 @@ const SaleCreate: React.FC = () => {
 
   const searchClient = () => {
     const nit = getValues("nit");
-    console.log(nit, "---")
     if(nit)
       dispatch(setSearchNit(nit));
   }
 
   const showModal = () =>{
-    console.log("open modal");
     dialogOpenSubject$.setSubject = true;
   }
 

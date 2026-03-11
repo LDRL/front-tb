@@ -7,6 +7,7 @@ import { RoutesWithNotFound } from './utils'
 import { Suspense, lazy } from 'react'
 import { Provider } from 'react-redux'
 import { store } from './redux/store.ts'
+import { ToastContainer } from 'react-toastify'
 import Loading from './components/Loading.tsx'
 
 const Login = lazy(() => import('./pages/Login/Login'))
@@ -31,6 +32,10 @@ function App() {
         </BrowserRouter>
         
         </Provider>
+
+        <ToastContainer 
+         pauseOnHover={false}
+         pauseOnFocusLoss={false}/>
       </Suspense>
 
     </>

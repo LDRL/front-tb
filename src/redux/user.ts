@@ -1,34 +1,32 @@
-import { UserInfo } from "@/models";
+
+import { AuthState ,EmptyUserState} from "@/modules/auth/models/login.type";
+import { User } from "@/pages/User";
 import { clearLocalStorage, persistLocalStorage } from "@/utils/localStorage.utility";
 import { createSlice } from "@reduxjs/toolkit";
 
-export const EmptyUserState: UserInfo = {
-    id:0,
-    name: "",
-    email: ""
-}
 
-export const userKey = 'user';
 
-export const userSlice = createSlice({
-    name:"user",
-    initialState: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') as string): EmptyUserState,
+export const userKey = 'auth';
+
+export const authSlice = createSlice({
+    name:"auth",
+    initialState: localStorage.getItem(userKey) ? JSON.parse(localStorage.getItem(userKey) as string): EmptyUserState,
     reducers: {
-        createUser: (state, action)=>{
-            persistLocalStorage<UserInfo>(userKey, action.payload);
+        login: (state, action)=>{
+            persistLocalStorage<AuthState>(userKey, action.payload);
             return action.payload;
         },
-        updateUser: (state, action)=>{
+        setUser: (state, action)=>{
             const result = {...state, ...action.payload}
-            persistLocalStorage<UserInfo>(userKey, result);
+            persistLocalStorage<User>(userKey, result);
             return result;
         },
-        resetUser: () => {
+        logout: () => {
             clearLocalStorage(userKey);
             return EmptyUserState;
         }
     }
 });
 
-export const { createUser, updateUser,resetUser } = userSlice.actions;
-export default userSlice.reducer;
+export const { login, setUser,logout } = authSlice.actions;
+export default authSlice.reducer;

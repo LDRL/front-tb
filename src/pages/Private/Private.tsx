@@ -9,6 +9,7 @@ import BrandCreate from '../Brand/components/BrandCreate/BrandCreate';
 import { PresentationCreate } from '../Presentation'
 import { BuyCreate, BuyShow } from '../Buy'
 import { SaleCreate, SaleShow } from '../Sale'
+import { UserCreate } from '../User'
 
 
 
@@ -20,6 +21,7 @@ const Brand = lazy(() => import('../Brand/Brand'))
 const Presentation = lazy(() => import('../Presentation/Presentation'))
 const Buy = lazy(() => import('../Buy/Buy'))
 const Sale = lazy(() => import('../Sale/Sale'))
+const User = lazy(() => import('../User/User'))
 
 
 
@@ -54,6 +56,10 @@ function Private() {
         <Route path = {PrivateRoutes.SALE} element={<Sale />} />
         <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />
         <Route path = {PrivateRoutes.SALE_SHOW} element={<SaleShow />} />
+
+        <Route path = {PrivateRoutes.USER} element={<User />} />
+        <Route path = {PrivateRoutes.USER_CREATE} element={<UserCreate />} />
+        <Route path = {PrivateRoutes.USER_EDIT} element={<UserCreate />} />
 
 
     </RoutesWithNotFound>

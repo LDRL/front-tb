@@ -4,6 +4,10 @@ import CategoryIcon from '@mui/icons-material/Category';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+
+import PersonIcon from '@mui/icons-material/Person';
+
 export const DesplegableUser = [
   {
     text: "Mi perfil",
@@ -72,7 +76,7 @@ export const LinksArray = [
   },
   {
     label: "Presentaciones",
-    icon: <ProductionQuantityLimitsIcon />,
+    icon: <HomeRepairServiceIcon />,
     to: "/private/presentation",
     path: "/private/presentation",
   },
@@ -87,6 +91,12 @@ export const LinksArray = [
     icon: <ShoppingBagIcon />,
     to: "/private/buy",
     path: "/private/buy",
+  },
+  {
+    label: "Usuarios",
+    icon: <PersonIcon />,
+    to: "/private/user",
+    path: "/private/user",
   },
   {
     label: "Reportes",

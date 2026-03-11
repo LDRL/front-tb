@@ -1,0 +1,42 @@
+.container {
+    /* min-height: 100vh; */
+    padding: 15px;
+    width: 100%;
+    /* background: var(--bgtotal); Para usar con una variable de CSS personalizada */
+    /* color: var(--text);  Para usar con una variable de CSS personalizada */
+    display: grid;
+    grid-template-areas: 
+      "header"
+      "area1"
+      "area2"
+      "main";
+    grid-template-rows: 100px 100px 60px auto;
+  }
+  
+  .header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    /* background-color: rgba(103, 93, 241, 0.14); */
+  }
+  
+  .area1 {
+    grid-area: area1;
+    display: flex;
+    align-items: center;
+    /* background-color: rgba(229, 67, 26, 0.14); */
+  }
+  
+  .area2 {
+    grid-area: area2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* background-color: rgba(77, 237, 106, 0.14); */
+  }
+  
+  .main {
+    grid-area: main;
+    /* background-color: rgba(179, 46, 241, 0.14); */
+  }
+  
