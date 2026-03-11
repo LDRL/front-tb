@@ -13,6 +13,7 @@ import "./BrandCreate.css"
 import { useCreateBrand, useGetBrand, useUpdateBrand } from '../../hooks/useBrand';
 import { clearBrand, editBrand } from '@/redux/brandSlice';
 import Loading from '@/components/Loading';
+import { toast } from 'react-toastify';
 
 const BrandCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -60,12 +61,18 @@ const BrandCreate: React.FC = () => {
     try {
       if (currentBrand) {
         await updateBrandMutation.mutateAsync(data);
+        toast.success("Marca actualizado exitosamente");        
       } else { // Create a new Brand
         await createBrandMutation.mutateAsync(data);
+        toast.success("Marca creada exitosamente");
       }
       navigate(`/private/${PrivateRoutes.BRAND}`, {replace:true})
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Error desconocido");
+      } else {
+        toast.error(error.message || "Error desconocido");
+      }
     }
     finally {
       setLoading(false); // Desactiva el loader

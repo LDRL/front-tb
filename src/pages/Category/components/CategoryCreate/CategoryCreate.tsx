@@ -1,6 +1,6 @@
 import { useCreateCategory, useGetCategory, useUpdateCategory } from '../../hooks/useCategory';
 import { clearCategory, editCategory } from '@/redux/categorySlice';
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardForm from '../../../../components/Cards/CardForm'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,8 +13,7 @@ import { Category } from '../../models';
 import { PrivateRoutes } from '@/models';
 import "./CategoryCreate.css"
 import Loading from '@/components/Loading';
-
-
+import { toast } from 'react-toastify';
 
 const CreateCategory: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -44,7 +43,7 @@ const CreateCategory: React.FC = () => {
   }
 
   dispatch(clearCategory())
- }, [dispatch, data]); // Agregar 'data' e 'isError' a las dependencias
+ }, [dispatch, data]);
 
 
   useEffect(() => {
@@ -57,18 +56,24 @@ const CreateCategory: React.FC = () => {
     }
   }, [currentCategory, reset]);
 
-
   const onSubmit = async (data: Category) => {
     setLoading(true);
     try {
       if (currentCategory) {
         await updateCategoryMutation.mutateAsync(data);
+        toast.success("Categoria actualizado exitosamente"); 
+
       } else { // Create a new Category
         await createCategoryMutation.mutateAsync(data);
+        toast.success("Categoria creada exitosamente"); 
       }
       navigate(`/private/${PrivateRoutes.CATEGORY}`, {replace:true})
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Error desconocido");
+      } else {
+        toast.error(error.message || "Error desconocido");
+      }
     }
     finally {
       setLoading(false); // Desactiva el loader

@@ -5,6 +5,7 @@ import { PaginationModel, pageSize } from '@/utils';
 import { PresentationAdapter, PresentationListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PresentationList, ApiResponse, Presentation, ApiPresentation } from '../models';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -98,9 +99,8 @@ export const useCreatePresentation = () => {
             queryClient.invalidateQueries({ queryKey: ['presentations'] });
         },
         onError: (error) => {
-            alert(`Error al crear la presentación: ${error.message}`);
-            // TODO:  Considerar usar un componente de notificación en lugar de alert
-            console.error(`Error al crear presentación: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };
@@ -127,7 +127,8 @@ export const useUpdatePresentation = () => {
             queryClient.invalidateQueries({ queryKey: ['presetentions'] });
         },
         onError: (error) => {
-            console.error(`Error updating Presentation: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };

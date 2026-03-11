@@ -15,6 +15,7 @@ import { clearPresentation, editPresentation } from '@/redux/presentationSlice';
 
 import "./PresentationCreate.css"
 import Loading from '@/components/Loading';
+import { toast } from 'react-toastify';
 
 const PresentationCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -62,12 +63,18 @@ const PresentationCreate: React.FC = () => {
     try {
       if (currentPresentation) {
         await updatePresentationMutation.mutateAsync(data);
+        toast.success("Presentación actualizado exitosamente"); 
       } else { // Create a new Presentation
         await createPresentationMutation.mutateAsync(data);
+        toast.success("Presentación creado exitosamente"); 
       }
       navigate(`/private/${PrivateRoutes.PRESENTATION}`, {replace:true})
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Error desconocido");
+      } else {
+        toast.error(error.message || "Error desconocido");
+      }
     }
     finally {
       setLoading(false); // Desactiva el loader

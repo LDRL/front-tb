@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
-import {Total, ApiBuy, BuyList, Buy, ApiHeaderBuy } from "../models";
+import {ApiBuy, BuyList, Buy, ApiHeaderBuy } from "../models";
 import { BuyAdapter, BuyListAdapter } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
 import { fetchBuyCreate } from '../services/buy';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -73,7 +74,6 @@ export const useBuy = (initialPage: number = 1) => {
     };
 };
 
-
 // Hook para obtener un producto específico
 export const useFetchProduct = (productId: string) => {
     return useQuery<Buy, Error>({
@@ -119,7 +119,8 @@ export const useCreateBuy = () => {
             queryClient.invalidateQueries({ queryKey: ['buys'] });
         },
         onError: (error) => {
-            console.error(`Error creating product: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };

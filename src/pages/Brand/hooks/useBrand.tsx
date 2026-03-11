@@ -5,6 +5,7 @@ import { PaginationModel, pageSize } from '@/utils';
 import { BrandAdapter, BrandListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BrandList, ApiResponse, Brand, ApiBrand } from '../models';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -80,7 +81,7 @@ export const useGetBrand = (brandId: string) => {
 export const useCreateBrand = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<Brand, Error, Brand>({
+    return useMutation<Brand, unknown, Brand>({
         mutationFn: async (newBrand) => {
             const brand = {
                 nombre: newBrand.name,
@@ -98,9 +99,8 @@ export const useCreateBrand = () => {
             queryClient.invalidateQueries({ queryKey: ['brands'] });
         },
         onError: (error) => {
-            alert(`Error al crear la marca: ${error.message}`);
-            // TODO:  Considerar usar un componente de notificación en lugar de alert
-            console.error(`Error al crear marca: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };
@@ -109,7 +109,7 @@ export const useCreateBrand = () => {
 export const useUpdateBrand = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<Brand, Error, Brand>({
+    return useMutation<Brand, unknown, Brand>({
         mutationFn: async (updatedBrand) => {
             const brand = {
                 nombre: updatedBrand.name,
@@ -127,7 +127,8 @@ export const useUpdateBrand = () => {
             queryClient.invalidateQueries({ queryKey: ['brands'] });
         },
         onError: (error) => {
-            console.error(`Error updating Brand: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };

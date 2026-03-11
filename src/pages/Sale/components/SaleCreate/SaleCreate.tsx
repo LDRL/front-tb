@@ -65,7 +65,6 @@ const SaleCreate: React.FC = () => {
   
 
   const onSubmit = async (data: Sale) => {
-
     setErrors({
       amount: false,
       cost: false,
@@ -88,9 +87,15 @@ const SaleCreate: React.FC = () => {
     setLoading(true);
     try {      
       await createSaleMutation.mutateAsync(newData);
+      toast.success("Venta creada exitosamente");
       navigate(`/private/${PrivateRoutes.SALE}`, {replace:true})
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      console.log(error);
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Error desconocido");
+      } else {
+        toast.error(error.message || "Error desconocido");
+      }
     }
     finally {
       setLoading(false); // Desactiva el loader

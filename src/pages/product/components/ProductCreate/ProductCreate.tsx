@@ -1,23 +1,21 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
+import { RootState } from '@/redux/store';
 import { Box, Button} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { FormDropdown,  FormInputText, FormTextArea } from '@/components';
 import { useForm } from 'react-hook-form';
 import { Product } from '../../models';
-
 import CardForm from '../../../../components/Cards/CardForm'
-
-import { RootState } from '@/redux/store';
-import { fetchProductCreate, fetchProductUpdate, fetchProduct, productUrl } from '../../services/product';
 import LoadMask from '@/components/LoadMask/LoadMask';
 import { useFetchMarcaOptions, useFetchOptions, useFetchPresentacionOptions } from '../../hooks/useFetchOptions';
-
-import "./ProductCreate.css"
+import { fetchProductCreate, fetchProductUpdate, fetchProduct, productUrl } from '../../services/product';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/models';
 import { openModal, clearProduct } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
+import "./ProductCreate.css"
+import { toast } from 'react-toastify';
+
 
 const CreateProduct: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -86,16 +84,21 @@ useEffect(() => {
       // let responseData;
       if (currentProduct) {
         // Update the product
-        const [err, responseData] = await fetchProductUpdate(productUrl, data);
-
-        if (err) throw new Error(err.message);
+        await fetchProductUpdate(productUrl, data);
+        toast.success("Producto actualizado exitosamente");
       } else {
         // Create a new product
-        const [err, responseData] = await fetchProductCreate(productUrl, data);
+        await fetchProductCreate(productUrl, data);
+        toast.success("Producto creado exitosamente");
       }
       navigate(`/private/${PrivateRoutes.PRODUCT}`, {replace:true})
-    } catch (error) {
-      console.log(error)
+
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Error desconocido");
+      } else {
+        toast.error(error.message || "Error desconocido");
+      }
     }
     finally {
       setLoading(false); // Desactiva el loader

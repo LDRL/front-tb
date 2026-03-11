@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
 import { fetchSaleCreate } from '../services/sale';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -79,11 +80,6 @@ export const useSale = (initialPage: number = 1) => {
 };
 
 
-
-
-
-
-
 // Hook para obtener un producto específico
 export const useFetchProduct = (productId: string) => {
     return useQuery<Sale, Error>({
@@ -111,7 +107,7 @@ export const useCreateSale = () => {
     return useMutation<string, Error, Sale>({
         mutationFn: async (newSale) => {
 
-            const [error, nuevaOrden, msg] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
+            const [error, nuevaOrden] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
 
             if (error){
                 throw new Error('Error al vender el producto');
@@ -125,10 +121,7 @@ export const useCreateSale = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['sales'] });
-        },
-        onError: (error) => {
-            console.error(`Error creating product: ${error}`);
-        },
+        }
     });
 };
 
@@ -152,10 +145,10 @@ export const useFetchClients = (nit: string) => {
         },
         enabled: !!nit,
         retry: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false
     });
 };
-
-
 
 //hook para buscar cliente por nit
 export const useClientSearch = () => {
@@ -165,23 +158,12 @@ export const useClientSearch = () => {
 
     useEffect(() => {
         if(data){
-            console.log(data?.cliente)
-
             const adaptedSales = SaleClientAdapter(data.cliente); // Todo cambiar a data cuando en la api mande data en ves de ventas
             setClient(adaptedSales || "");
         }
     }, [data]);
 
-    const errorMessage = error ? (
-        // Verificamos si el error es de tipo AxiosError y si tiene 'response'
-        (error instanceof AxiosError && error.response)
-            ? ` ${(error as AxiosError).response?.data?.error || 'Cliente no encontrado'}`
-            : `Error desconocido: ${(error instanceof Error ? error.message : 'No se pudo obtener el cliente')}`
-    ) : null;
-
-    
-
-
+    const errorMessage = error ?  getErrorMessage(error) : null;
     return {
         client,
         isLoading,

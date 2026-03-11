@@ -1,6 +1,7 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
-import { ApiSale, ApiDetail, Sale, SaleList, Total, ApiClient } from "../models";
+import { ApiSale, ApiDetail, Sale, SaleList, Total } from "../models";
 import { SaleAdapter, SaleListAdapter } from "../adapter";
+import { getErrorMessage } from "@/utils/axiosClient";
 
 export const fetchSaleList = async (url: string, page: number, search: string): Promise<[Error?, SaleList?, Total?]> => {
     const params: { page: number; search?: string } = { page };
@@ -11,9 +12,7 @@ export const fetchSaleList = async (url: string, page: number, search: string): 
     };
     
     try {
-
         const response: AxiosResponse<{ ordenes: ApiSale[], total: number }> = await axios.get(url, config);
-
 
         if (response.statusText !== 'OK') return [new Error(`Error fetching sales: ${response.statusText}`)];
 
@@ -21,8 +20,8 @@ export const fetchSaleList = async (url: string, page: number, search: string): 
 
         return [undefined, SaleListAdapter(ordenes), total];
     } catch (error) {
-        if (error instanceof Error) return [error];
-        return [new Error(`Error fetching sales:`)];
+        const message = getErrorMessage(error);
+        throw new Error(message);
     }
 };
 
@@ -37,7 +36,8 @@ export const fetchSale = async (url: string): Promise<[Error?, Sale?]> => {
         return [undefined, SaleAdapter(data)];
 
     } catch (error) {
-        throw new Error(`Error fetching sales: ${error}`);
+        const message = getErrorMessage(error);
+        throw new Error(message);
     }
 };
 
@@ -93,13 +93,8 @@ export const fetchSaleCreate = async (url: string, saleN: Sale):  Promise<[Error
         return [undefined, SaleAdapter(nuevaOrden), response]
 
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            // Server responded with a status other than 2xx
-            throw new Error(`Error creating sale: ${error.response.data}`);
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            throw new Error(`Error creating sale: ${error}`);
-        }
+        const message = getErrorMessage(error);
+        throw new Error(message);
     }
 };
 

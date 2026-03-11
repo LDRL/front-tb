@@ -12,8 +12,6 @@ import { createClient } from "../../services/client";
 import { useDispatch } from "react-redux";
 import { setFullNameClient, setNitClient } from "@/redux/clientSlice";
 
-
-
 const ClientCreate: React.FC = () => {
     const queryClient = useQueryClient();
     const dispatch = useDispatch();
@@ -26,11 +24,16 @@ const ClientCreate: React.FC = () => {
     const mutation = useMutation({
         mutationFn: (data: Client) => createClient(data),
         onSuccess() {
-            toast.success("Datos enviados correctamente");
+            toast.success("Cliente creado exitosamente");
         },
-        onError() {
-            toast.error("Error al enviar datos");
-        }
+        onError: (error: any) => {
+            console.log(error);
+            if (error.response && error.response.data) {
+                toast.error(error.response.data.error || "Error desconocido");
+            } else {
+                toast.error(error.message || "Error desconocido");
+            }
+        },
     })
 
     const handleExit = () => {
@@ -41,17 +44,14 @@ const ClientCreate: React.FC = () => {
         const fullName = `${data.name} ${data.lastName}`
     
         setLoading(true);
-        console.log(data);
         mutation.mutate(data, {
-            onSettled: () => {
+            onSuccess: () => {
                 setLoading(false)
                 dispatch(setNitClient(data.nit));
                 dispatch(setFullNameClient(fullName));
                 dialogCloseSubject$.setSubject = false;
             }
         });
-        
-
     };
 
     return (
@@ -132,8 +132,6 @@ const ClientCreate: React.FC = () => {
                     </div>
                 </Box>
             </CardForm>
-
-            
         </div>
     ) 
 }

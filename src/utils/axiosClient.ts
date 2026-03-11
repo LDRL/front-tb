@@ -27,6 +27,8 @@ export const getErrorMessage = (error: unknown): string => {
     if (error && typeof error === "object") {
             const axiosError = error as AxiosError<any>;
 
+            console.log(axiosError);
+
             // Error enviado por nodeJs
             if (axiosError.response?.data?.error) {
                 if (Array.isArray(axiosError.response.data.error)) {

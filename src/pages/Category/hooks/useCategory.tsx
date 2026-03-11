@@ -5,6 +5,7 @@ import { PaginationModel, pageSize } from '@/utils';
 import { CategoryAdapter, CategoryListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CategoryList, ApiResponse, Category, ApiCategory } from '../models';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -99,9 +100,8 @@ export const useCreateCategory = () => {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
         },
         onError: (error) => {
-            alert(`Error al crear la categoría: ${error.message}`);
-            // TODO:  Considerar usar un componente de notificación en lugar de alert
-            console.error(`Error al crear categoria: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };
@@ -128,7 +128,8 @@ export const useUpdateCategory = () => {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
         },
         onError: (error) => {
-            console.error(`Error updating category: ${error}`);
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };

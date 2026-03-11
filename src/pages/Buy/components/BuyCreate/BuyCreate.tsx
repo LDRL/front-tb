@@ -6,14 +6,14 @@ import { FormDate, FormDropdown, FormInputNumber, FormInputText } from '@/compon
 import { Box, Button, FormHelperText} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { PrivateRoutes } from '@/models';
-
-import "./BuyCreate.css"
 import {useCreateBuy} from '../../hooks/useBuy'
 import { Buy, Detail } from '../../models';
 import { useFetchProviderOptions, useFetchProductOptions } from '@/hooks/useOption';
-import dayjs from 'dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Loading from '@/components/Loading';
+import dayjs from 'dayjs';
+import "./BuyCreate.css"
+import { toast } from 'react-toastify';
 
 const BuyCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -53,7 +53,6 @@ const BuyCreate: React.FC = () => {
 
   const filterProduct = (product: Detail) => rows.filter(p => p.id !== product.id);
   const findProvider = (provider: number) => providerOptions?.find(p=> p.value === provider)
-  
 
   const onSubmit = async (data: Buy) => {
     setErrors({
@@ -61,9 +60,7 @@ const BuyCreate: React.FC = () => {
       cost: false,
       idProduct: false,
       detailProduct: false,
-    });
-    
-    
+    });   
 
     if (data.date) {
       data.date = dayjs(data.date).toISOString();
@@ -80,9 +77,14 @@ const BuyCreate: React.FC = () => {
     setLoading(true);
     try {      
       await createBrandMutation.mutateAsync(newData);
+      toast.success("Compra creado exitosamente");
       navigate(`/private/${PrivateRoutes.BUY}`, {replace:true})
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.error || "Error desconocido");
+      } else {
+        toast.error(error.message || "Error desconocido");
+      }
     }
     finally {
       setLoading(false); // Desactiva el loader
