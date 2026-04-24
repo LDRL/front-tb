@@ -4,17 +4,17 @@ import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { CategoryAdapter, CategoryListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CategoryList, ApiResponse, Category, ApiCategory } from '../models';
+import { CategoryList, ApiResponseCategory, Category, ApiCategory } from '../models';
 import { getErrorMessage } from '@/utils/axiosClient';
 
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useFetchCategories = (page: number = 1, search: string) => {
-    return useQuery<ApiResponse, Error>({
+    return useQuery<ApiResponseCategory, Error>({
         queryKey: ['categories', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}categorias/?page=${page}&search=${search}`);
+            const response = await axios.get<ApiResponseCategory>(`${apiUrl}categorias/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -29,7 +29,6 @@ export const useCategory = (initialPage: number = 1) => {
     const [totalCategory, setTotal] = useState<number>(0);
     const [page, setPage] = useState<number>(initialPage);
 
-
     const [paginationModel, setPaginationModel] = useState<PaginationModel>({
         page: initialPage - 1,
         pageSize: pageSize,
@@ -41,7 +40,7 @@ export const useCategory = (initialPage: number = 1) => {
         if(data){
             const adaptedProducts = data ? CategoryListAdapter(data.data) : [];
             setCategories(adaptedProducts || []);
-            setTotal(data?.total || 0);
+            setTotal(data?.meta.total || 0);
         }
     }, [data]);
 
@@ -116,13 +115,20 @@ export const useUpdateCategory = () => {
                 nombre: updatedCategory.name,
             };
 
-            const response = await axios.put<{ message: string, body: ApiCategory }>(`${apiUrl}categorias/${updatedCategory.id}/`, category);
+            const response = await axios.put<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/${updatedCategory.id}/`, category);
 
-            if (response.status !== 201) {
+            /*const response = await axios.put<UpdateCategoryResponse>(
+                `${apiUrl}categorias/${updatedCategory.id}/`,
+                category
+            );*/
+
+
+            if (response.status !== 200) {
                 throw new Error('Error al actualizar la categoria');
             }
 
-            return CategoryAdapter(response.data.body); // Se adpata la categorya y se retorna actualizado
+
+            return CategoryAdapter(response.data.data); // Se adpata la categorya y se retorna actualizado
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['categories'] });

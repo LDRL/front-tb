@@ -29,8 +29,8 @@ export default function Login() {
     try {
       const res = await mutationLogin.mutateAsync(data);
       dispatch(login({
-        token: res.token,
-        usuario: res.usuario
+        token: res.data.token,
+        usuario: res.data.usuario
       }));      
       dispatch(createSidebar({state: false}))
 

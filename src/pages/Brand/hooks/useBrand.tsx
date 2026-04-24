@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { BrandAdapter, BrandListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BrandList, ApiResponse, Brand, ApiBrand } from '../models';
+import { BrandList, ApiResponseBrand, Brand, ApiBrand, CreateOrUpdateBrandResponse } from '../models';
 import { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useFetchBrands = (page: number = 1, search: string) => {
-    return useQuery<ApiResponse, Error>({
+    return useQuery<ApiResponseBrand, Error>({
         queryKey: ['brands', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}marcas/?page=${page}&search=${search}`);
+            const response = await axios.get<ApiResponseBrand>(`${apiUrl}marcas/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -38,9 +38,9 @@ export const useBrand = (initialPage: number = 1) => {
 
     useEffect(() => {
         if(data){
-            const adaptedProducts = data ? BrandListAdapter(data.marcas) : []; // Todo cambiar a data cuando en la api mande data en ves de marcas
+            const adaptedProducts = data ? BrandListAdapter(data.data) : []; // Todo cambiar a data cuando en la api mande data en ves de marcas
             setBrands(adaptedProducts || []);
-            setTotal(data?.total || 0);
+            setTotal(data?.meta.total || 0);
         }
     }, [data]);
 
@@ -65,13 +65,13 @@ export const useGetBrand = (brandId: string) => {
     return useQuery<Brand, Error>({
         queryKey: ['brand', brandId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<{ marcas: ApiBrand }>(`${apiUrl}marcas/${brandId}/`);
+            const response = await axios.get<{ data: ApiBrand }>(`${apiUrl}marcas/${brandId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar la marca');
             }
 
-            return BrandAdapter(response.data.marcas); // Adaptamos y devolvemos el producto
+            return BrandAdapter(response.data.data); // Adaptamos y devolvemos el producto
         },
     });
 };
@@ -87,13 +87,18 @@ export const useCreateBrand = () => {
                 nombre: newBrand.name,
             };
 
-            const response = await axios.post<{ message: string, marcas: ApiBrand }>(`${apiUrl}marcas/`, brand);
+            //const response = await axios.post<{ message: string, marcas: ApiBrand }>(`${apiUrl}marcas/`, brand);
+
+            const response = await axios.post<CreateOrUpdateBrandResponse>(
+                `${apiUrl}marcas/`,
+                brand
+            );
 
             if (response.status !== 201) {
                 throw new Error('Error al crear la marca');
             }
 
-            return BrandAdapter(response.data.marcas);
+            return BrandAdapter(response.data.data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['brands'] });
@@ -115,13 +120,13 @@ export const useUpdateBrand = () => {
                 nombre: updatedBrand.name,
             };
 
-            const response = await axios.put<{ message: string, body: ApiBrand }>(`${apiUrl}marcas/${updatedBrand.id}/`, brand);
+            const response = await axios.put<CreateOrUpdateBrandResponse>(`${apiUrl}marcas/${updatedBrand.id}/`, brand);
 
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 throw new Error('Error al actualizar la marca');
             }
 
-            return BrandAdapter(response.data.body); // Se adpata la Branda y se retorna actualizado
+            return BrandAdapter(response.data.data); // Se adpata la Branda y se retorna actualizado
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['brands'] });

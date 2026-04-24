@@ -4,12 +4,18 @@ export interface ApiCategory {
     nombre:string;
 }
 
-export interface ApiResponse {
-    msg: string;
-    data: ApiCategory[];
-    total: number;
-    currentPage: number;
+export interface ApiResponseCategory {
+    message: string;
+    data: ApiCategory[]; //Todo cambiar a data cuando en la api mande data en ves de marcas
+    ok: boolean;
+    meta: {
+        total: number,
+        totalPage: number,
+        currentPage: number,
+        limit: number
+    }
 }
+
 
 /// Manejo en el frontend
 export interface Category {
@@ -33,4 +39,12 @@ export interface CategoryState {
 export const EmptyCategoryState: CategoryState = {
     currentCategory: null,
     search: ''
+};
+
+
+export type UpdateCategoryResponse = {
+  ok: boolean;
+  message: string;
+  data: ApiCategory;
+  meta: null;
 };

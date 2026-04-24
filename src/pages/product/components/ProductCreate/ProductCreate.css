@@ -21,3 +21,58 @@
     align-items: center;
     justify-content: center;
 }
+
+.container_prueba {
+    display: flex;
+    margin-bottom: 15px;
+    gap:10px;
+    justify-content: space-between;
+
+}
+
+
+
+
+/* grid */
+
+.container_prueba {
+  display: grid;
+  grid-template-columns: 1fr 120px; /* izquierda flexible, imagen fija */
+  gap: 15px;
+  align-items: start;
+}
+
+/* Columna izquierda */
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Fila precio + unidad */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+/* Cada input ocupa igual */
+.row > * {
+  flex: 1;
+}
+
+/* Imagen centrada */
+.image {
+  display: flex;
+  justify-content: center;
+}
+
+
+@media (max-width: 600px) {
+  .container_prueba {
+    grid-template-columns: 1fr;
+  }
+
+  .image {
+    justify-content: flex-start;
+  }
+}

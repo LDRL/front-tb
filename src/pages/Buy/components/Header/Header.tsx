@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import "./Header.css"
 import { setSearchBrand } from '@/redux/brandSlice';
-import { Buy } from '../../models';
+import { Buy } from '../../models/buy.domain.type';
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   };
 
   const { control } = useForm<Buy>({
-    defaultValues: { id: 0, direction: ''},
+    defaultValues: { id: 0, address: ''},
   });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

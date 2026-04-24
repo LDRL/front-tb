@@ -13,9 +13,14 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ApiResponse {
     msg: string;
-    ordenes: ApiSale[];
-    total: number;
-    currentPage: number;
+    data: ApiSale[];
+    meta: {
+        total: number;
+        currentPage: number;
+        limit: number;
+        totalPages: number;
+    };
+    ok:boolean;
 }
 
 interface ApiResponseHeader {
@@ -23,8 +28,9 @@ interface ApiResponseHeader {
 }
 
 interface ApiResponseClient {
-    msg: string;
-    cliente: ApiClient;
+    message: string;
+    data: ApiClient[];
+    ok: boolean;
 }
 // Hook para obtener la lista de ventas
 
@@ -32,7 +38,7 @@ export const useFetchSales = (page: number = 1, search: string) => {
     return useQuery<ApiResponse, Error>({
         queryKey: ['sales', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}ordenes/?page=${page}&search=${search}`);
+            const response = await axios.get<ApiResponse>(`${apiUrl}ventas/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -56,10 +62,10 @@ export const useSale = (initialPage: number = 1) => {
 
     useEffect(() => {
         if(data){
-            const adaptedSales = data ? SaleListAdapter(data.ordenes) : []; // Todo cambiar a data cuando en la api mande data en ves de ventas
+            const adaptedSales = data ? SaleListAdapter(data.data) : []; // Todo cambiar a data cuando en la api mande data en ves de ventas
 
             setSales(adaptedSales || []);
-            setTotal(data?.total || 0);
+            setTotal(data?.meta.total || 0);
         }
     }, [data]);
 
@@ -80,26 +86,6 @@ export const useSale = (initialPage: number = 1) => {
 };
 
 
-// Hook para obtener un producto específico
-export const useFetchProduct = (productId: string) => {
-    return useQuery<Sale, Error>({
-        queryKey: ['product', productId], // Clave de consulta
-        queryFn: async () => {
-            const response = await axios.get<{ producto: ApiSale }>(`${apiUrl}${productId}/`);
-
-            if (response.status !== 200) {
-                throw new Error('Error al cargar el producto');
-            }
-
-            return SaleAdapter(response.data.producto); // Adaptamos y devolvemos el producto
-        },
-        enabled: !!productId, // Solo se ejecuta si productId está disponible
-        // onError: (error) => {
-        //     console.error(`Error fetching product: ${error}`);
-        // },
-    });
-};
-
 // Hook para crear un nuevo producto
 export const useCreateSale = () => {
     const queryClient = useQueryClient();
@@ -107,7 +93,7 @@ export const useCreateSale = () => {
     return useMutation<string, Error, Sale>({
         mutationFn: async (newSale) => {
 
-            const [error, nuevaOrden] = await fetchSaleCreate(`${apiUrl}ordenes`,newSale);
+            const [error, nuevaOrden] = await fetchSaleCreate(`${apiUrl}ventas`,newSale);
 
             if (error){
                 throw new Error('Error al vender el producto');
@@ -129,18 +115,18 @@ export const useShowSale = (id:string) => {
     return useQuery<ApiResponseHeader, AxiosError>({
         queryKey: ['showSale',id],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseHeader>(`${apiUrl}ordenes/${id}/`);
+            const response = await axios.get<ApiResponseHeader>(`${apiUrl}ventas/${id}/`);
             return response.data;   
         }
     });
 };
-
+///localhost:8080/api/clientes?seaarch=CF
 // hook para obtener un cliente por nit
-export const useFetchClients = (nit: string) => {
+export const useFetchClient = (nit: string) => {
     return useQuery<ApiResponseClient, AxiosError>({
         queryKey: ['sales', nit],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseClient>(`${apiUrl}clientes/${nit}`);
+            const response = await axios.get<ApiResponseClient>(`${apiUrl}clientes?search=${nit}`);
             return response.data;   
         },
         enabled: !!nit,
@@ -154,11 +140,11 @@ export const useFetchClients = (nit: string) => {
 export const useClientSearch = () => {
     const search = useSelector((state:any) => state.sale.nit);
     const [client, setClient] = useState<ClientOrden>();
-    const { data, error, isLoading } = useFetchClients(search);
+    const { data, error, isLoading } = useFetchClient(search);
 
     useEffect(() => {
         if(data){
-            const adaptedSales = SaleClientAdapter(data.cliente); // Todo cambiar a data cuando en la api mande data en ves de ventas
+            const adaptedSales = SaleClientAdapter(data?.data?.[0] ?? null);
             setClient(adaptedSales || "");
         }
     }, [data]);
@@ -170,6 +156,8 @@ export const useClientSearch = () => {
         error: errorMessage
     };
 };
+
+
 
 
 

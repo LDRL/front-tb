@@ -81,13 +81,13 @@ export const HeadeSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
 //Todo cambiar a adapter Client
 export const SaleClientAdapter = (client: ApiClient): Client => {
     return{
-            id: client._id,
-            name: client.nombres,
-            lastName: client.apellidos,
-            telphone: client.telefono,
-            email: client.email,
-            state: client.estado,
-            nit: client.nit
+        id: client._id,
+        name: client.nombres,
+        lastName: client.apellidos,
+        telphone: client.telefono,
+        email: client.email,
+        state: client.estado,
+        nit: client.nit
     }
 }
 

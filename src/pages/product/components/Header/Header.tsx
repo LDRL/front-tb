@@ -1,25 +1,21 @@
 import React, { useCallback } from 'react';
 import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { openModal, setSearch } from '@/redux/productSlice';
-// import { dialogOpenSubject$ } from '@/components/CustomDialog/CustomDialog';
+import { setSearch } from '@/redux/productSlice';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
-import { Product } from '../../models';
-
+import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
+import { Product } from '../../models/product.domain.type';
 
-import { Navigate, useNavigate } from 'react-router-dom';
 
 const CreateProduct: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
-
   const debouncedGetProducts= useCallback(debounce((search: string) =>{
     dispatch(setSearch(search));
   },300 ),[])
-
 
   const handleClick = () => {
     navigate("create")
@@ -27,7 +23,7 @@ const CreateProduct: React.FC = () => {
   };
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<Product>({
-    defaultValues: { id: 0, name: '', price: 0},
+    defaultValues: { productCode: 0, name: '', price: 0},
   });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

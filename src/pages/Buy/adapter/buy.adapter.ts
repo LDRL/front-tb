@@ -1,32 +1,35 @@
 import dayjs from "dayjs";
-import { ApiBuy, ApiDetail, ApiHeaderBuy, ApiHeaderDetail, Buy, Detail, HeaderBuy, HeaderDetail } from "../models";
+import { ApiBuy, ApiDetail, ApiHeaderBuy, CreateBuyPayload } from "../models/buy.api.type";
+import { Buy, Detail } from "../models/buy.domain.type";
+import { HeaderBuy } from "../models/buy.view.type";
 
 export const BuyAdapter = (buy: ApiBuy): Buy => {
     return{
         id: buy._id,
+        name: buy.nombre,
         date: buy.fecha,
-        direction: buy.direccion,
+        address: buy.direccion,
         state: buy.estado,
         idProvider: buy.idproveedor,
+        idSucursal: buy.idsucursal,
+        idUser: buy.idusuario,
         total: buy.total,
         provider: buy.Proveedor ? {
             id: buy.Proveedor._id,
             name: buy.Proveedor.nombre,
-            direction: buy.Proveedor.direccion,
-            telphone: buy.Proveedor.telefono,
+            address: buy.Proveedor.direccion,
+            phone: buy.Proveedor.telefono,
             email: buy.Proveedor.email,
             state: buy.Proveedor.estado
             
-        }: {id: 0, name: '', direction: '', telphone: '', email: '', state: ''},
+        }: {id: 0, name: '', address: '', phone: '', email: '', state: ''},
 
-        detail: buy.detalles && buy.detalles.length > 0
-        ? buy.detalles.map((d: ApiDetail): Detail => ({
+        details: (buy.Detalles ?? []).map((d: ApiDetail): Detail => ({
             amount: d.cantidad,
             cost: d.costo,
             codProduct: d.codigoprod,
-            idBranch: d.idsucursal
-        }))
-        : []
+            subtotal: d.cantidad * d.costo,
+        })),
     }
 }
 
@@ -34,22 +37,45 @@ export function BuyListAdapter(apiBuyList: ApiBuy[]): Buy[] {
     return apiBuyList.map(BuyAdapter);
 }
 
-export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy =>{
+export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
     return {
-        header: buy.encabezado ? {
-            _id: buy.encabezado.idcompra,
-            date: dayjs(buy.encabezado.fecha),
-            direction:buy.encabezado.direccion,
-            provedorId: buy.encabezado["Proveedor.idproveedor"],
-            proveedorName: buy.encabezado["Proveedor.nombre"]
-        }: {_id: 0, date: dayjs(), direction: '', provedorId: 0, proveedorName: ''},
-        details: buy.detalles && buy.detalles.length > 0 
-        ?  buy.detalles.map((d: ApiHeaderDetail): HeaderDetail => ({
-            _id: d.idcompra_detalle,
-            amount:d.cantidad,
-            cost:d.costo,
-            product:d["Producto.nombre"],
-        }))
-        :[]
-    }
-}
+        header: {
+            id: buy._id,
+            date: dayjs(buy.fecha),
+            address: buy.direccion,
+            providerId: buy.idproveedor,
+            providerName: buy.Proveedor?.nombre ?? "",
+        },
+
+        details: (buy.Detalles ?? []).map((d) => ({
+            id: d._id,
+            amount: d.cantidad,
+            cost: Number(d.costo),
+            product: d.Producto?.nombre ?? "",
+        })),
+    };
+};
+
+//Adapter para crear la compra
+
+
+export const mapBuyToCreatePayload = (
+  buy: Buy,
+  idusuario: number,
+  idsucursal: number
+): CreateBuyPayload => ({
+  nombre: buy.name,
+  fecha: buy.date,
+  direccion: buy.address,
+  estado: buy.state,
+  idproveedor: buy.idProvider,
+  idusuario,
+  idsucursal,
+  total: buy.total ?? 0,
+
+  detalles: buy.details.map(d => ({
+    codigoprod: d.codProduct,
+    cantidad: d.amount,
+    costo: d.cost,
+  })),
+});

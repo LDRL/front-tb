@@ -10,15 +10,19 @@ import presentationSlice from './presentationSlice';
 import saleSlice from './saleSlice';
 import clientSlice from './clientSlice';
 import userSlice from './userSlice';
+import supplierSlice from './supplierSlice';
 
 
-import { Product } from '@/pages/product';
+
 import { CategoryState } from '@/pages/Category';
 import { BrandState } from '@/pages/Brand';
 import { PresentationState } from '@/pages/Presentation';
 import { Client, SaleState } from '@/pages/Sale';
 import { UserState } from '@/pages/User';
 import { AuthState } from '@/modules/auth/models/login.type';
+import { SupplierState } from '@/pages/Supplier';
+import { Product } from '@/pages/product/models/product.domain.type';
+import { ProductForm } from '@/pages/product/models/product.view.type';
 
 
 interface sidebarInfo {
@@ -27,7 +31,7 @@ interface sidebarInfo {
 
 interface ProductState {
   open: boolean;
-  currentProduct: Product | null;
+  currentProduct: ProductForm | null;
   search: string;
 }
 
@@ -50,6 +54,7 @@ export interface AppStore {
   sale: SaleState
   client:ClientState
   user:UserState
+  supplier: SupplierState
 }
 
 export const store = configureStore<AppStore>({
@@ -62,7 +67,8 @@ export const store = configureStore<AppStore>({
     product: productSliceReducer,
     sale: saleSlice,
     client: clientSlice,
-    user: userSlice
+    user: userSlice,
+    supplier: supplierSlice
   },
 });
 

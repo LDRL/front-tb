@@ -14,13 +14,19 @@ export const EmptyUserState: AuthState = {
     apellido: "",
     username: "",
     email: "",
+    idsucursal:0
   }
+ 
 };
 
 export interface LoginResponse {
-  token: string;
-  usuario: User;
+  ok: boolean;
+  message: string;
+  data : AuthState
+  meta: null;
+  
 }
+
 
 export interface LoginData {
   email: string;

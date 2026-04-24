@@ -11,11 +11,11 @@ export const useLoginMutation = () => {
   return useMutation<LoginResponse, Error, LoginData>({
     mutationFn: async (data) => {
       const response = await axiosClient.post<LoginResponse>(`${apiUrl}auth/login`, data);
+
       return response.data;
     },
     onError: (error) => {
       const message = getErrorMessage(error);
-      console.log(message);
       throw new Error(message);
     },
   });

@@ -99,6 +99,12 @@ export const LinksArray = [
     path: "/private/user",
   },
   {
+    label: "Proveedores",
+    icon: <PersonIcon />,
+    to: "/private/proveedor",
+    path: "/private/proveedor",
+  },
+  {
     label: "Reportes",
     icon: <SummarizeIcon/>,
     to: "/reportes",

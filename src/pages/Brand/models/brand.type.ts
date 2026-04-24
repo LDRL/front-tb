@@ -4,11 +4,16 @@ export interface ApiBrand {
     nombre:string;
 }
 
-export interface ApiResponse {
-    msg: string;
-    marcas: ApiBrand[]; //Todo cambiar a data cuando en la api mande data en ves de marcas
-    total: number;
-    currentPage: number;
+export interface ApiResponseBrand {
+    message: string;
+    data: ApiBrand[]; //Todo cambiar a data cuando en la api mande data en ves de marcas
+    ok: boolean;
+    meta: {
+        total: number,
+        totalPage: number,
+        currentPage: number,
+        limit: number
+    }
 }
 
 /// Manejo en el frontend
@@ -33,4 +38,12 @@ export interface BrandState {
 export const EmptyBrandState: BrandState = {
     currentBrand: null,
     search: ''
+};
+
+
+export type CreateOrUpdateBrandResponse = {
+  ok: boolean;
+  message: string;
+  data: ApiBrand;
+  meta: null;
 };

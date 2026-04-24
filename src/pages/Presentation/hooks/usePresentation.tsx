@@ -4,20 +4,21 @@ import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { PresentationAdapter, PresentationListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { PresentationList, ApiResponse, Presentation, ApiPresentation } from '../models';
+import { PresentationList, ApiResponsePresentation, Presentation, ApiPresentation, CreateOrUpdatePresentationResponse } from '../models';
 import { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useFetchPresentations = (page: number = 1, search: string) => {
-    return useQuery<ApiResponse, Error>({
+    return useQuery<ApiResponsePresentation, Error>({
         queryKey: ['presentations', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}Presentaciones/?page=${page}&search=${search}`);
+            const response = await axios.get<ApiResponsePresentation>(`${apiUrl}Presentaciones/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
 };
+
 
 //Hook for list presentations and search for name
 
@@ -38,9 +39,9 @@ export const usePresentation = (initialPage: number = 1) => {
 
     useEffect(() => {
         if(data){
-            const adaptedProducts = data ? PresentationListAdapter(data.presentacion) : []; // Todo cambiar a data cuando en la api mande data en ves de presentaciones
+            const adaptedProducts = data ? PresentationListAdapter(data.data) : []; // Todo cambiar a data cuando en la api mande data en ves de presentaciones
             setPresentations(adaptedProducts || []);
-            setTotal(data?.total || 0);
+            setTotal(data?.meta.total || 0);
         }
     }, [data, search]);
 
@@ -65,13 +66,13 @@ export const useGetPresentation = (presentationId: string) => {
     return useQuery<Presentation, Error>({
         queryKey: ['presentation', presentationId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<{ presentacion: ApiPresentation }>(`${apiUrl}presentaciones/${presentationId}/`);
+            const response = await axios.get<{ data: ApiPresentation }>(`${apiUrl}presentaciones/${presentationId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar la presentación');
             }
 
-            return PresentationAdapter(response.data.presentacion); // Adaptamos y devolvemos el producto
+            return PresentationAdapter(response.data.data); // Adaptamos y devolvemos el producto
         },
     });
 };
@@ -87,13 +88,13 @@ export const useCreatePresentation = () => {
                 nombre: newPresentation.name,
             };
 
-            const response = await axios.post<{ message: string, presentacion: ApiPresentation }>(`${apiUrl}presentaciones/`, presentation);
+            const response = await axios.post<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/`, presentation);
 
             if (response.status !== 201) {
                 throw new Error('Error al crear la presentación');
             }
 
-            return PresentationAdapter(response.data.presentacion);
+            return PresentationAdapter(response.data.data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['presentations'] });
@@ -115,13 +116,13 @@ export const useUpdatePresentation = () => {
                 nombre: updatedPresentation.name,
             };
 
-            const response = await axios.put<{ message: string, body: ApiPresentation }>(`${apiUrl}presentaciones/${updatedPresentation.id}/`, presentation);
+            const response = await axios.put<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/${updatedPresentation.id}/`, presentation);
 
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 throw new Error('Error al actualizar la presentación');
             }
 
-            return PresentationAdapter(response.data.body); // Se adpata Presentation y se retorna actualizado
+            return PresentationAdapter(response.data.data); // Se adpata Presentation y se retorna actualizado
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['presetentions'] });

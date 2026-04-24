@@ -9,10 +9,6 @@ export default function Category(){
     return(
         <div>
 
-            {/* <CustomDialog>
-                <ProductModal />
-            </CustomDialog> */}
-
             <div>
                 <h2>Listado de categorías</h2>
                 <hr />

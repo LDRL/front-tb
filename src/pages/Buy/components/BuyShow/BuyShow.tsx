@@ -1,4 +1,4 @@
-import { Form, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useShowBuy } from "../../hooks/useBuy";
 import { CSSProperties, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
@@ -7,10 +7,10 @@ import { Box, Button } from "@mui/material";
 import CardForm from "@/components/Cards/CardForm";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { HeaderBuyAdapter } from "../../adapter";
-import { FormDate, FormInputNumber, FormInputText } from "@/components";
-import { HeaderH } from "../../models";
+import { FormDate, FormInputText } from "@/components";
 import { useForm } from 'react-hook-form';
 import dayjs from "dayjs";
+import { HeaderH } from "../../models/buy.view.type";
 
 const override: CSSProperties = {
   display: "block",
@@ -22,17 +22,17 @@ function BuyShow() {
   const navigate = useNavigate();
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const { data, isLoading, isError } = id ? useShowBuy(id) : { data: null, isLoading: false, isError: false };
-  const adaptedData = data ? HeaderBuyAdapter(data.compra):null;
+  const adaptedData = data ? HeaderBuyAdapter(data.data):null;
 
-  const { control, reset, getValues, setValue} = useForm<HeaderH>({
-    defaultValues: { _id: 0, date: dayjs(), direction: '', provedorId: 0, proveedorName: '' }
+  const { control, reset} = useForm<HeaderH>({
+    defaultValues: { id: '', date: dayjs(), address: '', providerId: 0, providerName: '' }
   });
   
   const [color] = useState("#ffffff")
 
   const columns: GridColDef[] = [
     {
-        field: '_id',
+        field: 'id',
         headerName: 'Codigo',
         flex: 1,
         minWidth: 150,
@@ -57,12 +57,13 @@ function BuyShow() {
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
     }
   ];
-
+  
   useEffect(() => {
-    if (adaptedData?.header._id) {
+    if (adaptedData?.header.id) {
       reset(adaptedData.header);
     }
-  }, [adaptedData?.header._id]);
+  }, [adaptedData?.header.id]);
+  
   
   if (isError) {
     return (
@@ -103,60 +104,57 @@ function BuyShow() {
         <Box
         >
           <Box>
-          <div className='section'>
-          <div className='container_selector'>
+            <div className='section'>
+              <div className='container_selector'>
+                <FormInputText
+                  name="id"
+                  control={control}
+                  label="Numero de compra"
+                  disabled
+                />
+                <FormDate
+                  name="date"
+                  control={control}
+                  label="Fecha"
+                  disabled
+                />
+              </div>
+
               <FormInputText
-                name="_id"
+                name="providerName"
                 control={control}
-                label="Numero de compra"
+                label="Proveedor"
                 disabled
               />
-              <FormDate
-                name="date"
-                control={control}
-                label="Fecha"
-                disabled
-              />
-            </div>
-
-            <FormInputText
-              name="proveedorName"
-              control={control}
-              label="Proveedor"
-              disabled
-            />
-
             </div>
 
             <div className='section'>
-            <FormInputText
-              name="direction"
-              control={control}
-              label="Direccion"
-              disabled
-            />
+              <FormInputText
+                name="address"
+                control={control}
+                label="Direccion"
+                disabled
+              />
             </div>
-
-            
-            
           </Box>
+          
           <DataGrid
-              rows={adaptedData?.details || []}
-              rowCount={adaptedData?.details ? adaptedData?.details.length: 0}
-              columns={columns}
-              disableColumnSelector
-              disableRowSelectionOnClick
-              autoHeight
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 10,
-                  },
+            rows={adaptedData?.details || []}
+            rowCount={adaptedData?.details ? adaptedData?.details.length: 0}
+            columns={columns}
+            disableColumnSelector
+            disableRowSelectionOnClick
+            autoHeight
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
                 },
-              }}
-              pageSizeOptions={[10]}
-              getRowId={(row: any) => row._id}
-              paginationMode="server"
+              },
+            }}
+            pageSizeOptions={[10]}
+            getRowId={(row: any) => row.id}
+            paginationMode="server"
           />
 
           <div className='container_button'>

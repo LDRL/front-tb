@@ -1,7 +1,6 @@
-export const pageSize:number = 10
+export const pageSize:number = 20
 
-export const totalPagesMovile:number = 10
-   
+export const totalPagesMovile:number = 20
 
 export interface PaginationModel {
     page: number;

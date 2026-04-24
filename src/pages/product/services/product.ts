@@ -1,9 +1,10 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 
-import { ProductAdapter, ProductListAdapter } from "../adapter";
-import { Product, ProductList, Total, ApiProduct } from "../models";
-
-export const productUrl = 'http://localhost:8080/api/productos/';
+import { mapApiToProduct, ProductListAdapter } from "../adapter";
+import { Product, ProductList } from "../models/product.domain.type";
+import { Total } from "@/pages/Sale";
+import { ApiProduct } from "../models/product.api.type";
+import axiosClient from "@/utils/axiosClient";
 
 export const fetchProductList = async (url: string, page: number, search: string): Promise<[Error?, ProductList?, Total?]> => {
     const params: { page: number; search?: string } = { page };
@@ -39,7 +40,7 @@ export const fetchProduct = async (url: string): Promise<[Error?, Product?]> => 
 
         // const responseData: Product[] = ProductAdapter(response.data);
         const {data} = response.data
-        return [undefined, ProductAdapter(data)];
+        return [undefined, mapApiToProduct(data)];
 
     } catch (error) {
         // Lanza una excepción para que la función que llama a fetchProduct pueda manejar el error
@@ -49,61 +50,41 @@ export const fetchProduct = async (url: string): Promise<[Error?, Product?]> => 
 
 
 // CREATE
-export const fetchProductCreate = async (url: string, productoN: Product):  Promise<[Error?, Product?]> => {
-    try {
-        const product: Omit<ApiProduct, "_id" | "codigoprod"| "precio" | "Marca" | "Categoria" | "Presentacion" > ={
-            nombre:productoN.name,
-            idcategoria: productoN.idCategory,
-            idmarca: productoN.idBrand,
-            idpresentacion: productoN.idPresentation,
-            descripcion: productoN.description
-        }
-        const response: AxiosResponse<{message: string, data: ApiProduct}> = await axios.post(url, product);
-        const {data} = response.data
-        
-        return [undefined, ProductAdapter(data)]
 
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            // Server responded with a status other than 2xx
-            throw new Error(`Error creating product: ${error.response.data}`);
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            throw new Error(`Error creating product: ${error}`);
-        }
+export const fetchProductCreate = async (url: string,  payload: FormData ): Promise<[Error?, any?, any?]> => {
+  try {
+    const response = await axiosClient.post(url, payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const { data } = response.data;
+    return [undefined, data, response];
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return [error, undefined, undefined];
     }
+    return [new Error("Error de red"), undefined, undefined];
+  }
 };
 
+
 ////////UPDATE
-export const fetchProductUpdate = async (url: string, productU: Product):  Promise<[Error?, Product?]> => {
+export const fetchProductUpdate = async (url: string,  payload: FormData):  Promise<[Error?, any?, any?]> => {
     try {
-        const product: Omit<ApiProduct, "_id" | "codigoprod"| "precio" | "Marca" | "Categoria" | "Presentacion" > ={
-            nombre:productU.name,
-            idcategoria: productU.idCategory,
-            idmarca: productU.idBrand,
-            idpresentacion: productU.idPresentation,
-            descripcion: productU.description
+        const response = await axiosClient.put(url, payload, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        });
+
+       const { data } = response.data;
+        return [undefined, data, response];
+    } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+        return [error, undefined, undefined];
         }
-
-        const response: AxiosResponse<{message: string, data: ApiProduct}> = await axios.put(url+productU.productCode+"/", product);
-
-        // const response: AxiosResponse<{message: string, data: ApiProduct}> = await axios.post(url, product);
-
-        const {data} = response.data
-
-        // return response.data.id;
-        // const json:   ApiResponseProduct = response.data 
-        // const total: Total = json.total
-
-        return [undefined, ProductAdapter(data)]
-
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            // Server responded with a status other than 2xx
-            throw new Error(`Error update product: ${error.response.data}`);
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            throw new Error(`Error update product: ${error}`);
-        }
+        return [new Error("Error de red"), undefined, undefined];
     }
 };

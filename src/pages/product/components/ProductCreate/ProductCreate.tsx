@@ -2,22 +2,27 @@ import React, {useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import { Box, Button} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormDropdown,  FormInputText, FormTextArea } from '@/components';
+import { FormDropdown,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea } from '@/components';
 import { useForm } from 'react-hook-form';
-import { Product } from '../../models';
 import CardForm from '../../../../components/Cards/CardForm'
 import LoadMask from '@/components/LoadMask/LoadMask';
-import { useFetchMarcaOptions, useFetchOptions, useFetchPresentacionOptions } from '../../hooks/useFetchOptions';
-import { fetchProductCreate, fetchProductUpdate, fetchProduct, productUrl } from '../../services/product';
+import { useFetchMarcaOptions, useFetchOptions, useFetchPresentacionOptions, useFetchUnitOptions } from '@/hooks/useOption';
+import { fetchProduct } from '../../services/product';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/models';
 import { openModal, clearProduct } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
 import "./ProductCreate.css"
 import { toast } from 'react-toastify';
+import { Product } from '../../models/product.domain.type';
+import { ProductForm } from '../../models/product.view.type';
+import { useCreateProduct, useUpdateProduct } from '../../hooks/useProduct';
 
 
 const CreateProduct: React.FC = () => {
+  //const productUrl = `${apiUrl}productos`;
+  const productUrl ="http://localhost:8080/api/productos/";
+
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
   const navigate = useNavigate();
@@ -27,81 +32,77 @@ const CreateProduct: React.FC = () => {
   const { currentProduct } = useSelector((state: RootState) => state.product);
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<Product>({
-    defaultValues: { id: 0, name: '', price: 0 },
+    defaultValues: { name: '', price: 0 },
   });
 
   const {data: options, isLoading, isError} = useFetchOptions();
   const {data: marcaOptions, isLoading: isMarcaLoading, isError: isMarcaError} = useFetchMarcaOptions();
   const {data: presentacionOptions, isLoading: isPresentacionLoading, isError: isPresentacionError} = useFetchPresentacionOptions();
+  const {data: unitOptions, isLoading: isUnitLoading, isError: isUnitError} =   useFetchUnitOptions();
+
+  const createProductMutation = useCreateProduct();
+  const updateProductMutation = useUpdateProduct();
   
   useEffect(() => {
-  if (!id) {
-    dispatch(clearProduct());
+    if (!id) {
+      dispatch(clearProduct());
 
-    reset({
-      id: 0,
-      name: '',
-      price: 0,
-      description: '',
-      idCategory: undefined,
-      idBrand: undefined,
-      idPresentation: undefined,
-    });
+      reset({
+        name: '',
+        price: 0,
+        description: '',
+        idCategory: undefined,
+        idBrand: undefined,
+        idPresentation: undefined,
+      });
 
-    setSubtitulo("Nuevo");
-    return;
-  }
-
-  const fetchProductData = async () => {
-    try {
-      const productId = productUrl + id;
-      const [err, responseData] = await fetchProduct(productId);
-
-      if (!err && responseData) {
-        dispatch(openModal(responseData));
-      }
-    } catch (error) {
-      console.log(error);
+      setSubtitulo("Nuevo");
+      return;
     }
-  };
 
-  fetchProductData();
-}, [id, dispatch, reset]);
+    const fetchProductData = async () => {
+      try {
+        const productId = productUrl + id;
+        const [err, responseData] = await fetchProduct(productId);
 
+        if (!err && responseData) {
+          dispatch(openModal(responseData));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-useEffect(() => {
-  if (currentProduct && id) {
-    reset(currentProduct);
-    setSubtitulo("Editar");
-  }
-}, [currentProduct, id, reset]);
+    fetchProductData();
+  }, [id, dispatch, reset]);
 
+  useEffect(() => {
+    if (currentProduct && id) {
+      reset(currentProduct);
+      setSubtitulo("Editar");
+    }
+  }, [currentProduct, id, reset]);
 
-
-  const onSubmit = async (data: Product) => {
-    setLoading(true);
+  const onSubmit = async (data: ProductForm) => {
+    setLoading(true);  
     try {
-      // let responseData;
       if (currentProduct) {
-        // Update the product
-        await fetchProductUpdate(productUrl, data);
+        await updateProductMutation.mutateAsync({
+        productCode: currentProduct.productCode,
+        data,
+      });
+
         toast.success("Producto actualizado exitosamente");
       } else {
-        // Create a new product
-        await fetchProductCreate(productUrl, data);
+        await createProductMutation.mutateAsync (data);
         toast.success("Producto creado exitosamente");
       }
-      navigate(`/private/${PrivateRoutes.PRODUCT}`, {replace:true})
 
+      navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error || "Error desconocido");
-      } else {
-        toast.error(error.message || "Error desconocido");
-      }
-    }
-    finally {
-      setLoading(false); // Desactiva el loader
+      toast.error(error?.message || "Error desconocido");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,14 +145,49 @@ useEffect(() => {
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div className='section'>
-            <FormInputText
-                name="name"
+          <div className="container_prueba">
+            {/* Columna izquierda */}
+            <div className="left">
+              <div className="section">
+                <FormInputText
+                  name="name"
+                  control={control}
+                  label="Nombre producto"
+                  rules={{ required: 'Product name is required' }}
+                />
+              </div>
+
+              <div className="row">
+                <FormInputNumber
+                  name="price"
+                  label="Precio"
+                  control={control}
+                  rules={{ required: 'Precio es un campo requerido' }}
+                />
+
+                <FormDropdown
+                  name="idUnit"
+                  control={control}
+                  
+                  label="Unidad"
+                  rules={{ required: 'Unidad de medida es un campo requerido' }}
+                  options={unitOptions || []}
+                />
+              </div>
+            </div>
+
+            {/* Imagen a la derecha */}
+            <div className="image">
+              <FormInputImage 
+                name="image"
+                label="imagen del producto"
                 control={control}
-                label="Nombre producto"
-                rules={{ required: 'Product name is required' }}
+                
               />
+            </div>
           </div>
+
+          {/* categoria, marca y presentacion */}
 
           <div className='container_selector'>
               <FormDropdown
@@ -179,17 +215,26 @@ useEffect(() => {
               /> 
           </div>
 
+          {/*Descripcion */}
+
           <div className='section'>
             <FormTextArea
               name="description"
               control={control}
               label="Descripción"
-              rules={{required: 'Descripción es un campo requerido'}}
+              rules={{required: 'Descripción es un campo requerido', 
+                maxLength: {
+                  value: 500,
+                  message: "Máximo 500 caracteres",
+                },
+              }}
               rows={6}
               placeholder="Escribe algo aquí..."
-              helperText="Máximo 500 caracteres"
-              />
+            />
           </div>
+
+          {/**Botones */}
+
           <div className='container_button'>
             <Button
               variant="contained"

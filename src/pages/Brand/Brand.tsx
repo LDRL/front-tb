@@ -8,11 +8,6 @@ export default function Brand(){
 
     return(
         <div>
-
-            {/* <CustomDialog>
-                <ProductModal />
-            </CustomDialog> */}
-
             <div>
                 <h2>Listado de marcas</h2>
                 <hr />

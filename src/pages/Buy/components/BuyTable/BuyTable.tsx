@@ -4,9 +4,9 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Loading from '@/components/Loading';
 import { useBuy } from '../../hooks/useBuy';
 import { Button } from '@mui/material';
-import { Buy } from '../../models';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { Buy } from '../../models/buy.domain.type';
 
 // import { useDispatch } from 'react-redux';
 
@@ -28,7 +28,6 @@ const ListOfBuys: React.FC = () => {
         navigate(`${buy.id}/show`)
     };
 
-
     const columns: GridColDef[] = [
         {
             field: 'id',
@@ -44,7 +43,7 @@ const ListOfBuys: React.FC = () => {
             renderCell: (params: GridRenderCellParams) => <>{moment(params.value).format("DD/MM/YYYY")}</>,
         },
         {
-            field: 'direction',
+            field: 'address',
             headerName: 'Dirección',
             flex: 1,
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
@@ -62,7 +61,6 @@ const ListOfBuys: React.FC = () => {
             flex: 1,
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
         },
-        
         {
             field: 'actions',
             type: 'actions',
@@ -81,7 +79,6 @@ const ListOfBuys: React.FC = () => {
         },
     ];
 
-    
     if (isLoading) {
         return <Loading loading={isLoading}/>;
     }
@@ -111,5 +108,3 @@ const ListOfBuys: React.FC = () => {
 };
 
 export default ListOfBuys;
-
-

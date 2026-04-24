@@ -1,0 +1,23 @@
+.container {
+    margin-bottom: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.section{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.container_selector{
+    display:flex;
+    margin-bottom: 15px;
+    gap:10px;
+}
+
+.container_button{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}

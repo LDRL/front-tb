@@ -24,26 +24,29 @@ export default axiosClient;
 
 
 export const getErrorMessage = (error: unknown): string => {
-    if (error && typeof error === "object") {
-            const axiosError = error as AxiosError<any>;
+  // 1. Axios error (backend)
+  if (error && typeof error === "object" && "response" in error) {
+    const axiosError = error as AxiosError<any>;
 
-            console.log(axiosError);
+    const data = axiosError.response?.data;
 
-            // Error enviado por nodeJs
-            if (axiosError.response?.data?.error) {
-                if (Array.isArray(axiosError.response.data.error)) {
-                    // errores de validación 422
-                    return axiosError.response.data.error
-                    .map((err: any) => err.msg)
-                    .join(", ");
-                }
-                return axiosError.response.data.error;
-            }
-
-            if (axiosError.response?.data?.message) {
-                return axiosError.response.data.message;
-            }
+    if (data?.error) {
+      if (Array.isArray(data.error)) {
+        return data.error.map((err: any) => err.msg).join(", ");
+      }
+      return data.error;
     }
 
-    return "Ocurrió un error inesperado";
+    if (data?.message) {
+      return data.message;
+    }
+  }
+
+  // 2. Error normal de JS (hook / frontend)
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  // 3. fallback
+  return "Ocurrió un error inesperado";
 };

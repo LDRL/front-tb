@@ -1,0 +1,16 @@
+import { Dayjs } from "dayjs";
+
+export interface HeaderBuyVM {
+    id: string;
+    date: Dayjs;
+    direction: string;
+    providerName: string;
+    details: DetailVM[];
+}
+
+export interface DetailVM {
+    id: string;
+    amount: number;
+    cost: number;
+    product: string;
+}

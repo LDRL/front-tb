@@ -1,25 +1,34 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
-import {ApiBuy, BuyList, Buy, ApiHeaderBuy } from "../models";
-import { BuyAdapter, BuyListAdapter } from '../adapter';
+
+import { BuyAdapter, BuyListAdapter, mapBuyToCreatePayload } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
 import { fetchBuyCreate } from '../services/buy';
-import { getErrorMessage } from '@/utils/axiosClient';
+import { User } from '@/pages/User';
+import { userKey } from '@/redux/user';
+import { ApiBuy, ApiHeaderBuy } from '../models/buy.api.type';
+import { Buy, BuyList } from '../models/buy.domain.type';
+import { ApiBuyResponse } from '../models/buy.response.type';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-interface ApiResponse {
-    msg: string;
-    compras: ApiBuy[];
-    total: number;
-    currentPage: number;
+export interface ApiResponse {
+    message: string;
+    data: ApiBuy[]; //Todo cambiar a data cuando en la api mande data en ves de marcas
+    ok: boolean;
+    meta: {
+        total: number,
+        totalPage: number,
+        currentPage: number,
+        limit: number
+    }
 }
 
 interface ApiResponseHeader {
-    compra: ApiHeaderBuy;
+    data: ApiHeaderBuy;
 }
 
 // Hook para obtener la lista de compras
@@ -52,9 +61,9 @@ export const useBuy = (initialPage: number = 1) => {
 
     useEffect(() => {
         if(data){
-            const adaptedProducts = data ? BuyListAdapter(data.compras) : []; // Todo cambiar a data cuando en la api mande data en ves de marcas
+            const adaptedProducts = data ? BuyListAdapter(data.data) : []; // Todo cambiar a data cuando en la api mande data en ves de marcas
             setBuys(adaptedProducts || []);
-            setTotal(data?.total || 0);
+            setTotal(data?.meta.total || 0);
         }
     }, [data]);
 
@@ -74,53 +83,51 @@ export const useBuy = (initialPage: number = 1) => {
     };
 };
 
-// Hook para obtener un producto específico
-export const useFetchProduct = (productId: string) => {
-    return useQuery<Buy, Error>({
-        queryKey: ['product', productId], // Clave de consulta
-        queryFn: async () => {
-            const response = await axios.get<{ producto: ApiBuy }>(`${apiUrl}${productId}/`);
 
-            if (response.status !== 200) {
-                throw new Error('Error al cargar el producto');
-            }
-
-            return BuyAdapter(response.data.producto); // Adaptamos y devolvemos el producto
-        },
-        enabled: !!productId, // Solo se ejecuta si productId está disponible
-        // onError: (error) => {
-        //     console.error(`Error fetching product: ${error}`);
-        // },
-    });
-};
 
 // Hook para crear un nuevo producto
 export const useCreateBuy = () => {
     const queryClient = useQueryClient();
+    //const auth = localStorage.getItem('usuario');
+    const auth = localStorage.getItem(userKey);
 
-    return useMutation<Buy, Error, Buy>({
+    const usuario: User | null = auth
+    ? JSON.parse(auth).usuario
+    : null;
+
+    const idsucursal = usuario?.idsucursal;
+    const idusuario = usuario?._id;
+
+
+    return useMutation<Buy, Error | unknown, Buy>({
         mutationFn: async (newBuy) => {
+            if (!idsucursal) throw new Error("No sucursal");
+            if (!idusuario) throw new Error("No usuario");
 
-            // const response = await axios.post<{ message: string, producto: ApiBuy }>(`${apiUrl}compras`, buy);
-            const [error, producto] = await fetchBuyCreate(`${apiUrl}compras`,newBuy);
+            const payload = mapBuyToCreatePayload(
+                newBuy,
+                Number(idusuario),
+                idsucursal
+            );
 
-            if (error){
-                throw new Error('Error al crear el producto');
-            }
+            const [error, producto] = await fetchBuyCreate(
+                `${apiUrl}compras`,
+                payload
+            );
+
+            if (error) throw error;
 
             if (!producto) {
                 throw new Error('Producto no creado');
             }
 
             return producto;
-            // return BuyAdapter(response.data.producto);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['buys'] });
         },
         onError: (error) => {
-            const message = getErrorMessage(error);
-            throw new Error(message);
+            console.log(error);
         },
     });
 };

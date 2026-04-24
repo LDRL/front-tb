@@ -1,13 +1,10 @@
-import { CustomDialog } from "@/components/CustomDialog";
 import { useSelector } from "react-redux";
 import { AppStore } from "@/redux/store";
 import { BuyTable } from "./components/BuyTable";
 import { Header } from "./components/Header";
 
-
 export default function Buy(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)
-    
+    const sidebarState = useSelector((store: AppStore) => store.sidebar)    
     return(
         <div>
             <div>

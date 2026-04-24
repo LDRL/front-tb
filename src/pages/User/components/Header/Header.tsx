@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   };
 
   const { control } = useForm<User>({
-    defaultValues: { _id: 0, nombre:'', apellido:'', username: '', password:'', codigoemp:0},
+    defaultValues: { _id: '', nombre:'', apellido:'', username: '', password:'', codigoemp:0},
   });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

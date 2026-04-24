@@ -4,12 +4,18 @@ export interface ApiPresentation {
     nombre:string;
 }
 
-export interface ApiResponse {
-    msg: string;
-    presentacion: ApiPresentation[]; //Todo cambiar a data cuando en la api mande data en ves de marcas
-    total: number;
-    currentPage: number;
+export interface ApiResponsePresentation {
+    message: string;
+    data: ApiPresentation[]; //Todo cambiar a data cuando en la api mande data en ves de marcas
+    ok: boolean;
+    meta: {
+        total: number,
+        totalPage: number,
+        currentPage: number,
+        limit: number
+    }
 }
+
 
 /// Manejo en el frontend
 export interface Presentation {
@@ -33,4 +39,11 @@ export interface PresentationState {
 export const EmptyPresentationState: PresentationState = {
     currentPresentation: null,
     search: ''
+};
+
+export type CreateOrUpdatePresentationResponse = {
+  ok: boolean;
+  message: string;
+  data: ApiPresentation;
+  meta: null;
 };

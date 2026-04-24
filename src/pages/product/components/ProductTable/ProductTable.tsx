@@ -7,13 +7,14 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { Product } from '../../models';
 import { openModal } from '@/redux/productSlice';
-// import { dialogOpenSubject$ } from '@/components/CustomDialog/CustomDialog';
 import Loading from '@/components/Loading';
-import { useProducts } from '@/hooks/useProduct';
 
 import { useNavigate } from 'react-router-dom';
+import { Product } from '../../models/product.domain.type';
+import { useGetProducts } from '../../hooks/useProduct';
+
+const urlSinImage = "/sinImagen.png";
 
 const ListOfProducts: React.FC = () => {
     
@@ -25,7 +26,7 @@ const ListOfProducts: React.FC = () => {
         isLoading,
         paginationModel,
         handlePaginationModelChange,
-    } = useProducts();
+    } = useGetProducts();
 
     const handleEditProduct = (product: Product) => {
         dispatch(openModal(product));
@@ -72,6 +73,30 @@ const ListOfProducts: React.FC = () => {
             renderCell: (params: GridRenderCellParams) => <>{params.value ? params.value.name : 'Sin Categoria'}</>,
         },
         {
+            field: 'image',
+            headerName: 'Imagen',
+            flex: 1,
+            sortable: false,
+            renderCell: (params: GridRenderCellParams) => {
+                const imageUrl = params.value || urlSinImage;
+
+                return (
+                <img
+                    src={imageUrl}
+                    alt="producto"
+                    onError={(e: any) => {
+                    e.target.src = urlSinImage; // 🔥 fallback si falla la URL
+                    }}
+                    style={{
+                        width: 50,
+                        height: 50,
+                        objectFit: "cover"                    
+                    }}
+                />
+                );
+            },
+            },
+        {
             field: 'actions',
             type: 'actions',
             sortable: false,
@@ -112,31 +137,10 @@ const ListOfProducts: React.FC = () => {
             }}
             onPaginationModelChange={handlePaginationModelChange}
             pageSizeOptions={[paginationModel.pageSize]}
-            getRowId={(row: any) => row.id}
+            getRowId={(row: any) => row.productCode}
             paginationMode="server"
         />
     );
 };
 
 export default ListOfProducts;
-
-
-/*
-const NoProductsResults: React.FC = () => {
-    return(
-        <p>No se encontraron productos para esta busqueda</p>
-    )
-}
-
-
-const ProductTable: React.FC = ({products}) => {
-    const hasProducts = products?.length > 0
-
-    return(
-        hasProducts 
-            ? <ListOfProducts />
-            : <NoProductsResults/>    
-        )
-}
-*/
-

@@ -10,10 +10,6 @@ export default function Presentation(){
     return(
         <div>
 
-            {/* <CustomDialog>
-                <ProductModal />
-            </CustomDialog> */}
-
             <div>
                 <h2>Listado de presentaciones</h2>
                 <hr />

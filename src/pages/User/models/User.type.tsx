@@ -8,6 +8,7 @@ export interface User {
     imagen?: string;
     codigoemp?: number;
     estado?: number;
+    idsucursal?: number;
 }
 
 export interface ApiResponse {
@@ -30,7 +31,8 @@ export const EmptyUser: User = {
     password:'',
     imagen:'',
     codigoemp:0,
-    estado:1
+    estado:1,
+    idsucursal:0,
 }
 
 

@@ -10,8 +10,7 @@ import { PresentationCreate } from '../Presentation'
 import { BuyCreate, BuyShow } from '../Buy'
 import { SaleCreate, SaleShow } from '../Sale'
 import { UserCreate } from '../User'
-
-
+import { SupplierCreate } from '../Supplier'
 
 const Dashboard = lazy(() => import('./Dashboard/Dashboard'))
 const Home = lazy(() => import('./Home/Home'))
@@ -22,9 +21,7 @@ const Presentation = lazy(() => import('../Presentation/Presentation'))
 const Buy = lazy(() => import('../Buy/Buy'))
 const Sale = lazy(() => import('../Sale/Sale'))
 const User = lazy(() => import('../User/User'))
-
-
-
+const Supplier = lazy(() => import('../Supplier/Supplier'))
 
 
 function Private() {
@@ -60,6 +57,10 @@ function Private() {
         <Route path = {PrivateRoutes.USER} element={<User />} />
         <Route path = {PrivateRoutes.USER_CREATE} element={<UserCreate />} />
         <Route path = {PrivateRoutes.USER_EDIT} element={<UserCreate />} />
+
+        <Route path = {PrivateRoutes.SUPPLIER} element={<Supplier />} />
+        <Route path = {PrivateRoutes.SUPPLIER_CREATE} element={<SupplierCreate />} />
+        <Route path = {PrivateRoutes.SUPPLIER_EDIT} element={<SupplierCreate />} />
 
 
     </RoutesWithNotFound>

@@ -27,7 +27,11 @@ export const PrivateRoutes = {
     SALE_SHOW: 'sale/:id/show',
     USER: 'user',
     USER_CREATE:'user/create',
-    USER_EDIT:'user/:id/editar'
+    USER_EDIT:'user/:id/editar',
+
+    SUPPLIER: 'proveedor',
+    SUPPLIER_CREATE:'proveedor/create',
+    SUPPLIER_EDIT:'proveedor/:id/editar'
 
     
 }

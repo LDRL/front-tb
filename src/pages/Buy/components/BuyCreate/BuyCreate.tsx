@@ -7,13 +7,14 @@ import { Box, Button, FormHelperText} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { PrivateRoutes } from '@/models';
 import {useCreateBuy} from '../../hooks/useBuy'
-import { Buy, Detail } from '../../models';
 import { useFetchProviderOptions, useFetchProductOptions } from '@/hooks/useOption';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Loading from '@/components/Loading';
 import dayjs from 'dayjs';
 import "./BuyCreate.css"
 import { toast } from 'react-toastify';
+import { Buy, BuyForm, Detail } from '../../models/buy.domain.type';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 const BuyCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -21,12 +22,12 @@ const BuyCreate: React.FC = () => {
   const navigate = useNavigate();
 
   const createBrandMutation = useCreateBuy();
-  const { control, handleSubmit, reset, getValues, setValue} = useForm<Buy>({
-    defaultValues: { id: 0, direction: '', detail:[], total:0},
+  const { control, handleSubmit, reset, getValues, setValue} = useForm<BuyForm>({
+    defaultValues: { id: 0, address: '', name:'', details:[], total:0},
   });
 
   useEffect(() => {
-    reset({ idProvider: undefined, direction: '', date:undefined});
+    reset({ idProvider: undefined, address: '', name:'', date:undefined});
     setSubtitulo("Nuevo")    
   }, []);
 
@@ -44,8 +45,6 @@ const BuyCreate: React.FC = () => {
   const {data: providerOptions, isLoading: isProviderLoading, isError: isProviderError} = useFetchProviderOptions();
   const {data: productOptions, isLoading: isProductLoading, isError: isProductError} = useFetchProductOptions();
 
-  console.log (providerOptions);
-
   const calculateTotal = (updatedRows: Detail[]) => {
     const newTotal = updatedRows.reduce((acc, row) => acc + (row.subtotal ?? 0), 0);
     setTotal(newTotal);
@@ -54,42 +53,62 @@ const BuyCreate: React.FC = () => {
   const filterProduct = (product: Detail) => rows.filter(p => p.id !== product.id);
   const findProvider = (provider: number) => providerOptions?.find(p=> p.value === provider)
 
-  const onSubmit = async (data: Buy) => {
-    setErrors({
-      amount: false,
-      cost: false,
-      idProduct: false,
-      detailProduct: false,
-    });   
+  //
+  // ---- Boton para guardar la compra ---- 
+  ///
+  const onSubmit = async (data: BuyForm) => {
+  setErrors({
+    amount: false,
+    cost: false,
+    idProduct: false,
+    detailProduct: false,
+  });
 
-    if (data.date) {
-      data.date = dayjs(data.date).toISOString();
-    }
-    data.total = parseFloat(total.toFixed(2));
+  if (rows.length === 0) {
+    setErrors(prev => ({ ...prev, detailProduct: true }));
+    return;
+  }
 
-    if (rows.length === 0) {
-      setErrors(prev => ({ ...prev, detailProduct: true }));
-      return; 
-    }
+  setLoading(true);
 
-    const newData:Buy = {...data, detail: rows}
-    
-    setLoading(true);
-    try {      
-      await createBrandMutation.mutateAsync(newData);
-      toast.success("Compra creado exitosamente");
-      navigate(`/private/${PrivateRoutes.BUY}`, {replace:true})
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error || "Error desconocido");
-      } else {
-        toast.error(error.message || "Error desconocido");
-      }
-    }
-    finally {
-      setLoading(false); // Desactiva el loader
-    }
-  };
+  try {
+    const newBuy: Buy = {
+      id: 0,
+      name: data.name,
+      date: dayjs(data.date).toISOString(),
+      address: data.address,
+      state: true,
+      idProvider: data.idProvider!,
+      idSucursal: 0,
+      idUser: "",
+      total: parseFloat(total.toFixed(2)),
+
+      provider: {
+        id: data.idProvider!,
+        name: data.name,
+        address: data.address,
+        phone: "",
+        email: "",
+        state: "",
+      },
+
+      details: rows,
+    };
+
+    await createBrandMutation.mutateAsync(newBuy);
+
+    toast.success("Compra creada exitosamente");
+
+    navigate(`/private/${PrivateRoutes.BUY}`, {
+      replace: true,
+    });
+
+  } catch (error: unknown) {
+    toast.error(getErrorMessage(error));
+  } finally {
+    setLoading(false);
+  }
+};
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
     {
@@ -177,7 +196,6 @@ const BuyCreate: React.FC = () => {
       amount: newAmount,
       cost: newCost,
       subtotal: newAmount * newCost,
-      idBranch: 1,
       name: selectedProduct ? selectedProduct.label : "",
     };
   
@@ -231,7 +249,12 @@ const BuyCreate: React.FC = () => {
                 const n = findProvider(numericValue)
                 //setValue("direction",  `${n?.direction}`)
 
-                setValue("direction", n?.direction ?? "", {
+                setValue("name", n?.label ?? "", {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+
+                setValue("address", n?.direction ?? "", {
                   shouldDirty: true,
                   shouldValidate: true,
                 });
@@ -241,7 +264,7 @@ const BuyCreate: React.FC = () => {
           
           <div className='section'>
             <FormInputText
-              name="direction"
+              name="address"
               control={control}
               label="Direccion"
               rules={{ required: 'Direccion es un campo requerido' }}

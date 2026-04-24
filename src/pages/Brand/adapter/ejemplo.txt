@@ -1,0 +1,63 @@
+export const BuyAdapter = (buy: ApiBuy): Buy => {
+    return {
+        id: buy._id,
+        date: buy.fecha,
+        direction: buy.direccion,
+        state: buy.estado,
+        providerName: buy.Proveedor?.nombre ?? "",
+        total: Number(buy.total),
+        idProvider: buy.idproveedor,
+        idBranch: buy.idsucursal,
+    };
+};
+
+export const HeaderBuyAdapter = (buy: ApiBuy): HeaderBuyVM => {
+    return {
+        id: buy._id,
+        date: dayjs(buy.fecha),
+        direction: buy.direccion,
+        providerName: buy.Proveedor?.nombre ?? "",
+
+        details: (buy.Detalles ?? []).map((d) => ({
+            id: String(d._id),
+            amount: d.cantidad,
+            cost: Number(d.costo),
+            product: d.Producto?.nombre ?? "",
+        })),
+    };
+};
+
+
+buy.adapter.ts
+buy-header.adapter.ts
+detail.adapter.ts
+
+
+
+///////
+
+features/buy/
+│
+├── api/
+│   ├── buy.api.ts
+│   ├── buy.types.ts
+│   └── buy.response.ts
+│
+├── domain/
+│   ├── buy.model.ts
+│   └── detail.model.ts
+│
+├── adapters/
+│   ├── buy.adapter.ts
+│   ├── buy-header.adapter.ts
+│   └── detail.adapter.ts
+│
+├── hooks/
+│   ├── useBuy.ts
+│   ├── useBuyList.ts
+│   └── useCreateBuy.ts
+│
+└── ui/
+    ├── BuyTable.tsx
+    ├── BuyForm.tsx
+    └── BuyDetailView.tsx

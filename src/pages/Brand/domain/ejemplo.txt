@@ -1,0 +1,25 @@
+export interface Buy {
+    id: string;
+    date: string;
+    direction: string;
+    state: boolean;
+    providerName: string;
+    total: number;
+    idProvider: number;
+    idBranch: number;
+}
+
+export interface Detail {
+    id: string;
+    amount: number;
+    cost: number;
+    product: string;
+}
+
+buy.model.ts
+detail.model.ts
+
+buy.model.ts → Buy
+detail.model.ts → Detail
+
+👉 Aquí SOLO lógica de negocio (sin API)
