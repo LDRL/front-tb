@@ -7,7 +7,6 @@ import { FormInputText } from '@/components';
 import { Box, Button} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
-import { Supplier } from '../../models';
 import { PrivateRoutes } from '@/models';
 import { useCreateSupplier, useGetSupplier, useUpdateSupplier } from '../../hooks/useSupplier';
 import { clearSupplier, editSupplier } from '@/redux/supplierSlice';
@@ -15,6 +14,7 @@ import { toast } from 'react-toastify';
 
 import "./SupplierCreate.css"
 import Loading from '@/components/Loading';
+import { SupplierForm } from '../../models/supplier.view.type';
 
 const SupplierCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -25,8 +25,8 @@ const SupplierCreate: React.FC = () => {
   const dispatch = useDispatch();
   const { currentSupplier } = useSelector((state: RootState) => state.supplier);
 
-  const { control, handleSubmit, reset} = useForm<Supplier>({
-    defaultValues: { _id: "", nombre: ''},
+  const { control, handleSubmit, reset} = useForm<SupplierForm>({
+    defaultValues: { code: 0, name: ''},
   });
 
  // Llamar al hook aquí
@@ -49,16 +49,22 @@ const SupplierCreate: React.FC = () => {
       reset(currentSupplier);
       setSubtitulo("Editar")
     } else {
-      reset({ _id: "", nombre: ''});
+      reset({ code: 0, name: ''});
       setSubtitulo("Nuevo")
     }
   }, [currentSupplier, reset]);
 
-  const onSubmit = async (data: Supplier) => {
+  const onSubmit = async (data: SupplierForm) => {
     setLoading(true);
     try {
       if (currentSupplier) {
-        await updateSupplierMutation.mutateAsync(data);
+        //await updateSupplierMutation.mutateAsync(data);
+
+        await updateSupplierMutation.mutateAsync({
+          code: currentSupplier.code,
+          data,
+        });
+
         toast.success("Proveedor actualizado exitosamente");
       } else { // Create a new Supplier
         await createSupplierMutation.mutateAsync(data);
@@ -95,7 +101,7 @@ const SupplierCreate: React.FC = () => {
         >
           <div className='section'>
             <FormInputText
-              name="nombre"
+              name="name"
               control={control}
               label="Nombre"
               rules={{ required: 'El nombre es requerido' }}
@@ -103,7 +109,7 @@ const SupplierCreate: React.FC = () => {
           </div>
           <div className='section'>
             <FormInputText
-              name="direccion"
+              name="address"
               control={control}
               label="Direccionón"
               rules={{ required: 'la dirección es requerida' }}
@@ -111,7 +117,7 @@ const SupplierCreate: React.FC = () => {
           </div>
           <div className='section'>
             <FormInputText
-              name="telefono"
+              name="phone"
               control={control}
               label="Telefono"
               rules={{ required: 'El telefono es requerido' }}
@@ -120,10 +126,18 @@ const SupplierCreate: React.FC = () => {
           </div>
           <div className='section'>
             <FormInputText
-                name="email"
+                name="mail"
                 control={control}
                 label="Correo Electronico"
                 rules={{ required: 'El correo electronico es requerido' }}
+            />
+          </div>
+          <div className='section'>
+            <FormInputText
+                name="nit"
+                control={control}
+                label="Nit"
+                rules={{ required: 'Nit requerido' }}
             />
           </div>
           <div className='container_button'>

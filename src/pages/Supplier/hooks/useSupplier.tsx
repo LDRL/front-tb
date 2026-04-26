@@ -3,16 +3,21 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiGetSupplierList, ApiResponse, Supplier, SupplierList } from '@/pages/Supplier';
-import { getErrorMessage } from '@/utils/axiosClient';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
+import { ApiSupplier } from '../models/supplier.api.type';
+import { ApiResponseSupplierList } from '../models/supplier.response.type';
+import { Supplier, SupplierList } from '../models/supplier.domain.type';
+import { mapApiToSupplier, mapSupplierToApi, SupplierListAdapter } from '../adapter/supplier.adapter';
+import { SupplierForm } from '../models/supplier.view.type';
+import { fetchSupplierCreate, fetchSupplierUpdate } from '../service/supplier';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useFetchProviders = (page: number = 1, search: string) => {
-    return useQuery<ApiResponse, Error>({
+    return useQuery<ApiResponseSupplierList, Error>({
         queryKey: ['providers', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}proveedor/?page=${page}&search=${search}`);
+            const response = await axios.get<ApiResponseSupplierList>(`${apiUrl}proveedor/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -37,10 +42,9 @@ export const useSupplier = (initialPage: number = 1) => {
 
     useEffect(() => {
         if(data){
-            //const adaptedProducts = data ? providerListAdapter(data.presentacion) : []; // Todo cambiar a data cuando en la api mande data en ves de usuarios
-            //setProviders(adaptedProducts || []);
-            setProviders(data.proveedor || []);
-            setTotal(data?.total || 0);
+            const adaptedSuppliers = data ? SupplierListAdapter(data.data) : []; // Todo cambiar a data cuando en la api mande data en ves de usuarios
+            setProviders(adaptedSuppliers || []);
+            setTotal(data?.meta.total || 0);
         }
     }, [data, search]);
 
@@ -65,13 +69,15 @@ export const useGetSupplier = (supplierId: string) => {
     return useQuery<Supplier, Error>({
         queryKey: ['provieder', supplierId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<ApiGetSupplierList>(`${apiUrl}proveedor/${supplierId}/`);
+      
+
+            const response = await axiosClient.get<{ data: ApiSupplier }>(`${apiUrl}proveedor/${supplierId}/`);
 
             if (response.status !== 200) {
-                throw new Error('Error al cargar el proveedor');
+                throw new Error('Error al cargar el producto');
             }
-
-            return response.data.proveedor;
+            console.log(response.data);
+            return mapApiToSupplier(response.data.data);
         },
     });
 };
@@ -81,23 +87,18 @@ export const useGetSupplier = (supplierId: string) => {
 export const useCreateSupplier = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<Supplier, unknown, Supplier>({
-        mutationFn: async (newSupplier) => {
-            const supplier = {
-                nombre: newSupplier.nombre,
-                direccion: newSupplier.direccion,
-                telefono: newSupplier.telefono,
-                email: newSupplier.email,
-                estado: 1
-            };
+    return useMutation({
+        mutationFn: async (data: SupplierForm) => {
+            const payload = mapSupplierToApi(data);
+            const [error, proveedor] = await fetchSupplierCreate(
+            `${apiUrl}proveedor`,
+                payload
+            );
 
-            const response = await axios.post<{ message: string, usuario: Supplier }>(`${apiUrl}proveedor/`, supplier);
+            if (error) throw error;
+            if (!proveedor) throw new Error("Proveedor no creado");
 
-            if (response.status !== 201) {
-                throw new Error('Error al crear proveedor');
-            }
-
-            return response.data.usuario;
+            return proveedor;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['providers'] });
@@ -109,23 +110,29 @@ export const useCreateSupplier = () => {
     });
 };
 
+export type UpdateSupplierDTO = {
+  code: number;
+  data: SupplierForm;
+};
+
 // Hook para actualizar un producto existente
 export const useUpdateSupplier = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<Supplier, Error, Supplier>({
-        mutationFn: async (updatedSupplier) => {
-            const supplier = {
-                nombre: updatedSupplier.nombre,
-                direccion: updatedSupplier.direccion,
-                telefono: updatedSupplier.telefono,
-                email: updatedSupplier.email,
-                estado: 1
-            };
+    return useMutation ({
+       mutationFn: async ({ code, data }: UpdateSupplierDTO) => {
+            //const response = await axios.put<{ message: string, body: Supplier }>(`${apiUrl}proveedor/${updatedSupplier.code}/`, supplier);
 
-            const response = await axios.put<{ message: string, body: Supplier }>(`${apiUrl}proveedor/${updatedSupplier._id}/`, supplier);
+            const payload = mapSupplierToApi(data);
+            const [error, proveedor] = await fetchSupplierUpdate(
+                `${apiUrl}proveedor/${code}`,
+                payload
+            );
 
-            return response.data.body; 
+            if (error) throw error;
+            if (!proveedor) throw new Error('Error al actualizar el proveedor');
+
+            return proveedor;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['providers'] });

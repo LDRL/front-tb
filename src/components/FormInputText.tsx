@@ -1,10 +1,13 @@
 // src/form-component/FormInputText.tsx
 import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import React, { useEffect } from 'react';
-import {Box, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select } from "@mui/material";
+import {Autocomplete, Box, CircularProgress, FormControl, FormHelperText, IconButton, InputLabel, MenuItem } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import Select from "react-select";
+import AsyncSelect from "react-select/async";
+
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -13,7 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import 'dayjs/locale/es';
 dayjs.locale('es');
-
+import debounce from 'just-debounce-it';
 
 
 interface FormInputProps<T extends FieldValues> {
@@ -127,66 +130,81 @@ interface Option {
   value: number;
 }
 
-interface DropwdownProps<T extends FieldValues> {
-  options: Option[];
-  label: string;
+
+
+export interface FormAutocompleteAsyncProps<T extends FieldValues, TOption> {
   name: Path<T>;
   control: Control<T>;
-  rules?: any;
-  disabled?: boolean;
-  defaultValue?: any;
-  externalOnChange?: (value: string | number) => void; // 👈 AGREGAR
+  label: string;
+
+  options: TOption[];
+  isLoading?: boolean;
+
+  getOptionLabel: (option: TOption) => string;
+  getOptionValue: (option: TOption) => string | number;
+
+  onInputChange?: (value: string) => void;
+  onChangeExternal?: (value: TOption | null) => void;
 }
 
-export const FormDropdown = <T extends FieldValues>({
+export const FormAutocompleteAsync = <
+  T extends FieldValues,
+  TOption extends Record<string, any>
+>({
   name,
   control,
   label,
-  rules,
-  options,
-  disabled,
-  defaultValue,
-  externalOnChange,
-}: DropwdownProps<T>) => {
+  options,            // ✅ AQUÍ FALTABA
+  isLoading,
+  getOptionLabel,
+  getOptionValue,
+  onInputChange,
+  onChangeExternal,
+}: FormAutocompleteAsyncProps<T, TOption>) => {
   return (
-    <FormControl fullWidth size="small">
-      <InputLabel>{label}</InputLabel>
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => {
+        return (
+          <div>
+            <label style={{ fontSize: 12, color: "#666" }}>
+              {label}
+            </label>
 
-      <Controller
-        name={name}
-        control={control}
-        defaultValue={defaultValue ?? ''}
-        rules={rules}
-        render={({ field, fieldState: { error } }) => (
-          <>
-            <Select
-              {...field}
-              value={field.value ?? ''}
-              label={label}
-              error={!!error}
-              disabled={disabled}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                field.onChange(value);
-                externalOnChange?.(value); // 👈 AQUÍ
+            <Select<TOption, false>
+              styles={customStyles}
+              isLoading={isLoading}
+              isClearable
+              options={options}
+
+              value={
+                options.find(opt => opt.value === field.value) ?? null
+              }
+
+              onInputChange={(value) => {
+                onInputChange?.(value);
+                return value;
               }}
-            >
-              {options.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
+
+              onChange={(value) => {
+                field.onChange(value?.value);
+                onChangeExternal?.(value);
+              }}
+
+              getOptionLabel={getOptionLabel}
+              getOptionValue={(option) => String(getOptionValue(option))}
+            />
 
             {error && (
-              <FormHelperText sx={{ color: "red" }}>
+              <div style={{ color: "red", fontSize: 12 }}>
                 {error.message}
-              </FormHelperText>
+              </div>
             )}
-          </>
-        )}
-      />
-    </FormControl>
+          </div>
+        );
+      }}
+    />
   );
 };
 
@@ -344,4 +362,32 @@ export const FormInputImage = <T extends FieldValues>({
       }}
     />
   );
+};
+
+const customStyles = {
+  menu: (base: any) => ({
+    ...base,
+    backgroundColor: "#fff",
+    zIndex: 9999,
+    borderRadius: 8,
+    boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+  }),
+
+  menuList: (base: any) => ({
+    ...base,
+    backgroundColor: "#fff",
+    maxHeight: 220,
+  }),
+
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isFocused ? "#f0f0f0" : "#fff",
+    color: "#000",
+    cursor: "pointer",
+  }),
+
+  control: (base: any) => ({
+    ...base,
+    backgroundColor: "#fff",
+  }),
 };

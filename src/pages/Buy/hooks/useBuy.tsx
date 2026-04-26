@@ -10,7 +10,7 @@ import { fetchBuyCreate } from '../services/buy';
 import { User } from '@/pages/User';
 import { userKey } from '@/redux/user';
 import { ApiBuy, ApiHeaderBuy } from '../models/buy.api.type';
-import { Buy, BuyList } from '../models/buy.domain.type';
+import { Buy, BuyList, Detail } from '../models/buy.domain.type';
 import { ApiBuyResponse } from '../models/buy.response.type';
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -140,4 +140,33 @@ export const useShowBuy = (id:string) => {
             return response.data;   
         }
     });
+};
+
+//Detail Create
+export const useBuyDetails = () => {
+  const [rows, setRows] = useState<Detail[]>([]);
+  const [total, setTotal] = useState(0);
+
+  const calculateTotal = (rows: Detail[]) => {
+    const total = rows.reduce((acc, r) => acc + (r.subtotal ?? 0), 0);
+    setTotal(total);
+  };
+
+  const addRow = (detail: Detail) => {
+    setRows(prev => {
+      const updated = [...prev, { ...detail, id: prev.length }];
+      calculateTotal(updated);
+      return updated;
+    });
+  };
+
+  const deleteRow = (id: number) => {
+    setRows(prev => {
+      const updated = prev.filter(r => r.id !== id);
+      calculateTotal(updated);
+      return updated;
+    });
+  };
+
+  return { rows, total, addRow, deleteRow };
 };

@@ -3,13 +3,13 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, useMediaQuery, useTheme } from "@mui/material";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { Supplier } from "../../models";
 
 import Loading from "@/components/Loading";
 import { totalPagesMovile } from "@/utils";
 import TableMovil from "../TableMovil/TableMovil";
 import { useSupplier } from "../../hooks/useSupplier";
 import { editSupplier } from "@/redux/supplierSlice";
+import { Supplier } from "../../models/supplier.domain.type";
 
 const ListOfSuppliers: React.FC = () => {
   const dispatch = useDispatch();
@@ -27,12 +27,12 @@ const ListOfSuppliers: React.FC = () => {
 
   const handleEditPresentation = (supplier: Supplier) => {
     dispatch(editSupplier(supplier));
-    navigate(`${supplier._id}/editar`);
+    navigate(`${supplier.code}/editar`);
   };
 
   const columns: GridColDef[] = [
     {
-      field: "_id",
+      field: "code",
       headerName: "Codigo",
       flex: 1,
       minWidth: 150,
@@ -43,7 +43,7 @@ const ListOfSuppliers: React.FC = () => {
       ),
     },
     {
-      field: "nombre",
+      field: "name",
       headerName: "Nombre",
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (
@@ -53,7 +53,7 @@ const ListOfSuppliers: React.FC = () => {
       ),
     },
     {
-      field: "direccion",
+      field: "address",
       headerName: "Dirección",
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (
@@ -63,7 +63,7 @@ const ListOfSuppliers: React.FC = () => {
       ),
     },
     {
-      field: "telefono",
+      field: "phone",
       headerName: "Telefono",
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (
@@ -75,6 +75,16 @@ const ListOfSuppliers: React.FC = () => {
     {
       field: "email",
       headerName: "Correo Electronico",
+      flex: 1,
+      renderCell: (params: GridRenderCellParams) => (
+        <div style={{ display: isMobile ? "block" : "inline" }}>
+          {params.value}
+        </div>
+      ),
+    },
+    {
+      field: "nit",
+      headerName: "Nit",
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (
         <div style={{ display: isMobile ? "block" : "inline" }}>
@@ -133,7 +143,7 @@ const ListOfSuppliers: React.FC = () => {
           }}
           onPaginationModelChange={handlePaginationModelChange}
           pageSizeOptions={[paginationModel.pageSize]}
-          getRowId={(row: any) => row._id}
+          getRowId={(row: any) => row.code}
           paginationMode="server"
         />
       )}

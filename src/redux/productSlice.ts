@@ -1,5 +1,5 @@
 // redux/productSlice.ts
-import { Product } from '@/pages/product';
+import { Product } from '@/pages/product/models/product.domain.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // import { Product } from '../models';
 

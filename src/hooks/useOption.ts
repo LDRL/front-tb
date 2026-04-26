@@ -1,9 +1,11 @@
-import {useQuery} from '@tanstack/react-query'
+import {useQuery, useQueryClient} from '@tanstack/react-query'
 import { ApiBrand, ApiResponseBrand } from '@/pages/Brand';
 import { ApiPresentation, ApiResponsePresentation } from '@/pages/Presentation';
 import { ApiCategory, ApiResponseCategory } from '@/pages/Category';
+import { useCallback } from 'react';
+import debounce from 'just-debounce-it';
 
-interface Option{
+export interface Option{
     value: number;
     label: string;
     direction?: string;
@@ -38,21 +40,24 @@ interface ApiProductResponse {
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const useFetchProviderOptions = () => {
-    return useQuery<Option[], Error>({
-        queryKey: ['dropdownProvider'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
-        queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"proveedor/");
+export const useFetchProviderOptions = (search: string) => {
+  return useQuery<Option[], Error>({
+    queryKey: ["dropdownProvider", search],
+    queryFn: async () => {
+      const url = search
+        ? `${apiUrl}proveedor?search=${search}`
+        : `${apiUrl}proveedor/`;
 
-            if(!response.ok){
-                throw new Error('Errr al cargar las opciones')
-            }
+      const response = await fetch(url);
+      const data: ApiProviderResponse = await response.json();
 
-            const data: ApiProviderResponse = await response.json();
-            return ProvidersAdapter(data.data);
-        }
-    });
+      return ProvidersAdapter(data.data);
+    },
+    staleTime: 1000 * 60 * 5,
+  });
 };
+
+
 
 const ProvidersAdapter = (providers: Provider[]): Option[] => {
     return providers.map(provider => ({
@@ -62,27 +67,32 @@ const ProvidersAdapter = (providers: Provider[]): Option[] => {
     }));
 };
 
-//Obtener productos 
-export const useFetchProductOptions = () => {
-    return useQuery<Option[], Error>({
-        queryKey: ['dropdownProduct'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
-        queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"productos/");
+export const useFetchProductOptions = (search: string) => {
+  return useQuery<Option[], Error>({
+    queryKey: ['dropdownProduct', search], // 🔥 IMPORTANTE
+    queryFn: async () => {
+      const url = search
+        ? `${apiUrl}productos?search=${search}`
+        : `${apiUrl}productos/`; // 🔥 default
 
-            if(!response.ok){
-                throw new Error('Errr al cargar las opciones')
-            }
+      const response = await fetch(url);
 
-            const data: ApiProductResponse = await response.json();
-            return ProductsAdapter(data.data);
-        }
-    });
+      if (!response.ok) {
+        throw new Error("Error al cargar productos");
+      }
+
+      const data: ApiProductResponse = await response.json();
+      return ProductsAdapter(data.data);
+    },
+    //enabled: search.length >= 2, // 🔥 evita llamadas innecesarias
+    staleTime: 1000 * 60 * 5, // cache 5 min
+  });
 };
 
 const ProductsAdapter = (products: Product[]): Option[] => {
     return products.map(product => ({
         value: product.codigoprod,
-        label: `${product.nombre} - ${product.Marca.nombre} - ${product.Presentacion.nombre} - ${product.Categoria.nombre}`
+        label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre}  - ${product.Presentacion.nombre}`
     }));
 };
 

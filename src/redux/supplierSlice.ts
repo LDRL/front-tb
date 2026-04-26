@@ -1,4 +1,5 @@
-import { EmptySupplierState, Supplier } from '@/pages/Supplier';
+
+import { EmptySupplierState, Supplier } from '@/pages/Supplier/models/supplier.domain.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const supplierSlice = createSlice({
