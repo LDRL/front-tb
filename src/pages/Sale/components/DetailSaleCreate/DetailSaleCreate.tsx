@@ -3,8 +3,9 @@ import { FormAutocompleteAsync, FormInputNumber } from '@/components';
 import { Box, Button, FormHelperText} from '@mui/material';
 import {Option, useFetchProductOptions } from '@/hooks/useOption';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import "../BuyCreate/BuyCreate.css"
-import { Detail } from '../../models/buy.domain.type';
+//import "../BuyCreate/BuyCreate.css"
+import { Detail } from '../../models/sale.domain.type';
+
 import debounce from 'just-debounce-it';
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
   setErrors: any;
 };
 
-export const DetailCreate: React.FC<Props> = ({
+export const DetailSaleCreate: React.FC<Props> = ({
   control,
   getValues,
   setValue,
@@ -92,7 +93,7 @@ export const DetailCreate: React.FC<Props> = ({
       headerName: '',
       width: 90,
       renderCell: (params: GridRenderCellParams) => (
-        <>{<Button variant='contained' color='error' size='small' onClick={() => deleteRow(params.row)}>X</Button>}</>
+        <>{<Button variant='contained' color='error' size='small' onClick={() => deleteRow(params.row.id)}>X</Button>}</>
       )
     },
     {

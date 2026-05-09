@@ -3,8 +3,9 @@ import { AppStore } from "@/redux/store";
 import { BuyTable } from "./components/BuyTable";
 import { Header } from "./components/Header";
 
+
 export default function Buy(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)    
+    //const sidebarState = useSelector((store: AppStore) => store.sidebar)    
     return(
         <div>
             <div>
@@ -12,12 +13,12 @@ export default function Buy(){
                 <hr />
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px", marginRight: "20px"}}>
+            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
                 <Header /> 
             </div>
             
             {/* 94 */}
-            <div style={{width:  sidebarState.state ? "86vw" : "94vw"}}>
+            <div >
                 <BuyTable />
             </div>
         </div>

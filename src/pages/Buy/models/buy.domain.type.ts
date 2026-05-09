@@ -4,7 +4,7 @@ export interface Detail {
   codProduct: number;
   name?: string;
   subtotal?: number;
-  id?: number;
+  id?: string;
 }
 
 export interface Provider {

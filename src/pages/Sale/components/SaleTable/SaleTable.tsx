@@ -6,7 +6,7 @@ import {useSale } from '../../hooks/useSale';
 import moment from 'moment';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Sale } from '../../models';
+import { Sale } from '../../models/sale.domain.type';
 
 const ListOfSales: React.FC = () => {
     const navigate = useNavigate();
@@ -46,7 +46,7 @@ const ListOfSales: React.FC = () => {
             renderCell: (params: GridRenderCellParams) =>  <>{params.value ? `${params.value.name} ${params.value.lastName}` : 'Sin Proveedor'}</>,
         },
         {
-            field: 'direction',
+            field: 'address',
             headerName: 'Dirección',
             flex: 1,
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,

@@ -1,7 +1,8 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
-import { ApiSale, ApiDetail, Sale, SaleList, Total } from "../models";
 import { SaleAdapter, SaleListAdapter } from "../adapter";
 import { getErrorMessage } from "@/utils/axiosClient";
+import { ApiDetail, ApiSale, CreateSalePayload } from "../models/sale.api.type";
+import { Sale, SaleList, Total } from "../models/sale.domain.type";
 
 export const fetchSaleList = async (url: string, page: number, search: string): Promise<[Error?, SaleList?, Total?]> => {
     const params: { page: number; search?: string } = { page };
@@ -43,36 +44,24 @@ export const fetchSale = async (url: string): Promise<[Error?, Sale?]> => {
 
 
 // CREATE
+/*
 export const fetchSaleCreate = async (url: string, saleN: Sale):  Promise<[Error?, Sale?, any?]> => {
     try {
         const detalles: ApiDetail[] = [];
 
-        if (Array.isArray(saleN.detail) && saleN.detail.length > 0) {
-            saleN.detail.forEach(d => {
+        if (Array.isArray(saleN.details) && saleN.details.length > 0) {
+            saleN.details.forEach(d => {
                 detalles.push({
                     cantidad: d.amount,
                     precio: d.cost,
-                    codigoprod: d.codProduct,
-                    idsucursal: d.idBranch
+                    codigoprod: d.codProduct
                 });
             });
         }
 
-        // export interface ApiClient {
-        //     _id: number;
-        //     nombres:string;
-        //     apellidos:string;
-        //     telefono: string;
-        //     email: string;
-        //     estado: string;
-        //     nit: string;
-        // }
-
-    
-
         const newCliente  = {
             idcliente: saleN.nit,
-            direccion: saleN.direction
+            direccion: saleN.address
         };
 
         const newPago = {
@@ -96,5 +85,18 @@ export const fetchSaleCreate = async (url: string, saleN: Sale):  Promise<[Error
         const message = getErrorMessage(error);
         throw new Error(message);
     }
-};
+};*/
 
+
+export const fetchSaleCreate = async (url: string, payload: CreateSalePayload ): Promise<[Error?, Sale?, any?]> => {
+  try {
+    const response = await axios.post(url, payload);
+    const { data } = response.data;
+    return [undefined, SaleAdapter(data), response];
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return [error, undefined, undefined];
+    }
+    return [new Error("Error de red"), undefined, undefined];
+  }
+};

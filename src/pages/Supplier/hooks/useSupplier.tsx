@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
@@ -17,7 +16,7 @@ export const useFetchProviders = (page: number = 1, search: string) => {
     return useQuery<ApiResponseSupplierList, Error>({
         queryKey: ['providers', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseSupplierList>(`${apiUrl}proveedor/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponseSupplierList>(`${apiUrl}proveedor/?page=${page}&search=${search}`);
             return response.data;   
         }
     });

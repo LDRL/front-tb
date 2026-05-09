@@ -1,12 +1,13 @@
 // redux/productSlice.ts
 import { Product } from '@/pages/product/models/product.domain.type';
+import { ProductForm } from '@/pages/product/models/product.view.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // import { Product } from '../models';
 
 
 interface ProductState {
   open: boolean;
-  currentProduct: Product | null;
+  currentProduct: ProductForm | null;
   search: string;
 }
 

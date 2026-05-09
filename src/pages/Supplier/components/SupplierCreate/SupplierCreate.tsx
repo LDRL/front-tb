@@ -111,7 +111,7 @@ const SupplierCreate: React.FC = () => {
             <FormInputText
               name="address"
               control={control}
-              label="Direccionón"
+              label="Dirección"
               rules={{ required: 'la dirección es requerida' }}
             />
           </div>

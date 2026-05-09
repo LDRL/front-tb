@@ -73,7 +73,7 @@ const ListOfSuppliers: React.FC = () => {
       ),
     },
     {
-      field: "email",
+      field: "mail",
       headerName: "Correo Electronico",
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (

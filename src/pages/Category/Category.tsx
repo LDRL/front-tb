@@ -4,7 +4,7 @@ import { Header } from "./components/Header";
 import { AppStore } from "@/redux/store";
 
 export default function Category(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)
+    //const sidebarState = useSelector((store: AppStore) => store.sidebar)
 
     return(
         <div>
@@ -14,12 +14,12 @@ export default function Category(){
                 <hr />
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px", marginRight: "20px"}}>
+            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
                 <Header /> 
             </div>
             
             {/* 94 */}
-            <div style={{width:  sidebarState.state ? "86vw" : "94vw"}}>
+            <div>
                 <CategoryTable />
             </div>
         </div>

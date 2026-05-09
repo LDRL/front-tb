@@ -1,13 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
-import {ApiSale, SaleList, Sale, ApiHeaderSale, ClientOrden, ApiClient } from "../models";
-import { SaleAdapter, SaleClientAdapter, SaleListAdapter } from '../adapter';
-import { useSelector } from 'react-redux';
+import { mapSaleToCreatePayload, SaleClientAdapter, SaleListAdapter } from '../adapter';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
 import { fetchSaleCreate } from '../services/sale';
-import { getErrorMessage } from '@/utils/axiosClient';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
+import { ApiHeaderSale, ApiSale } from '../models/sale.api.type';
+import { ApiClient } from '@/pages/Client/models/client.api.type';
+import { ClientOrden, Detail, Sale, SaleList } from '../models/sale.domain.type';
+
+import { User } from '@/pages/User';
+import { userKey } from '@/redux/user';
+import { editClient } from '@/redux/clientSlice';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -38,7 +45,7 @@ export const useFetchSales = (page: number = 1, search: string) => {
     return useQuery<ApiResponse, Error>({
         queryKey: ['sales', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}ventas/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponse>(`${apiUrl}ventas/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -89,14 +96,40 @@ export const useSale = (initialPage: number = 1) => {
 // Hook para crear un nuevo producto
 export const useCreateSale = () => {
     const queryClient = useQueryClient();
+    const auth = localStorage.getItem(userKey);
+
+    const usuario: User | null = auth
+    ? JSON.parse(auth).usuario
+    : null;
+
+    const idsucursal = usuario?.idsucursal;
+    const idusuario = usuario?._id;
+
 
     return useMutation<string, Error, Sale>({
         mutationFn: async (newSale) => {
 
-            const [error, nuevaOrden] = await fetchSaleCreate(`${apiUrl}ventas`,newSale);
+            if (!idsucursal) throw new Error("No sucursal");
+            if (!idusuario) throw new Error("No usuario");
 
-            if (error){
-                throw new Error('Error al vender el producto');
+            const payload = mapSaleToCreatePayload(
+                newSale,
+                Number(idusuario),
+                idsucursal
+            );
+
+            //const [error, nuevaOrden] = await fetchSaleCreate(`${apiUrl}ventas`,newSale);
+
+
+            const [error, nuevaOrden] = await fetchSaleCreate(
+                `${apiUrl}ventas`,
+                payload
+            );
+
+            console.log(error);
+
+            if (error) {
+                throw error;
             }
 
             if (!nuevaOrden) {
@@ -115,7 +148,7 @@ export const useShowSale = (id:string) => {
     return useQuery<ApiResponseHeader, AxiosError>({
         queryKey: ['showSale',id],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseHeader>(`${apiUrl}ventas/${id}/`);
+            const response = await axiosClient.get<ApiResponseHeader>(`${apiUrl}ventas/${id}/`);
             return response.data;   
         }
     });
@@ -126,7 +159,7 @@ export const useFetchClient = (nit: string) => {
     return useQuery<ApiResponseClient, AxiosError>({
         queryKey: ['sales', nit],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseClient>(`${apiUrl}clientes?search=${nit}`);
+            const response = await axiosClient.get<ApiResponseClient>(`${apiUrl}clientes?search=${nit}`);
             return response.data;   
         },
         enabled: !!nit,
@@ -138,18 +171,47 @@ export const useFetchClient = (nit: string) => {
 
 //hook para buscar cliente por nit
 export const useClientSearch = () => {
-    const search = useSelector((state:any) => state.sale.nit);
-    const [client, setClient] = useState<ClientOrden>();
+    const dispatch = useDispatch();
+
+    const search = useSelector(
+      (state:any) => state.client.searchNit
+    );
+
+    const [client, setClient] = useState<ClientOrden | null>(null);
+
     const { data, error, isLoading } = useFetchClient(search);
 
     useEffect(() => {
-        if(data){
-            const adaptedSales = SaleClientAdapter(data?.data?.[0] ?? null);
-            setClient(adaptedSales || "");
-        }
-    }, [data]);
 
-    const errorMessage = error ?  getErrorMessage(error) : null;
+        if (!data) return;
+
+        // No existe cliente
+        if (data.data.length === 0) {
+            setClient(null);
+
+            // 👇 limpiar redux
+            dispatch(editClient(null));
+
+            return;
+        }
+
+        // Cliente encontrado
+        const adaptedClient = SaleClientAdapter(
+            data.data[0]
+        );
+
+        // estado local
+        setClient(adaptedClient);
+
+        // 👇 ACTUALIZA REDUX
+        dispatch(editClient(adaptedClient));
+
+    }, [data, dispatch]);
+
+    const errorMessage = error
+      ? getErrorMessage(error)
+      : null;
+
     return {
         client,
         isLoading,
@@ -159,6 +221,34 @@ export const useClientSearch = () => {
 
 
 
+//Detail
+export const useSaleDetails = () => {
+  const [rows, setRows] = useState<Detail[]>([]);
+  const [total, setTotal] = useState(0);
 
+  const calculateTotal = (rows: Detail[]) => {
+    const total = rows.reduce((acc, r) => acc + (r.subtotal ?? 0), 0);
+    setTotal(total);
+  };
 
+  const addRow = (detail: Detail) => {
+    setRows(prev => {
+      const updated = [
+        ...prev,
+        { ...detail, id: uuidv4() } // 👈 ID único real
+      ];
+      calculateTotal(updated);
+      return updated;
+    });
+  };
 
+  const deleteRow = (id: string) => {
+    setRows(prev => {
+      const updated = prev.filter(r => r.id !== id);
+      calculateTotal(updated);
+      return updated;
+    });
+  };
+
+  return { rows, total, addRow, deleteRow };
+};

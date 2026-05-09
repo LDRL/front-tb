@@ -1,9 +1,8 @@
-import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {useQuery} from '@tanstack/react-query'
 import { ApiBrand, ApiResponseBrand } from '@/pages/Brand';
 import { ApiPresentation, ApiResponsePresentation } from '@/pages/Presentation';
 import { ApiCategory, ApiResponseCategory } from '@/pages/Category';
-import { useCallback } from 'react';
-import debounce from 'just-debounce-it';
+
 
 export interface Option{
     value: number;
@@ -117,6 +116,27 @@ interface ApiUnitResponse{
 }
 
 
+// Type Client
+
+interface ApiTypeClient {
+    idtipoCli: number;
+    nombre: string;
+    estado: string | null;
+}
+
+interface ApiTypeClientResponse{
+    msg: string;
+    data: ApiTypeClient[];
+    meta: {
+        total: number;
+        currentPage: number;
+        limit: number;
+        totalPages: number;
+    };
+    ok:boolean;
+}
+
+
 export const useFetchOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownOptions'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
@@ -205,5 +225,29 @@ const UnitsAdapter = (presentaciones: ApiUnit[]): Option[] => {
     return presentaciones.map(presentacion => ({
         value: presentacion._id,
         label: presentacion.nombre,
+    }));
+};
+
+
+export const useFetchTypeClientsOptions = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['dropdownUnit'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
+        queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
+            const response = await fetch(apiUrl+"tipocliente/");
+
+            if(!response.ok){
+                throw new Error('Error al cargar las opciones')
+            }
+
+            const data: ApiTypeClientResponse = await response.json();
+            return TypeClientsAdapter(data.data);
+        }
+    });
+};
+
+const TypeClientsAdapter = (tipos: ApiTypeClient[]): Option[] => {
+    return tipos.map(tipo => ({
+        value: tipo.idtipoCli,
+        label: tipo.nombre,
     }));
 };

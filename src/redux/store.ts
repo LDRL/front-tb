@@ -13,16 +13,15 @@ import userSlice from './userSlice';
 import supplierSlice from './supplierSlice';
 
 
-
 import { CategoryState } from '@/pages/Category';
 import { BrandState } from '@/pages/Brand';
 import { PresentationState } from '@/pages/Presentation';
-import { Client, SaleState } from '@/pages/Sale';
 import { UserState } from '@/pages/User';
 import { AuthState } from '@/modules/auth/models/login.type';
-import { SupplierState } from '@/pages/Supplier';
-import { Product } from '@/pages/product/models/product.domain.type';
 import { ProductForm } from '@/pages/product/models/product.view.type';
+import { Client } from '@/pages/Client/models/client.domain.type';
+import { SaleState } from '@/pages/Sale/models/sale.domain.type';
+import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
 
 
 interface sidebarInfo {
@@ -37,12 +36,10 @@ interface ProductState {
 
 // Todo mover en un futruo
 interface ClientState {
-    currentClient: Client | null;
-    search: string;
-    nit: string;
-    fullName: string;
+  currentClient: Client | null;
+  search: string;
+  searchNit: string;
 }
-
 
 export interface AppStore {
   sidebar: sidebarInfo

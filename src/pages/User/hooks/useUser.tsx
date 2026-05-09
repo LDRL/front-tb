@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiResponse, User, UserList } from '@/pages/User';
-import { getErrorMessage } from '@/utils/axiosClient';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -12,7 +11,7 @@ export const useFetchUsers = (page: number = 1, search: string) => {
     return useQuery<ApiResponse, Error>({
         queryKey: ['users', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}usuarios/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponse>(`${apiUrl}usuarios/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -65,15 +64,12 @@ export const useGetUser = (UserId: string) => {
     return useQuery<User, Error>({
         queryKey: ['user', UserId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<User>(`${apiUrl}usuarios/${UserId}/`);
-
+            const response = await axiosClient.get<User>(`${apiUrl}usuarios/${UserId}/`);
             if (response.status !== 200) {
                 throw new Error('Error al cargar la presentación');
             }
-
             return response.data;
-
-         },
+        },
     });
 };
 
@@ -96,7 +92,7 @@ export const useCreateUser = () => {
 
             //const response = await axios.post<{ message: string, presentacion: Apiuser }>(`${apiUrl}usuarios/`, user);
 
-            const response = await axios.post<{ message: string, usuario: User }>(`${apiUrl}usuarios/`, user);
+            const response = await axiosClient.post<{ message: string, usuario: User }>(`${apiUrl}usuarios/`, user);
 
             if (response.status !== 201) {
                 throw new Error('Error al crear usuario');
@@ -133,7 +129,7 @@ export const useUpdateUser = () => {
                 user.password = updatedUser.password;
             }
 
-            const response = await axios.put<{ message: string, body: User }>(`${apiUrl}usuarios/${updatedUser.codigoemp}/`, user);
+            const response = await axiosClient.put<{ message: string, body: User }>(`${apiUrl}usuarios/${updatedUser.codigoemp}/`, user);
 
             if (response.status !== 200) {
                 throw new Error('Error al actualizar el usuario');

@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { PresentationAdapter, PresentationListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PresentationList, ApiResponsePresentation, Presentation, ApiPresentation, CreateOrUpdatePresentationResponse } from '../models';
-import { getErrorMessage } from '@/utils/axiosClient';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -13,7 +12,7 @@ export const useFetchPresentations = (page: number = 1, search: string) => {
     return useQuery<ApiResponsePresentation, Error>({
         queryKey: ['presentations', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponsePresentation>(`${apiUrl}Presentaciones/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponsePresentation>(`${apiUrl}Presentaciones/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -66,7 +65,7 @@ export const useGetPresentation = (presentationId: string) => {
     return useQuery<Presentation, Error>({
         queryKey: ['presentation', presentationId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<{ data: ApiPresentation }>(`${apiUrl}presentaciones/${presentationId}/`);
+            const response = await axiosClient.get<{ data: ApiPresentation }>(`${apiUrl}presentaciones/${presentationId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar la presentación');
@@ -88,7 +87,7 @@ export const useCreatePresentation = () => {
                 nombre: newPresentation.name,
             };
 
-            const response = await axios.post<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/`, presentation);
+            const response = await axiosClient.post<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/`, presentation);
 
             if (response.status !== 201) {
                 throw new Error('Error al crear la presentación');
@@ -116,7 +115,7 @@ export const useUpdatePresentation = () => {
                 nombre: updatedPresentation.name,
             };
 
-            const response = await axios.put<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/${updatedPresentation.id}/`, presentation);
+            const response = await axiosClient.put<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/${updatedPresentation.id}/`, presentation);
 
             if (response.status !== 200) {
                 throw new Error('Error al actualizar la presentación');

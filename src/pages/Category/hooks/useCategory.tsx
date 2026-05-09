@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { CategoryAdapter, CategoryListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CategoryList, ApiResponseCategory, Category, ApiCategory } from '../models';
-import { getErrorMessage } from '@/utils/axiosClient';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -14,7 +13,7 @@ export const useFetchCategories = (page: number = 1, search: string) => {
     return useQuery<ApiResponseCategory, Error>({
         queryKey: ['categories', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseCategory>(`${apiUrl}categorias/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponseCategory>(`${apiUrl}categorias/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -65,7 +64,7 @@ export const useGetCategory = (categoryId: string) => {
     return useQuery<Category, Error>({
         queryKey: ['category', categoryId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<{ data: ApiCategory }>(`${apiUrl}categorias/${categoryId}/`);
+            const response = await axiosClient.get<{ data: ApiCategory }>(`${apiUrl}categorias/${categoryId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar el producto');
@@ -87,7 +86,7 @@ export const useCreateCategory = () => {
                 nombre: newCategory.name,
             };
 
-            const response = await axios.post<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/`, category);
+            const response = await axiosClient.post<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/`, category);
 
             if (response.status !== 201) {
                 throw new Error('Error al crear la categoria');
@@ -115,7 +114,7 @@ export const useUpdateCategory = () => {
                 nombre: updatedCategory.name,
             };
 
-            const response = await axios.put<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/${updatedCategory.id}/`, category);
+            const response = await axiosClient.put<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/${updatedCategory.id}/`, category);
 
             /*const response = await axios.put<UpdateCategoryResponse>(
                 `${apiUrl}categorias/${updatedCategory.id}/`,

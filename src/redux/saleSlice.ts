@@ -1,4 +1,5 @@
-import { Sale, EmptySaleState } from '@/pages/Sale';
+
+import { EmptySaleState, Sale } from '@/pages/Sale/models/sale.domain.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const saleSlice = createSlice({
@@ -13,14 +14,11 @@ const saleSlice = createSlice({
     },
     setSearchSale: (state, action: PayloadAction<string>) => {
       state.search = action.payload;
-    },
-    setSearchNit: (state, action: PayloadAction<string>) => {
-      state.nit = action.payload;
-    },
+    }
   },
 });
 
-export const { editSale, clearSale,setSearchSale, setSearchNit } = saleSlice.actions;
+export const { editSale, clearSale,setSearchSale } = saleSlice.actions;
 
 export default saleSlice.reducer;
 

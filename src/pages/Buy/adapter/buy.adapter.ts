@@ -37,6 +37,11 @@ export function BuyListAdapter(apiBuyList: ApiBuy[]): Buy[] {
     return apiBuyList.map(BuyAdapter);
 }
 
+export const toDecimal = (value: number | string, decimals = 2) => {
+  const factor = Math.pow(10, decimals);
+  return Math.round(Number(value) * factor) / factor;
+};
+
 export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
     return {
         header: {
@@ -50,7 +55,7 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
         details: (buy.Detalles ?? []).map((d) => ({
             id: d._id,
             amount: d.cantidad,
-            cost: Number(d.costo),
+            cost: d.costo,
             product: d.Producto?.nombre ?? "",
         })),
     };

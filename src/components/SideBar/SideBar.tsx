@@ -60,7 +60,7 @@ const Sidebar = () => {
           <ArrowForwardIosIcon />
         </span>
         <div
-          className={classNames(styles.container, {
+          className={classNames(styles.container_sidebar, {
             [styles.container_open]: sidebarState.state,
             [styles.container_close]: !sidebarState.state
           })}

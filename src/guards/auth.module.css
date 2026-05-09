@@ -21,4 +21,7 @@
 
 .custom_padding_flex {
   padding-left: 2rem; 
+  padding-right: 2rem; 
+  box-sizing: border-box;
+  width: 100%;
 }

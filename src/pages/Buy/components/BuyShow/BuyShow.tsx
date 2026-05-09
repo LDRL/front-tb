@@ -24,6 +24,8 @@ function BuyShow() {
   const { data, isLoading, isError } = id ? useShowBuy(id) : { data: null, isLoading: false, isError: false };
   const adaptedData = data ? HeaderBuyAdapter(data.data):null;
 
+  console.log(adaptedData);
+
   const { control, reset} = useForm<HeaderH>({
     defaultValues: { id: '', date: dayjs(), address: '', providerId: 0, providerName: '' }
   });
@@ -32,10 +34,10 @@ function BuyShow() {
 
   const columns: GridColDef[] = [
     {
-        field: 'id',
-        headerName: 'Codigo',
+        field: 'product',
+        headerName: 'Producto',
         flex: 1,
-        minWidth: 150,
+        minWidth: 400,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
     },
     {
@@ -47,12 +49,6 @@ function BuyShow() {
     {
         field: 'cost',
         headerName: 'Precio',
-        flex: 1,
-        renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
-    },
-    {
-        field: 'product',
-        headerName: 'Producto',
         flex: 1,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
     }

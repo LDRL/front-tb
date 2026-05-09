@@ -1,6 +1,4 @@
 import { BrowserRouter, Navigate, Route } from 'react-router-dom'
-// import './App.css'
-
 import { PrivateRoutes, PublicRoutes } from './models'
 import { AuthGuard } from './guards'
 import { RoutesWithNotFound } from './utils'
@@ -9,6 +7,8 @@ import { Provider } from 'react-redux'
 import { store } from './redux/store.ts'
 import { ToastContainer } from 'react-toastify'
 import Loading from './components/Loading.tsx'
+
+import "./App.css";
 
 const Login = lazy(() => import('./pages/Login/Login'))
 const Private = lazy(() => import('./pages/Private/Private'))

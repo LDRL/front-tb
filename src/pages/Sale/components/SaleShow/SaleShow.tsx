@@ -10,8 +10,9 @@ import { FormDate, FormInputText } from "@/components";
 
 import { useForm } from 'react-hook-form';
 import dayjs from "dayjs";
-import { HeaderSale } from "../../models";
-import { HeadeSaleAdapter } from "../../adapter";
+
+import { HeaderS } from "../../models/sale.view.type";
+import { HeaderSaleAdapter } from "../../adapter";
 
 const override: CSSProperties = {
   display: "block",
@@ -23,10 +24,10 @@ function BuyShow() {
   const navigate = useNavigate();
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const { data, isLoading, isError } = id ? useShowSale(id) : { data: null, isLoading: false, isError: false };
-  const adaptedData = data ? HeadeSaleAdapter(data.orden):null;
+  const adaptedData = data ? HeaderSaleAdapter(data.orden):null;
 
-  const { control, reset, getValues} = useForm<HeaderSale>({
-    defaultValues: { _id: 0, date: dayjs(), direction: '', total:0 }
+  const { control, reset, getValues} = useForm<HeaderS>({
+    defaultValues: { id:0, date: dayjs(), address: '', total:0 }
   });
 
   const [total, setTotal] = useState(0);
@@ -62,11 +63,10 @@ function BuyShow() {
   ];
 
   useEffect(() => {
-    if (adaptedData?._id) {
-      reset(adaptedData);
-      setTotal(getValues('total'));
+    if (adaptedData?.header.id) {
+      reset(adaptedData.header);
     }
-  }, [adaptedData?._id]);
+  }, [adaptedData?.header.id]);
   
   if (isError) {
     return (
@@ -110,7 +110,7 @@ function BuyShow() {
           <div className='section'>
           <div className='container_selector'>
               <FormInputText
-                name="_id"
+                name="id"
                 control={control}
                 label="Numero de venta"
                 disabled
@@ -124,7 +124,7 @@ function BuyShow() {
             </div>
 
             <FormInputText
-              name="client.fullName"
+              name="name"
               control={control}
               label="Cliente"
               disabled
@@ -134,7 +134,7 @@ function BuyShow() {
 
             <div className='section'>
             <FormInputText
-              name="direction"
+              name="address"
               control={control}
               label="Direccion"
               disabled

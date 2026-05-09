@@ -1,8 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
-
-import { BuyAdapter, BuyListAdapter, mapBuyToCreatePayload } from '../adapter';
+import { BuyListAdapter, mapBuyToCreatePayload } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
@@ -11,7 +10,7 @@ import { User } from '@/pages/User';
 import { userKey } from '@/redux/user';
 import { ApiBuy, ApiHeaderBuy } from '../models/buy.api.type';
 import { Buy, BuyList, Detail } from '../models/buy.domain.type';
-import { ApiBuyResponse } from '../models/buy.response.type';
+import axiosClient from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -37,7 +36,7 @@ export const useFetchBuys = (page: number = 1, search: string) => {
     return useQuery<ApiResponse, Error>({
         queryKey: ['buys', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponse>(`${apiUrl}compras/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponse>(`${apiUrl}compras/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -136,7 +135,8 @@ export const useShowBuy = (id:string) => {
     return useQuery<ApiResponseHeader, Error>({
         queryKey: ['showBuy',id],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseHeader>(`${apiUrl}compras/${id}/`);
+            const response = await axiosClient.get<ApiResponseHeader>(`${apiUrl}compras/${id}/`);
+            console.log(response.data);
             return response.data;   
         }
     });
@@ -154,13 +154,16 @@ export const useBuyDetails = () => {
 
   const addRow = (detail: Detail) => {
     setRows(prev => {
-      const updated = [...prev, { ...detail, id: prev.length }];
+      const updated = [
+        ...prev,
+        { ...detail, id: uuidv4() } // 👈 ID único real
+      ];
       calculateTotal(updated);
       return updated;
     });
   };
 
-  const deleteRow = (id: number) => {
+  const deleteRow = (id: string) => {
     setRows(prev => {
       const updated = prev.filter(r => r.id !== id);
       calculateTotal(updated);

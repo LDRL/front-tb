@@ -63,7 +63,7 @@
 
 
 /* Estilos base */
-.container {
+.container_sidebar {
   color: #fff; /* Asigna el valor de color del tema */
   background: #272727; /* Asigna el valor de fondo del tema */
   position: fixed;
@@ -80,12 +80,12 @@
   width: 220px;
 } */
 
-.container::-webkit-scrollbar {
+.container_sidebar::-webkit-scrollbar {
   width: 6px;
   border-radius: 10px;
 }
 
-.container::-webkit-scrollbar-thumb {
+.container_sidebar::-webkit-scrollbar-thumb {
   /* background-color: var(--scrollbar-color); Asigna el valor de color de la barra de desplazamiento del tema */
   background-color: #434343;
   border-radius: 10px;

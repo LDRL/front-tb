@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { AppStore } from "@/redux/store";
 
 export default function Productt(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)
+    //const sidebarState = useSelector((store: AppStore) => store.sidebar)
     
     return(
         <div>
@@ -18,10 +18,9 @@ export default function Productt(){
             </div>
             
 
-            <div style={{width:  sidebarState.state ? "84vw" : "92vw"}}>
+            <div>
                 <ProductTable />
             </div>
         </div>
-
     )
 }

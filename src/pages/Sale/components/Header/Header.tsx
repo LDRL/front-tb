@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import "./Header.css"
 import { setSearchSale } from '@/redux/saleSlice';
-import { Sale } from '../../models';
+
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();

@@ -1,70 +1,83 @@
-import { FormInputText } from "@/components";
+import { FormDropdown, FormInputText } from "@/components";
 import CardForm from "@/components/Cards/CardForm";
 import LoadMask from '@/components/LoadMask/LoadMask';
 import { Box, Button } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { Client } from "../../models";
 import { dialogCloseSubject$ } from "@/components/CustomDialog/CustomDialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { ToastContainer, toast } from 'react-toastify'; 
+import { toast } from 'react-toastify';
 import { createClient } from "../../services/client";
 import { useDispatch } from "react-redux";
-import { setFullNameClient, setNitClient } from "@/redux/clientSlice";
+import { editClient } from "@/redux/clientSlice";
+import { ClientForm } from "@/pages/Client/models/client.domain.type";
+import { useFetchTypeClientsOptions } from "@/hooks/useOption";
+import { CreateClientPayload } from "@/pages/Client/models/client.api.type";
 
 const ClientCreate: React.FC = () => {
-    const queryClient = useQueryClient();
     const dispatch = useDispatch();
-    const { control, handleSubmit} = useForm<Client>({
-    defaultValues: { id: 0, name: '', lastName: '', email:'', telphone:''},
+
+    const { control, handleSubmit } = useForm<ClientForm>({
+        defaultValues: {
+            name: '',
+            lastName: '',
+            address: '',
+            email: '',
+            telphone: '',
+            nit: '',
+            idTypeCli: 0
+        },
     });
 
     const [loading, setLoading] = useState(false);
+    const {data: typeCliOptions, isLoading: isTypeCliLoading, isError: isTypeCliError} =   useFetchTypeClientsOptions();
+    
 
     const mutation = useMutation({
-        mutationFn: (data: Client) => createClient(data),
-        onSuccess() {
-            toast.success("Cliente creado exitosamente");
-        },
+        mutationFn: (data: ClientForm) => createClient(data),
         onError: (error: any) => {
-            console.log(error);
-            if (error.response && error.response.data) {
+            if (error.response?.data) {
                 toast.error(error.response.data.error || "Error desconocido");
             } else {
                 toast.error(error.message || "Error desconocido");
             }
         },
-    })
+    });
 
     const handleExit = () => {
         dialogCloseSubject$.setSubject = false;
     };
 
-    const onSubmit = async (data: Client) => {
-        const fullName = `${data.name} ${data.lastName}`
-    
+    const onSubmit = async (data: ClientForm) => {
         setLoading(true);
+
         mutation.mutate(data, {
-            onSuccess: () => {
-                setLoading(false)
-                dispatch(setNitClient(data.nit));
-                dispatch(setFullNameClient(fullName));
+            onSuccess: (response) => {
+                setLoading(false);
+
+                const createdClient = response;
+
+                toast.success("Cliente creado exitosamente");
+
+                // 🔥 SOLO UN DISPATCH
+                dispatch(editClient(createdClient));
+
                 dialogCloseSubject$.setSubject = false;
+            },
+            onSettled: () => {
+                setLoading(false);
             }
         });
     };
 
     return (
         <div className="container">
-            <CardForm
-                titulo="Cliente"
-                subtitulo="Nuevo"
-            >
+            <CardForm titulo="Cliente" subtitulo="Nuevo">
                 <LoadMask />
                 <Box
                     component="form"
                     onSubmit={handleSubmit(onSubmit)}
-                    sx={{marginLeft:3}}
+                    sx={{ marginLeft: 3 }}
                     autoComplete="off"
                 >
                     <div className='section'>
@@ -72,7 +85,7 @@ const ClientCreate: React.FC = () => {
                             name="nit"
                             control={control}
                             label="Nit"
-                            rules={{ required: 'Nit es un campo requerido' }}
+                            rules={{ required: 'Nit es requerido' }}
                         />
                     </div>
 
@@ -81,7 +94,7 @@ const ClientCreate: React.FC = () => {
                             name="name"
                             control={control}
                             label="Nombres"
-                            rules={{ required: 'Nombres es un campo requerido' }}
+                            rules={{ required: 'Nombres es requerido' }}
                         />
                     </div>
 
@@ -90,7 +103,16 @@ const ClientCreate: React.FC = () => {
                             name="lastName"
                             control={control}
                             label="Apellidos"
-                            rules={{ required: 'Apellidos es un campo requerido' }}
+                            rules={{ required: 'Apellidos es requerido' }}
+                        />
+                    </div>
+
+                    <div className='section'>
+                        <FormInputText
+                            name="address"
+                            control={control}
+                            label="Dirección"
+                            rules={{ required: 'dirección es requerido' }}
                         />
                     </div>
 
@@ -98,7 +120,7 @@ const ClientCreate: React.FC = () => {
                         <FormInputText
                             name="email"
                             control={control}
-                            label="Correo electronico"
+                            label="Correo electrónico"
                         />
                     </div>
 
@@ -106,7 +128,17 @@ const ClientCreate: React.FC = () => {
                         <FormInputText
                             name="telphone"
                             control={control}
-                            label="Telefono"
+                            label="Teléfono"
+                        />
+                    </div>
+
+                    <div className="section">
+                        <FormDropdown
+                            name="idTypeCli"
+                            control={control}                            
+                            label="Tipo de cliente"
+                            rules={{ required: 'Tipo cliente un campo requerido' }}
+                            options={typeCliOptions || []}
                         />
                     </div>
 
@@ -116,10 +148,10 @@ const ClientCreate: React.FC = () => {
                             type="submit"
                             sx={{ mt: 2 }}
                             disabled={mutation.isPending}
-                        // disabled={createSaleMutation.isPending}
                         >
                             Guardar
                         </Button>
+
                         <Button
                             variant="contained"
                             type="button"
@@ -133,7 +165,7 @@ const ClientCreate: React.FC = () => {
                 </Box>
             </CardForm>
         </div>
-    ) 
-}
+    );
+};
 
 export default ClientCreate;

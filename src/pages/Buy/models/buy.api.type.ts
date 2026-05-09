@@ -2,7 +2,6 @@ export interface ApiDetail {
     cantidad: number,
     costo: number,
     codigoprod: number,
-    idsucursal: number
     nombre?: string,
 }
 
