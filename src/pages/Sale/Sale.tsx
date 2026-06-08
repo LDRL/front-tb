@@ -3,7 +3,6 @@ import { AppStore } from "@/redux/store";
 import { SaleTable } from "./components/SaleTable";
 import { Header } from "./components/Header";
 
-
 export default function Sale(){
     const sidebarState = useSelector((store: AppStore) => store.sidebar)
     

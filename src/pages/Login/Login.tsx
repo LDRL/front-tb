@@ -1,7 +1,7 @@
 import { FormInputText } from "@/components";
 import { PrivateRoutes } from "@/models";
 import { createSidebar } from "@/redux/sidebar";
-import { login} from "@/redux/user";
+import { login} from "@/redux/authSlice";
 
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux"
@@ -10,9 +10,10 @@ import './Login.css'
 import LoadMask from "@/components/LoadMask/LoadMask";
 import { Box, Button } from "@mui/material";
 import { useLoginMutation } from "@/modules/auth/hooks/useLogin";
-import { LoginData } from "@/modules/auth/models/login.type";
 
 import { toast } from 'react-toastify';
+import { getErrorMessage } from "@/utils/axiosClient";
+import { LoginData } from "@/modules/auth/models/login.request.type";
 
 
 export default function Login() {
@@ -27,22 +28,18 @@ export default function Login() {
 
   const onSubmit = async (data: LoginData) => {
     try {
-      const res = await mutationLogin.mutateAsync(data);
-      dispatch(login({
-        token: res.data.token,
-        usuario: res.data.usuario
-      }));      
+      const auth = await mutationLogin.mutateAsync(data);
+      console.log(auth);
+      dispatch(login(auth));     
       dispatch(createSidebar({state: false}))
 
       // Redirigir a ruta privada
       navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
 
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error || "Error desconocido");
-      } else {
-        toast.error(error.message || "Error desconocido");
-      }
+    } catch (error: unknown) {
+      toast.error(
+        getErrorMessage(error)
+      );
     }
   };
   

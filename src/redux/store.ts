@@ -1,7 +1,7 @@
 // redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
 
-import authSliceReducer  from './user';
+import authSlice  from './authSlice';
 import productSliceReducer from './productSlice';
 import sidebarSlice  from './sidebar';
 import categorySlice from './categorySlice';
@@ -17,11 +17,11 @@ import { CategoryState } from '@/pages/Category';
 import { BrandState } from '@/pages/Brand';
 import { PresentationState } from '@/pages/Presentation';
 import { UserState } from '@/pages/User';
-import { AuthState } from '@/modules/auth/models/login.type';
 import { ProductForm } from '@/pages/product/models/product.view.type';
 import { Client } from '@/pages/Client/models/client.domain.type';
 import { SaleState } from '@/pages/Sale/models/sale.domain.type';
 import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
+import { AuthState } from '@/modules/auth/models/login.domain.type';
 
 
 interface sidebarInfo {
@@ -56,7 +56,7 @@ export interface AppStore {
 
 export const store = configureStore<AppStore>({
   reducer: {
-    auth : authSliceReducer,
+    auth : authSlice,
     sidebar: sidebarSlice,
     category: categorySlice,
     brand: brandSlice,

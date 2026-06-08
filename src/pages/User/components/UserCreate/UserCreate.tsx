@@ -7,8 +7,7 @@ import { FormInputText } from '@/components';
 import { Box, Button} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
-import { User } from '../../models';
-import { PrivateRoutes, PublicRoutes } from '@/models';
+import { PrivateRoutes } from '@/models';
 import { useCreateUser, useGetUser, useUpdateUser } from '../../hooks/useUser';
 import { clearUser, editUser } from '@/redux/userSlice';
 import { toast } from 'react-toastify';
@@ -17,6 +16,7 @@ import { toast } from 'react-toastify';
 
 import "./UserCreate.css"
 import Loading from '@/components/Loading';
+import { UserApi } from '../../models/user.api.type';
 
 const UserCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -27,7 +27,7 @@ const UserCreate: React.FC = () => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: RootState) => state.user);
 
-  const { control, handleSubmit, reset} = useForm<User>({
+  const { control, handleSubmit, reset} = useForm<UserApi>({
     defaultValues: { _id: "", nombre: ''},
   });
 
@@ -59,7 +59,7 @@ const UserCreate: React.FC = () => {
   }, [currentUser, reset]);
 
 
-  const onSubmit = async (data: User) => {
+  const onSubmit = async (data: UserApi) => {
     setLoading(true);
     try {
       if (currentUser) {

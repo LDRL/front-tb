@@ -1,4 +1,5 @@
-import { EmptyUserState, User } from '@/pages/User';
+
+import { EmptyUserState, User } from '@/pages/User/models/user.domain.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({

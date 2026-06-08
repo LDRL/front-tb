@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { userKey } from '@/redux/user';
+import { userKey } from '@/redux/authSlice';
 
 const axiosClient = axios.create({
   baseURL: '/api', // tu base URL del backend

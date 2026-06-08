@@ -68,14 +68,11 @@ export const useGetSupplier = (supplierId: string) => {
     return useQuery<Supplier, Error>({
         queryKey: ['provieder', supplierId], // Clave de consulta
         queryFn: async () => {
-      
-
             const response = await axiosClient.get<{ data: ApiSupplier }>(`${apiUrl}proveedor/${supplierId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar el producto');
             }
-            console.log(response.data);
             return mapApiToSupplier(response.data.data);
         },
     });

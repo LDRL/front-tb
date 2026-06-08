@@ -8,8 +8,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import styles from "./auth.module.css"
 
 export const AuthGuard = () => {
-    const userState = useSelector((store: AppStore) => store.auth);    
-    if (!userState.usuario?._id) {
+    const userState = useSelector((store: AppStore) => store.auth);
+    
+    if (!userState.user?.id) {
     return <Navigate replace to={`/${PublicRoutes.LOGIN}`} />;
   }
 

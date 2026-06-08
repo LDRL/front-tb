@@ -1,5 +1,5 @@
 import { PublicRoutes } from "@/models";
-import { logout, userKey } from "@/redux/user"
+import { logout, userKey } from "@/redux/authSlice"
 import { clearLocalStorage } from "@/utils/localStorage.utility"
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";

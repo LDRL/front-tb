@@ -2,16 +2,19 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiResponse, User, UserList } from '@/pages/User';
+
 import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
+import { UserApiResponseList } from '../models/user.response.type';
+import { UserApi } from '../models/user.api.type';
+import { UserList } from '../models/user.view.type';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export const useFetchUsers = (page: number = 1, search: string) => {
-    return useQuery<ApiResponse, Error>({
+    return useQuery<UserApiResponseList, Error>({
         queryKey: ['users', page, search],
         queryFn: async () => {
-            const response = await axiosClient.get<ApiResponse>(`${apiUrl}usuarios/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<UserApiResponseList>(`${apiUrl}usuarios/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -38,8 +41,8 @@ export const useUser = (initialPage: number = 1) => {
         if(data){
             //const adaptedProducts = data ? userListAdapter(data.presentacion) : []; // Todo cambiar a data cuando en la api mande data en ves de usuarios
             //setUsers(adaptedProducts || []);
-            setUsers(data.usuarios || []);
-            setTotal(data?.total || 0);
+            setUsers(data.data || []);
+            setTotal(data?.meta.total || 0);
         }
     }, [data, search]);
 
@@ -61,10 +64,10 @@ export const useUser = (initialPage: number = 1) => {
 
 // Hook for get an user for id
 export const useGetUser = (UserId: string) => {
-    return useQuery<User, Error>({
+    return useQuery<UserApi, Error>({
         queryKey: ['user', UserId], // Clave de consulta
         queryFn: async () => {
-            const response = await axiosClient.get<User>(`${apiUrl}usuarios/${UserId}/`);
+            const response = await axiosClient.get<UserApi>(`${apiUrl}usuarios/${UserId}/`);
             if (response.status !== 200) {
                 throw new Error('Error al cargar la presentación');
             }
@@ -78,7 +81,7 @@ export const useGetUser = (UserId: string) => {
 export const useCreateUser = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<User, unknown, User>({
+    return useMutation<UserApi, unknown, UserApi>({
         mutationFn: async (newUser) => {
             const user = {
                 nombre: newUser.nombre,
@@ -92,7 +95,7 @@ export const useCreateUser = () => {
 
             //const response = await axios.post<{ message: string, presentacion: Apiuser }>(`${apiUrl}usuarios/`, user);
 
-            const response = await axiosClient.post<{ message: string, usuario: User }>(`${apiUrl}usuarios/`, user);
+            const response = await axiosClient.post<{ message: string, usuario: UserApi }>(`${apiUrl}usuarios/`, user);
 
             if (response.status !== 201) {
                 throw new Error('Error al crear usuario');
@@ -114,9 +117,10 @@ export const useCreateUser = () => {
 export const useUpdateUser = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<User, Error, User>({
+    return useMutation<UserApi, Error, UserApi>({
         mutationFn: async (updatedUser) => {
-            const user: Partial<User> = {
+            console.log(updatedUser);
+            const user: Partial<UserApi> = {
                 nombre: updatedUser.nombre,
                 apellido: updatedUser.apellido,
                 username: updatedUser.username,
@@ -129,7 +133,7 @@ export const useUpdateUser = () => {
                 user.password = updatedUser.password;
             }
 
-            const response = await axiosClient.put<{ message: string, body: User }>(`${apiUrl}usuarios/${updatedUser.codigoemp}/`, user);
+            const response = await axiosClient.put<{ message: string, body: UserApi }>(`${apiUrl}usuarios/${updatedUser._id}/`, user);
 
             if (response.status !== 200) {
                 throw new Error('Error al actualizar el usuario');

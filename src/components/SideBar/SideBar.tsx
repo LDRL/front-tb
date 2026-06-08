@@ -9,6 +9,7 @@ import { LinksArray } from '@/utils';
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { createSidebar, updateSidebar } from '@/redux/sidebar';
+import { hasPermission } from '@/modules/auth/helper/auth.helper';
 
 export interface SidebarInterface {
   state: boolean;
@@ -18,8 +19,15 @@ export interface SidebarInterface {
 const Sidebar = () => {
 
   const sidebarState = useSelector((store: AppStore) => store.sidebar)
+  const user = useSelector((state: AppStore) => state.auth.user);
   const dispatch = useDispatch();
 
+  //Para saber que permisos tiene el usario logueado
+  const filteredLinks = LinksArray.filter((item) => {
+    if (!item.permission) return true;
+
+    return hasPermission(user, item.permission);
+  });
 
   const [subnav, setSubnav] = useState(false);
 
@@ -79,7 +87,7 @@ const Sidebar = () => {
             </h2>
           </div>
 
-          {LinksArray.map(({ icon, label, to, subNav, iconOpened, iconClosed }) => (
+          {filteredLinks.map(({ icon, label, to, subNav, iconOpened, iconClosed }) => (
             <li className={styles.LinkLi} key={label}>
               <div
                 className={classNames(styles.LinkContainer, {

@@ -7,6 +7,7 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
 import PersonIcon from '@mui/icons-material/Person';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 export const DesplegableUser = [
   {
@@ -55,59 +56,69 @@ export const LinksArray = [
     icon: <HomeIcon />,
     to: "/private/dashboard",
     path: "/private/dashboard",
+    permission:null
   },
   {
     label: "Producto",
     icon: <ProductionQuantityLimitsIcon />,
     to: "/private/product",
     path: "/private/product",
+    permission: PERMISSIONS.PRODUCTS.READ
   },
   {
     label: "Categorias",
     icon: <CategoryIcon />,
     to: "/private/category",
     path: "/private/category",
+    permission: PERMISSIONS.CATEGORIES.READ
   },
   {
     label: "Marcas",
     icon: <ProductionQuantityLimitsIcon />,
     to: "/private/brand",
     path: "/private/brand",
+    permission: PERMISSIONS.BRANDS.READ
   },
   {
     label: "Presentaciones",
     icon: <HomeRepairServiceIcon />,
     to: "/private/presentation",
     path: "/private/presentation",
+    permission: PERMISSIONS.PRESENTATIONS.READ
   },
   {
     label: "Ventas",
     icon: <PointOfSaleIcon />,
     to: "/private/sale",
     path: "/private/sale",
+    permission: PERMISSIONS.SALES.READ
   },
   {
     label: "Compras",
     icon: <ShoppingBagIcon />,
     to: "/private/buy",
     path: "/private/buy",
+    permission: PERMISSIONS.PURCHASES.READ
   },
   {
     label: "Usuarios",
     icon: <PersonIcon />,
     to: "/private/user",
     path: "/private/user",
+    permission: PERMISSIONS.USERS.READ
   },
   {
     label: "Proveedores",
     icon: <PersonIcon />,
     to: "/private/proveedor",
     path: "/private/proveedor",
+    permission: PERMISSIONS.PROVIDERS.READ
   },
   {
     label: "Reportes",
     icon: <SummarizeIcon/>,
     to: "/reportes",
+    permission:null
   },
  
 ];

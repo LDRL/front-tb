@@ -6,11 +6,11 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
 import { fetchBuyCreate } from '../services/buy';
-import { User } from '@/pages/User';
-import { userKey } from '@/redux/user';
+import { userKey } from '@/redux/authSlice';
 import { ApiBuy, ApiHeaderBuy } from '../models/buy.api.type';
 import { Buy, BuyList, Detail } from '../models/buy.domain.type';
 import axiosClient from '@/utils/axiosClient';
+import { AuthUser } from '@/modules/auth/models/login.domain.type';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -90,12 +90,12 @@ export const useCreateBuy = () => {
     //const auth = localStorage.getItem('usuario');
     const auth = localStorage.getItem(userKey);
 
-    const usuario: User | null = auth
+    const usuario: AuthUser | null = auth
     ? JSON.parse(auth).usuario
     : null;
 
-    const idsucursal = usuario?.idsucursal;
-    const idusuario = usuario?._id;
+    const idsucursal = usuario?.branchId;
+    const idusuario = usuario?.id;
 
 
     return useMutation<Buy, Error | unknown, Buy>({
@@ -136,7 +136,6 @@ export const useShowBuy = (id:string) => {
         queryKey: ['showBuy',id],
         queryFn: async () => {
             const response = await axiosClient.get<ApiResponseHeader>(`${apiUrl}compras/${id}/`);
-            console.log(response.data);
             return response.data;   
         }
     });

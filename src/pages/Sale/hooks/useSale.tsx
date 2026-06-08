@@ -12,9 +12,10 @@ import { ApiHeaderSale, ApiSale } from '../models/sale.api.type';
 import { ApiClient } from '@/pages/Client/models/client.api.type';
 import { ClientOrden, Detail, Sale, SaleList } from '../models/sale.domain.type';
 
-import { User } from '@/pages/User';
-import { userKey } from '@/redux/user';
+
+import { userKey } from '@/redux/authSlice';
 import { editClient } from '@/redux/clientSlice';
+import { AuthUser } from '@/modules/auth/models/login.domain.type';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -98,13 +99,12 @@ export const useCreateSale = () => {
     const queryClient = useQueryClient();
     const auth = localStorage.getItem(userKey);
 
-    const usuario: User | null = auth
+    const usuario: AuthUser | null = auth
     ? JSON.parse(auth).usuario
     : null;
 
-    const idsucursal = usuario?.idsucursal;
-    const idusuario = usuario?._id;
-
+    const idsucursal = usuario?.branchId;
+    const idusuario = usuario?.id;
 
     return useMutation<string, Error, Sale>({
         mutationFn: async (newSale) => {
@@ -118,15 +118,10 @@ export const useCreateSale = () => {
                 idsucursal
             );
 
-            //const [error, nuevaOrden] = await fetchSaleCreate(`${apiUrl}ventas`,newSale);
-
-
             const [error, nuevaOrden] = await fetchSaleCreate(
                 `${apiUrl}ventas`,
                 payload
             );
-
-            console.log(error);
 
             if (error) {
                 throw error;

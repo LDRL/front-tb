@@ -11,6 +11,8 @@ import { BuyCreate, BuyShow } from '../Buy'
 import { SaleCreate, SaleShow } from '../Sale'
 import { UserCreate } from '../User'
 import { SupplierCreate } from '../Supplier'
+import { PermissionGuard } from '@/guards/permission.guard'
+import { PERMISSIONS } from '@/modules/auth/helper/permissions'
 
 const Dashboard = lazy(() => import('./Dashboard/Dashboard'))
 const Home = lazy(() => import('./Home/Home'))
@@ -50,7 +52,11 @@ function Private() {
         <Route path = {PrivateRoutes.BUY_CREATE} element={<BuyCreate />} />
         <Route path = {PrivateRoutes.BUY_SHOW} element={<BuyShow />} />
 
-        <Route path = {PrivateRoutes.SALE} element={<Sale />} />
+        <Route path = {PrivateRoutes.SALE} 
+          element={ <PermissionGuard permission={PERMISSIONS.SALES.CREATE}>
+            <SaleCreate />
+          </PermissionGuard> } 
+        />
         <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />
         <Route path = {PrivateRoutes.SALE_SHOW} element={<SaleShow />} />
 
