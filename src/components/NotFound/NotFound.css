@@ -1,0 +1,29 @@
+.not-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.not-found__content {
+  text-align: center;
+}
+
+.not-found__code {
+  font-size: 8rem;
+  font-weight: 700;
+  color: #1976d2;
+  margin: 0;
+  line-height: 1;
+}
+
+.not-found__title {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 1rem 0 0.5rem;
+}
+
+.not-found__text {
+  color: #666;
+  margin: 0;
+}

@@ -1,16 +1,17 @@
 import { Route, Routes } from 'react-router-dom'
+import { NotFound } from '@/components'
 
 interface Props {
     children: JSX.Element[] | JSX.Element;
 }
 
-function RoutersWitNotFound({children}: Props) {
+function RoutesWithNotFound({children}: Props) {
   return (
     <Routes>
         {children}
-        <Route path="*" element={<div> Not found</div>}/>
+        <Route path="*" element={<NotFound />}/>
     </Routes>
   )
 }
 
-export default RoutersWitNotFound
+export default RoutesWithNotFound

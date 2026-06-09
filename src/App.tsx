@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import Loading from './components/Loading.tsx'
 
 import "./App.css";
+import { NotFound } from './components/index.ts'
 
 const Login = lazy(() => import('./pages/Login/Login'))
 const Private = lazy(() => import('./pages/Private/Private'))
@@ -22,7 +23,7 @@ function App() {
         <BrowserRouter>
           <RoutesWithNotFound>
             <Route path="/" element={<Navigate to ={PrivateRoutes.PRIVATE} />} />
-            <Route path="*" element={<>Not found</>}/>
+            <Route path="*" element={<NotFound />}/>
             <Route path={PublicRoutes.LOGIN} element={<Login />} />
             <Route element={<AuthGuard />}>
               <Route path={`${PrivateRoutes.PRIVATE}/*`} element={<Private />} />

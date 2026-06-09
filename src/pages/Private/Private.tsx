@@ -1,83 +1,44 @@
-import { PrivateRoutes } from '@/models'
-import React, { lazy } from 'react'
+import { Suspense } from 'react'
 import { Navigate, Route } from 'react-router-dom'
 import { RoutesWithNotFound } from '@/utils'
-import { ProductCreate } from '../product'
-import { CategoryCreate } from '../Category'
-// import CategoryCreate from '../Category/components/CategoryCreate/CategoryCreate'
-import BrandCreate from '../Brand/components/BrandCreate/BrandCreate';
-import { PresentationCreate } from '../Presentation'
-import { BuyCreate, BuyShow } from '../Buy'
-import { SaleCreate, SaleShow } from '../Sale'
-import { UserCreate } from '../User'
-import { SupplierCreate } from '../Supplier'
-import { ClientCreate } from '../Client'
+import { PrivateRoutes } from '@/models'
 import { PermissionGuard } from '@/guards/permission.guard'
-import { PERMISSIONS } from '@/modules/auth/helper/permissions'
-
-const Dashboard = lazy(() => import('./Dashboard/Dashboard'))
-const Home = lazy(() => import('./Home/Home'))
-const Category = lazy(()=> import('../Category/Category'))
-const Product = lazy(()=> import('../product/Product'))
-const Brand = lazy(() => import('../Brand/Brand'))
-const Presentation = lazy(() => import('../Presentation/Presentation'))
-const Buy = lazy(() => import('../Buy/Buy'))
-const Sale = lazy(() => import('../Sale/Sale'))
-const User = lazy(() => import('../User/User'))
-const Supplier = lazy(() => import('../Supplier/Supplier'))
-const Client = lazy(() => import('../Client/Client'))
-
+import { publicRoutes, protectedRoutes } from './routes.config'
+import Loading from '@/components/Loading'
 
 function Private() {
   return (
     <RoutesWithNotFound>
-        <Route path = "/" element={<Navigate to={PrivateRoutes.DASHBOARD} />} />
-        <Route path ={PrivateRoutes.DASHBOARD} element={<Dashboard />} />
-        <Route path ={PrivateRoutes.HOME} element={<Home />} />
-        <Route path = {PrivateRoutes.PRODUCT} element={<Product />} />
-        <Route path = {PrivateRoutes.PRODUCT_CREATE} element={<ProductCreate />} />
-        <Route path = {PrivateRoutes.PRODUCT_EDIT} element={<ProductCreate />} />
+      <>
+        <Route path="/" element={<Navigate to={PrivateRoutes.DASHBOARD} />} />
 
-        <Route path = {PrivateRoutes.CATEGORY} element={<Category />} />
-        <Route path = {PrivateRoutes.CATEGORY_CREATE} element={<CategoryCreate />} />
-        <Route path = {PrivateRoutes.CATEGORY_EDIT} element={<CategoryCreate />} />
+        {publicRoutes.map(({ path, Component }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <Suspense fallback={<Loading loading />}>
+                <Component />
+              </Suspense>
+            }
+          />
+        ))}
 
-        <Route path = {PrivateRoutes.BRAND} element={<Brand />} />
-        <Route path = {PrivateRoutes.BRAND_CREATE} element={<BrandCreate />} />
-        <Route path = {PrivateRoutes.BRAND_EDIT} element={<BrandCreate />} />
-
-        <Route path = {PrivateRoutes.PRESENTATION} element={<Presentation />} />
-        <Route path = {PrivateRoutes.PRESENTATION_CREATE} element={<PresentationCreate />} />
-        <Route path = {PrivateRoutes.PRESENTATION_EDIT} element={<PresentationCreate />} />
-
-        <Route path = {PrivateRoutes.BUY} element={<Buy />} />
-        <Route path = {PrivateRoutes.BUY_CREATE} element={<BuyCreate />} />
-        <Route path = {PrivateRoutes.BUY_SHOW} element={<BuyShow />} />
-
-        <Route path = {PrivateRoutes.SALE} 
-          element={ <PermissionGuard permission={PERMISSIONS.SALES.READ}>
-            <Sale />
-          </PermissionGuard> } 
-        />
-
-       
-        <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />
-        <Route path = {PrivateRoutes.SALE_SHOW} element={<SaleShow />} />
-
-        <Route path = {PrivateRoutes.USER} element={<User />} />
-        <Route path = {PrivateRoutes.USER_CREATE} element={<UserCreate />} />
-        <Route path = {PrivateRoutes.USER_EDIT} element={<UserCreate />} />
-
-        <Route path = {PrivateRoutes.SUPPLIER} element={<Supplier />} />
-        <Route path = {PrivateRoutes.SUPPLIER_CREATE} element={<SupplierCreate />} />
-        <Route path = {PrivateRoutes.SUPPLIER_EDIT} element={<SupplierCreate />} />
-
-        <Route path = {PrivateRoutes.CLIENT} element={<Client />} />
-        <Route path = {PrivateRoutes.CLIENT_CREATE} element={<ClientCreate />} />
-        <Route path = {PrivateRoutes.CLIENT_EDIT} element={<ClientCreate />} />
-
+        {protectedRoutes.map(({ path, Component, permission }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <PermissionGuard permission={permission!}>
+                <Suspense fallback={<Loading loading />}>
+                  <Component />
+                </Suspense>
+              </PermissionGuard>
+            }
+          />
+        ))}
+      </>
     </RoutesWithNotFound>
-    
   )
 }
 
