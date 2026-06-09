@@ -7,6 +7,8 @@ import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 import { UserApiResponseList } from '../models/user.response.type';
 import { UserApi } from '../models/user.api.type';
 import { UserList } from '../models/user.view.type';
+import { AuthUser } from '@/modules/auth/models/login.domain.type';
+import { userKey } from '@/redux/authSlice';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -80,9 +82,18 @@ export const useGetUser = (UserId: string) => {
 // Hook for create new user
 export const useCreateUser = () => {
     const queryClient = useQueryClient();
+    const auth = localStorage.getItem(userKey);
+    const usuario: AuthUser | null = auth
+        ? JSON.parse(auth).user
+        : null;
+    
+    const idsucursal = usuario?.branchId;
 
     return useMutation<UserApi, unknown, UserApi>({
         mutationFn: async (newUser) => {
+
+            if (!idsucursal) throw new Error("No sucursal");
+
             const user = {
                 nombre: newUser.nombre,
                 apellido: newUser.apellido,
@@ -90,7 +101,10 @@ export const useCreateUser = () => {
                 email: newUser.email,
                 password: newUser.password,
                 imagen: "ruta_imagen",
-                estado: 1
+                estado: 1,
+                idsucursal: idsucursal,
+                codigoemp: newUser.codigoemp,
+                roles: newUser.roles ? newUser.roles : []
             };
 
             //const response = await axios.post<{ message: string, presentacion: Apiuser }>(`${apiUrl}usuarios/`, user);
@@ -126,7 +140,8 @@ export const useUpdateUser = () => {
                 username: updatedUser.username,
                 email: updatedUser.email,
                 imagen: "update_ruta_imagen",
-                estado: 1
+                estado: 1,
+                roles: updatedUser.roles ? updatedUser.roles : []
             };
 
             if (updatedUser.password) {

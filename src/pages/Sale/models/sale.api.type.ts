@@ -1,4 +1,4 @@
-import { ApiClient, ApiClientPost } from "@/pages/Client/models/client.api.type";
+import { ApiClient } from "@/pages/Client/models";
 
 export interface ApiDetail {
     cantidad: number,

@@ -1,4 +1,4 @@
-import { Client } from "@/pages/Client/models/client.domain.type";
+import { Client } from "@/pages/Client/models";
 
 export interface Detail{
     amount: number,
@@ -22,14 +22,6 @@ export interface Sale {
     
     client: Client;
     details: Detail[];
-
-    //
-    //amount?: number,
-    //cost?: number, 
-    //codProduct?: number, 
-    //name?: string,
-    //subtotal?: number,
-    //nit?: string,
 }
 
 
@@ -75,7 +67,6 @@ export interface Pay {
 export type SaleList = Sale[];
 
 export type Total = number;
-export type ClientOrden = Client;
 
 
 /// Slice 

@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import { SaleAdapter, SaleListAdapter } from "../adapter";
-import { getErrorMessage } from "@/utils/axiosClient";
-import { ApiDetail, ApiSale, CreateSalePayload } from "../models/sale.api.type";
+import axiosClient, { getErrorMessage } from "@/utils/axiosClient";
+import { ApiSale, CreateSalePayload } from "../models/sale.api.type";
 import { Sale, SaleList, Total } from "../models/sale.domain.type";
 
 export const fetchSaleList = async (url: string, page: number, search: string): Promise<[Error?, SaleList?, Total?]> => {
@@ -13,7 +13,7 @@ export const fetchSaleList = async (url: string, page: number, search: string): 
     };
     
     try {
-        const response: AxiosResponse<{ ordenes: ApiSale[], total: number }> = await axios.get(url, config);
+        const response: AxiosResponse<{ ordenes: ApiSale[], total: number }> = await axiosClient.get(url, config);
 
         if (response.statusText !== 'OK') return [new Error(`Error fetching sales: ${response.statusText}`)];
 
@@ -29,7 +29,7 @@ export const fetchSaleList = async (url: string, page: number, search: string): 
 
 export const fetchSale = async (url: string): Promise<[Error?, Sale?]> => {    
     try {
-        const response: AxiosResponse<{ data: ApiSale }> = await axios.get(url);
+        const response: AxiosResponse<{ data: ApiSale }> = await axiosClient.get(url);
         
         if (response.statusText !== 'OK') return [new Error(`Error fetching sales: ${response.statusText}`)];
 
@@ -90,7 +90,7 @@ export const fetchSaleCreate = async (url: string, saleN: Sale):  Promise<[Error
 
 export const fetchSaleCreate = async (url: string, payload: CreateSalePayload ): Promise<[Error?, Sale?, any?]> => {
   try {
-    const response = await axios.post(url, payload);
+    const response = await axiosClient.post(url, payload);
     const { data } = response.data;
     return [undefined, SaleAdapter(data), response];
   } catch (error: any) {

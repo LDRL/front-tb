@@ -82,8 +82,6 @@ export const useBuy = (initialPage: number = 1) => {
     };
 };
 
-
-
 // Hook para crear un nuevo producto
 export const useCreateBuy = () => {
     const queryClient = useQueryClient();
@@ -91,7 +89,7 @@ export const useCreateBuy = () => {
     const auth = localStorage.getItem(userKey);
 
     const usuario: AuthUser | null = auth
-    ? JSON.parse(auth).usuario
+    ? JSON.parse(auth).user
     : null;
 
     const idsucursal = usuario?.branchId;

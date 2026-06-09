@@ -2,6 +2,7 @@ import {useQuery} from '@tanstack/react-query'
 import { ApiBrand, ApiResponseBrand } from '@/pages/Brand';
 import { ApiPresentation, ApiResponsePresentation } from '@/pages/Presentation';
 import { ApiCategory, ApiResponseCategory } from '@/pages/Category';
+import axiosClient from '@/utils/axiosClient';
 
 
 export interface Option{
@@ -47,10 +48,8 @@ export const useFetchProviderOptions = (search: string) => {
         ? `${apiUrl}proveedor?search=${search}`
         : `${apiUrl}proveedor/`;
 
-      const response = await fetch(url);
-      const data: ApiProviderResponse = await response.json();
-
-      return ProvidersAdapter(data.data);
+      const response = await axiosClient.get<ApiProviderResponse>(url);
+      return ProvidersAdapter(response.data.data);
     },
     staleTime: 1000 * 60 * 5,
   });
@@ -74,14 +73,8 @@ export const useFetchProductOptions = (search: string) => {
         ? `${apiUrl}productos?search=${search}`
         : `${apiUrl}productos/`; // 🔥 default
 
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error("Error al cargar productos");
-      }
-
-      const data: ApiProductResponse = await response.json();
-      return ProductsAdapter(data.data);
+      const response = await axiosClient.get<ApiProductResponse>(url);
+      return ProductsAdapter(response.data.data);
     },
     //enabled: search.length >= 2, // 🔥 evita llamadas innecesarias
     staleTime: 1000 * 60 * 5, // cache 5 min
@@ -141,13 +134,8 @@ export const useFetchOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownOptions'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"categorias/");
-            if(!response.ok){
-                throw new Error('Errr al cargar las opciones')
-            }
-
-            const data: ApiResponseCategory = await response.json();
-            return categoriasAdapter(data.data);
+            const response = await axiosClient.get<ApiResponseCategory>(apiUrl+"categorias/");
+            return categoriasAdapter(response.data.data);
         }
     });
 };
@@ -163,13 +151,8 @@ export const useFetchMarcaOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownMarca'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"marcas/");
-            if(!response.ok){
-                throw new Error('Errr al cargar las opciones')
-            }
-
-            const data: ApiResponseBrand = await response.json();
-            return MarcasAdapter(data.data);
+            const response = await axiosClient.get<ApiResponseBrand>(apiUrl+"marcas/");
+            return MarcasAdapter(response.data.data);
         }
     });
 };
@@ -185,14 +168,8 @@ export const useFetchPresentacionOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownPresentacion'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"presentaciones/");
-
-            if(!response.ok){
-                throw new Error('Errr al cargar las opciones')
-            }
-
-            const data: ApiResponsePresentation= await response.json();
-            return PresentacionesAdapter(data.data);
+            const response = await axiosClient.get<ApiResponsePresentation>(apiUrl+"presentaciones/");
+            return PresentacionesAdapter(response.data.data);
         }
     });
 };
@@ -209,14 +186,8 @@ export const useFetchUnitOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownUnit'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"unidades/");
-
-            if(!response.ok){
-                throw new Error('Errr al cargar las opciones')
-            }
-
-            const data: ApiUnitResponse = await response.json();
-            return UnitsAdapter(data.data);
+            const response = await axiosClient.get<ApiUnitResponse>(apiUrl+"unidades/");
+            return UnitsAdapter(response.data.data);
         }
     });
 };
@@ -229,18 +200,43 @@ const UnitsAdapter = (presentaciones: ApiUnit[]): Option[] => {
 };
 
 
+// Role
+
+interface ApiRole {
+    _id: number;
+    nombrerol: string;
+    estado: string | null;
+}
+
+interface ApiRoleResponse {
+    msg: string;
+    data: ApiRole[];
+    ok: boolean;
+}
+
+export const useFetchRoleOptions = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['dropdownRole'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiRoleResponse>(`${apiUrl}roles/`);
+            return RolesAdapter(response.data.data);
+        },
+    });
+};
+
+const RolesAdapter = (roles: ApiRole[]): Option[] => {
+    return roles.map(role => ({
+        value: role._id,
+        label: role.nombrerol,
+    }));
+};
+
 export const useFetchTypeClientsOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownUnit'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await fetch(apiUrl+"tipocliente/");
-
-            if(!response.ok){
-                throw new Error('Error al cargar las opciones')
-            }
-
-            const data: ApiTypeClientResponse = await response.json();
-            return TypeClientsAdapter(data.data);
+            const response = await axiosClient.get<ApiTypeClientResponse>(apiUrl+"tipocliente/");
+            return TypeClientsAdapter(response.data.data);
         }
     });
 };

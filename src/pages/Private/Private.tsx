@@ -11,6 +11,7 @@ import { BuyCreate, BuyShow } from '../Buy'
 import { SaleCreate, SaleShow } from '../Sale'
 import { UserCreate } from '../User'
 import { SupplierCreate } from '../Supplier'
+import { ClientCreate } from '../Client'
 import { PermissionGuard } from '@/guards/permission.guard'
 import { PERMISSIONS } from '@/modules/auth/helper/permissions'
 
@@ -24,6 +25,7 @@ const Buy = lazy(() => import('../Buy/Buy'))
 const Sale = lazy(() => import('../Sale/Sale'))
 const User = lazy(() => import('../User/User'))
 const Supplier = lazy(() => import('../Supplier/Supplier'))
+const Client = lazy(() => import('../Client/Client'))
 
 
 function Private() {
@@ -53,10 +55,12 @@ function Private() {
         <Route path = {PrivateRoutes.BUY_SHOW} element={<BuyShow />} />
 
         <Route path = {PrivateRoutes.SALE} 
-          element={ <PermissionGuard permission={PERMISSIONS.SALES.CREATE}>
-            <SaleCreate />
+          element={ <PermissionGuard permission={PERMISSIONS.SALES.READ}>
+            <Sale />
           </PermissionGuard> } 
         />
+
+       
         <Route path = {PrivateRoutes.SALE_CREATE} element={<SaleCreate />} />
         <Route path = {PrivateRoutes.SALE_SHOW} element={<SaleShow />} />
 
@@ -68,6 +72,9 @@ function Private() {
         <Route path = {PrivateRoutes.SUPPLIER_CREATE} element={<SupplierCreate />} />
         <Route path = {PrivateRoutes.SUPPLIER_EDIT} element={<SupplierCreate />} />
 
+        <Route path = {PrivateRoutes.CLIENT} element={<Client />} />
+        <Route path = {PrivateRoutes.CLIENT_CREATE} element={<ClientCreate />} />
+        <Route path = {PrivateRoutes.CLIENT_EDIT} element={<ClientCreate />} />
 
     </RoutesWithNotFound>
     

@@ -1,39 +1,28 @@
-//Para cliente
+export interface ApiTipoClie {
+    idtipoCli: number;
+    nombre: string;
+    estado: boolean;
+}
+
 export interface ApiClient {
     _id: number;
-    nombres:string;
-    apellidos:string;
+    nit: string;
+    nombres: string;
+    apellidos: string;
+    direccion: string;
+    email: string;
     telefono: string;
-    email: string;
-    estado: string;
-    nit: string;
-    direccion: string;
-}
-
-export interface ApiClientPost {
-    idcliente?: string;
-    direccion: string;
-}
-
-export interface ClientForm {
-    name: string;
-    lastName: string;
-    telphone: string;
-    email: string;
-    state: string;
-    fullName?: string;
-    nit: string;
-    address: string;
-    idTypeCli: number;
+    estado: number;
+    idtipoCli: number;
+    tipoClie: ApiTipoClie;
 }
 
 export interface CreateClientPayload {
-    nombres:string;
-    apellidos:string;
-    telefono: string;
-    email: string;
-    estado: string;
     nit: string;
+    nombres: string;
+    apellidos: string;
     direccion: string;
-    idTipoCli: number;
+    email: string;
+    telefono: string;
+    idtipoCli: number | string;
 }

@@ -31,7 +31,9 @@ export const PrivateRoutes = {
 
     SUPPLIER: 'proveedor',
     SUPPLIER_CREATE:'proveedor/create',
-    SUPPLIER_EDIT:'proveedor/:id/editar'
+    SUPPLIER_EDIT:'proveedor/:id/editar',
 
-    
+    CLIENT: 'client',
+    CLIENT_CREATE:'client/create',
+    CLIENT_EDIT:'client/:id/editar'
 }

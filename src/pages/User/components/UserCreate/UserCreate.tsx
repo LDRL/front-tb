@@ -3,7 +3,7 @@ import CardForm from '../../../../components/Cards/CardForm'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadMask from '@/components/LoadMask/LoadMask';
-import { FormInputText } from '@/components';
+import { FormAutocompleteAsync, FormInputText } from '@/components';
 import { Box, Button} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
@@ -16,18 +16,23 @@ import { toast } from 'react-toastify';
 
 import "./UserCreate.css"
 import Loading from '@/components/Loading';
-import { UserApi } from '../../models/user.api.type';
+import { UserApi, UserForm } from '../../models/user.api.type';
+
+import { Option, useFetchRoleOptions } from '@/hooks/useOption';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 const UserCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
+
+  const { data: roleOptions = [], isLoading: isRoleLoading } = useFetchRoleOptions();
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: RootState) => state.user);
 
-  const { control, handleSubmit, reset} = useForm<UserApi>({
+  const { control, handleSubmit, reset} = useForm<UserForm>({
     defaultValues: { _id: "", nombre: ''},
   });
 
@@ -59,23 +64,26 @@ const UserCreate: React.FC = () => {
   }, [currentUser, reset]);
 
 
-  const onSubmit = async (data: UserApi) => {
+  const onSubmit = async (data: UserForm) => {
     setLoading(true);
     try {
+      const payload = {
+      ...data,
+      roles: data.rol
+        ? [data.rol]
+        : []
+    };
+
       if (currentUser) {
-        await updateUserMutation.mutateAsync(data);
+        await updateUserMutation.mutateAsync(payload);
         toast.success("Usuario actualizado exitosamente");
       } else { // Create a new User
-        await createUserMutation.mutateAsync(data);
+        await createUserMutation.mutateAsync(payload);
         toast.success("Usuario creado exitosamente")
       }
       navigate(`/private/${PrivateRoutes.USER}`, {replace:true})
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.error || "Error desconocido");
-      } else {
-        toast.error(error.message || "Error desconocido");
-      }
+      toast.error(getErrorMessage(error));
     }
     finally {
       setLoading(false); // Desactiva el loader
@@ -114,26 +122,33 @@ const UserCreate: React.FC = () => {
               label="Apellido"
               rules={{ required: 'El apellido es requerido' }}
             />
-            </div>
-            <div className='section'>
-
+          </div>
+          <div className='section'>
             <FormInputText
               name="username"
               control={control}
               label="Usuario"
               rules={{ required: 'El usuario es requerido' }}
             />
-            </div>
-            <div className='section'>
-                        <FormInputText
+          </div>
+          <div className='section'>
+            <FormInputText
+              name="codigoemp"
+              control={control}
+              label="Código Empleado"
+              rules={{ required: 'El código de empleado es requerido' }}
+            />
+          </div>
+          <div className='section'>
+            <FormInputText
               name="email"
               control={control}
               label="Correo Electronico"
               rules={{ required: 'El correo electronico es requerido' }}
             />
-            </div>
-            <div className='section'>
-                        <FormInputText
+          </div>
+          <div className='section'>
+            <FormInputText
               name="password"
               control={control}
               label="Contraseña"
@@ -142,6 +157,17 @@ const UserCreate: React.FC = () => {
             />
           </div>
 
+          <div className='section'>
+            <FormAutocompleteAsync
+              name="rol"
+              control={control}
+              label="Rol"
+              options={roleOptions}
+              isLoading={isRoleLoading}
+              getOptionLabel={(opt) => opt.label}
+              getOptionValue={(opt) => opt.value}
+            />
+          </div>
 
           <div className='container_button'>
             <Button

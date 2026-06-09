@@ -7,6 +7,7 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
 import PersonIcon from '@mui/icons-material/Person';
+import GroupIcon from '@mui/icons-material/Group';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 export const DesplegableUser = [
@@ -113,6 +114,13 @@ export const LinksArray = [
     to: "/private/proveedor",
     path: "/private/proveedor",
     permission: PERMISSIONS.PROVIDERS.READ
+  },
+  {
+    label: "Clientes",
+    icon: <GroupIcon />,
+    to: "/private/client",
+    path: "/private/client",
+    permission: PERMISSIONS.CLIENTS.READ
   },
   {
     label: "Reportes",

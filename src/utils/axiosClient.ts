@@ -29,12 +29,13 @@ export const getErrorMessage = (error: unknown): string => {
     const axiosError = error as AxiosError<any>;
 
     const data = axiosError.response?.data;
+   
 
-    if (data?.error) {
-      if (Array.isArray(data.error)) {
-        return data.error.map((err: any) => err.msg).join(", ");
+    if (data?.errors) {
+      if (Array.isArray(data.errors)) {
+        return data.errors.map((err: any) => err.msg).join(", ");
       }
-      return data.error;
+      return data.errors;
     }
 
     if (data?.message) {

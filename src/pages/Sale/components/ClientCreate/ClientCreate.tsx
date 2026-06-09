@@ -10,9 +10,8 @@ import { toast } from 'react-toastify';
 import { createClient } from "../../services/client";
 import { useDispatch } from "react-redux";
 import { editClient } from "@/redux/clientSlice";
-import { ClientForm } from "@/pages/Client/models/client.domain.type";
+import { ClientForm } from "@/pages/Client/models";
 import { useFetchTypeClientsOptions } from "@/hooks/useOption";
-import { CreateClientPayload } from "@/pages/Client/models/client.api.type";
 
 const ClientCreate: React.FC = () => {
     const dispatch = useDispatch();
@@ -25,7 +24,7 @@ const ClientCreate: React.FC = () => {
             email: '',
             telphone: '',
             nit: '',
-            idTypeCli: 0
+            idTypeCli: ''
         },
     });
 

@@ -1,9 +1,20 @@
 import dayjs from "dayjs";
 import { ApiDetail, ApiHeaderSale, ApiSale, CreateSalePayload } from "../models/sale.api.type";
-import { ApiClient } from "@/pages/Client/models/client.api.type";
 import { Detail, Sale } from "../models/sale.domain.type";
 import { HeaderSale } from "../models/sale.view.type";
-import { Client } from "@/pages/Client/models/client.domain.type";
+import { ClientAdapter } from "@/pages/Client/adapter";
+import { Client } from "@/pages/Client/models";
+
+const defaultClient = (): Client => ({
+    id: 0,
+    nit: "",
+    name: "",
+    lastName: "",
+    direccion: "",
+    email: "",
+    telefono: "",
+    estado: 1,
+});
 
 export const SaleAdapter = (sale: ApiSale): Sale => {
     return{
@@ -15,18 +26,7 @@ export const SaleAdapter = (sale: ApiSale): Sale => {
         idUser: sale.idusuario,
         idSucursal: sale.idsucursal,
         total: sale.total,
-        client:sale.Cliente ? {
-            id: sale.Cliente._id,
-            name: sale.Cliente.nombres,
-            lastName: sale.Cliente.apellidos,
-            telphone: sale.Cliente.telefono,
-            email: sale.Cliente.email,
-            state: sale.Cliente.estado,
-            nit: sale.Cliente.nit,
-            address: sale.Cliente.direccion
-            
-        }: {id: 0, name: '', lastName: '', telphone: '', email: '', state: '', nit:'', address: ''},
-        // state: sale.estado,
+        client: sale.Cliente ? ClientAdapter(sale.Cliente) : defaultClient(),
 
         details: sale.detalles && sale.detalles.length > 0
         ? sale.detalles.map((d: ApiDetail): Detail => ({
@@ -69,21 +69,6 @@ export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
             paymentDate: dayjs(sale.Pago.fecha_pago),
             
         }: {_id: 0, amount:0, idOrden:0, idPaymentType:0, paymentDate:dayjs()},
-    }
-}
-
-
-//Todo cambiar a adapter Client
-export const SaleClientAdapter = (client: ApiClient): Client => {
-    return{
-        id: client._id,
-        name: client.nombres,
-        lastName: client.apellidos,
-        telphone: client.telefono,
-        email: client.email,
-        state: client.estado,
-        nit: client.nit,
-        address: client.direccion
     }
 }
 

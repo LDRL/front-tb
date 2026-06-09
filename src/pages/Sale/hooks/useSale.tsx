@@ -2,17 +2,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-import { mapSaleToCreatePayload, SaleClientAdapter, SaleListAdapter } from '../adapter';
+import { mapSaleToCreatePayload, SaleListAdapter } from '../adapter';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
 import { fetchSaleCreate } from '../services/sale';
 import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 import { ApiHeaderSale, ApiSale } from '../models/sale.api.type';
-import { ApiClient } from '@/pages/Client/models/client.api.type';
-import { ClientOrden, Detail, Sale, SaleList } from '../models/sale.domain.type';
+import { ApiResponseClient, Client } from '@/pages/Client/models';
+import { Detail, Sale, SaleList } from '../models/sale.domain.type';
 
 
+import { ClientAdapter } from '@/pages/Client/adapter';
 import { userKey } from '@/redux/authSlice';
 import { editClient } from '@/redux/clientSlice';
 import { AuthUser } from '@/modules/auth/models/login.domain.type';
@@ -35,11 +36,6 @@ interface ApiResponseHeader {
     orden: ApiHeaderSale;
 }
 
-interface ApiResponseClient {
-    message: string;
-    data: ApiClient[];
-    ok: boolean;
-}
 // Hook para obtener la lista de ventas
 
 export const useFetchSales = (page: number = 1, search: string) => {
@@ -100,7 +96,7 @@ export const useCreateSale = () => {
     const auth = localStorage.getItem(userKey);
 
     const usuario: AuthUser | null = auth
-    ? JSON.parse(auth).usuario
+    ? JSON.parse(auth).user
     : null;
 
     const idsucursal = usuario?.branchId;
@@ -172,7 +168,7 @@ export const useClientSearch = () => {
       (state:any) => state.client.searchNit
     );
 
-    const [client, setClient] = useState<ClientOrden | null>(null);
+    const [client, setClient] = useState<Client | null>(null);
 
     const { data, error, isLoading } = useFetchClient(search);
 
@@ -191,7 +187,7 @@ export const useClientSearch = () => {
         }
 
         // Cliente encontrado
-        const adaptedClient = SaleClientAdapter(
+        const adaptedClient = ClientAdapter(
             data.data[0]
         );
 

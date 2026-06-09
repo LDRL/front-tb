@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { BrandAdapter, BrandListAdapter } from '../adapter';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BrandList, ApiResponseBrand, Brand, ApiBrand, CreateOrUpdateBrandResponse } from '../models';
-import { getErrorMessage } from '@/utils/axiosClient';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -13,7 +12,7 @@ export const useFetchBrands = (page: number = 1, search: string) => {
     return useQuery<ApiResponseBrand, Error>({
         queryKey: ['brands', page, search],
         queryFn: async () => {
-            const response = await axios.get<ApiResponseBrand>(`${apiUrl}marcas/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponseBrand>(`${apiUrl}marcas/?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -65,7 +64,7 @@ export const useGetBrand = (brandId: string) => {
     return useQuery<Brand, Error>({
         queryKey: ['brand', brandId], // Clave de consulta
         queryFn: async () => {
-            const response = await axios.get<{ data: ApiBrand }>(`${apiUrl}marcas/${brandId}/`);
+            const response = await axiosClient.get<{ data: ApiBrand }>(`${apiUrl}marcas/${brandId}/`);
 
             if (response.status !== 200) {
                 throw new Error('Error al cargar la marca');
@@ -89,7 +88,7 @@ export const useCreateBrand = () => {
 
             //const response = await axios.post<{ message: string, marcas: ApiBrand }>(`${apiUrl}marcas/`, brand);
 
-            const response = await axios.post<CreateOrUpdateBrandResponse>(
+            const response = await axiosClient.post<CreateOrUpdateBrandResponse>(
                 `${apiUrl}marcas/`,
                 brand
             );
@@ -120,7 +119,7 @@ export const useUpdateBrand = () => {
                 nombre: updatedBrand.name,
             };
 
-            const response = await axios.put<CreateOrUpdateBrandResponse>(`${apiUrl}marcas/${updatedBrand.id}/`, brand);
+            const response = await axiosClient.put<CreateOrUpdateBrandResponse>(`${apiUrl}marcas/${updatedBrand.id}/`, brand);
 
             if (response.status !== 200) {
                 throw new Error('Error al actualizar la marca');

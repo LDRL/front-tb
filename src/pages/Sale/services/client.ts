@@ -1,8 +1,6 @@
-import axios from 'axios';
-
-import { getErrorMessage } from '@/utils/axiosClient';
-import { ClientForm } from '@/pages/Client/models/client.domain.type';
-import { SaleClientAdapter } from '../adapter/sale.adapter';
+import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
+import { ClientForm } from '@/pages/Client/models';
+import { ClientAdapter } from '@/pages/Client/adapter';
 const apiUrl = import.meta.env.VITE_API_URL;
 
 
@@ -13,18 +11,14 @@ export const createClient = async (client:ClientForm) => {
             nombres: client.name,
             apellidos: client.lastName,
             direccion: client.address,
-            emal: client.email,
+            email: client.email,
             telefono: client.telphone,
             idtipoCli: client.idTypeCli
         }
         
-        const {data} = await axios.post(`${apiUrl}clientes`, newClient);
+        const {data} = await axiosClient.post(`${apiUrl}clientes`, newClient);
 
-        //SaleClientAdapter
-        //return data;
-
-    
-        const adaptedClient = SaleClientAdapter(data.data);
+        const adaptedClient = ClientAdapter(data.data);
         return adaptedClient;
 
     } catch (error: any) {

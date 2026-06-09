@@ -1,4 +1,4 @@
-import { Client } from '@/pages/Client/models/client.domain.type';
+import { Client } from '@/pages/Client/models';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ClientState {

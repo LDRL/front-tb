@@ -60,7 +60,7 @@ const SaleCreate: React.FC = () => {
 
     setValue('nit', currentClient.nit ?? '');
     setValue('name',`${currentClient.name ?? ''} ${currentClient.lastName ?? ''}`.trim() );
-    setValue('address', currentClient.address ?? '');
+    setValue('address', currentClient.direccion ?? '');
 
   }, [currentClient, setValue]);
 
@@ -99,13 +99,13 @@ const SaleCreate: React.FC = () => {
 
         client: currentClient ?? {
           id: 0,
+          nit: '',
           name: '',
           lastName: '',
-          telphone: '',
+          direccion: '',
           email: '',
-          nit: '',
-          address: '',
-          state: ''
+          telefono: '',
+          estado: 1,
         },
 
         details: rows,
@@ -151,7 +151,7 @@ const SaleCreate: React.FC = () => {
 
     setValue('nit', client.nit ?? '');
     setValue('name',`${currentClient.name ?? ''} ${currentClient.lastName ?? ''}`.trim() );
-    setValue('address', client.address ?? '');
+    setValue('address', client.direccion ?? '');
   }, [client, setValue]);
 
   return (
