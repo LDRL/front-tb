@@ -1,7 +1,5 @@
 import { ProductTable } from "./components";
 import { Header } from "./index";
-import { useSelector } from "react-redux";
-import { AppStore } from "@/redux/store";
 
 export default function Productt(){
     //const sidebarState = useSelector((store: AppStore) => store.sidebar)

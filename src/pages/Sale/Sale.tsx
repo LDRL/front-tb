@@ -1,11 +1,8 @@
-import { useSelector } from "react-redux";
-import { AppStore } from "@/redux/store";
+
 import { SaleTable } from "./components/SaleTable";
 import { Header } from "./components/Header";
 
-export default function Sale(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)
-    
+export default function Sale(){    
     return(
         <div>
             <div>
@@ -18,7 +15,7 @@ export default function Sale(){
             </div>
             
             {/* 94 */}
-            <div style={{width:  sidebarState.state ? "86vw" : "94vw"}}>
+            <div >
                 <SaleTable />
             </div>
         </div>

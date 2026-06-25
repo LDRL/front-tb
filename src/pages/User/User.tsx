@@ -1,10 +1,9 @@
-import { useSelector } from "react-redux";
+
 import { UserTable } from "./components";
 import { Header } from "./components/Header";
-import { AppStore } from "@/redux/store";
 
 export default function User(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)
+ 
 
     return(
         <div>
@@ -19,7 +18,7 @@ export default function User(){
             </div>
             
             {/* 94 */}
-            <div style={{width:  sidebarState.state ? "86vw" : "94vw"}}>
+            <div>
                 <UserTable />
             </div>
         </div>

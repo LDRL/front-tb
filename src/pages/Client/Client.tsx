@@ -1,11 +1,7 @@
-import { useSelector } from "react-redux";
 import { ClientTable } from "./components";
 import { Header } from "./components/Header";
-import { AppStore } from "@/redux/store";
 
 export default function Client() {
-    const sidebarState = useSelector((store: AppStore) => store.sidebar);
-
     return (
         <div>
             <div>
@@ -24,7 +20,7 @@ export default function Client() {
                 <Header />
             </div>
 
-            <div style={{ width: sidebarState.state ? "86vw" : "94vw" }}>
+            <div>
                 <ClientTable />
             </div>
         </div>

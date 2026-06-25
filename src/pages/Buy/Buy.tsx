@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { AppStore } from "@/redux/store";
 import { BuyTable } from "./components/BuyTable";
 import { Header } from "./components/Header";
 

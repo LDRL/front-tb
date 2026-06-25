@@ -133,7 +133,6 @@ export const useUpdateUser = () => {
 
     return useMutation<UserApi, Error, UserApi>({
         mutationFn: async (updatedUser) => {
-            console.log(updatedUser);
             const user: Partial<UserApi> = {
                 nombre: updatedUser.nombre,
                 apellido: updatedUser.apellido,

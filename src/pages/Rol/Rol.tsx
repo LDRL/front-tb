@@ -1,10 +1,7 @@
-import { useSelector } from "react-redux";
 import { RoleTable } from "./components";
 import { Header } from "./components/Header";
-import { AppStore } from "@/redux/store";
 
 export default function Rol() {
-    const sidebarState = useSelector((store: AppStore) => store.sidebar);
 
     return (
         <div>
@@ -17,7 +14,7 @@ export default function Rol() {
                 <Header />
             </div>
 
-            <div style={{ width: sidebarState.state ? "86vw" : "94vw" }}>
+            <div>
                 <RoleTable />
             </div>
         </div>

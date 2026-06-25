@@ -1,11 +1,7 @@
-import { useSelector } from "react-redux";
 import { BrandTable } from "./components";
 import { Header } from "./components/Header";
-import { AppStore } from "@/redux/store";
 
 export default function Brand(){
-    const sidebarState = useSelector((store: AppStore) => store.sidebar)
-
     return(
         <div>
             <div>
@@ -18,7 +14,7 @@ export default function Brand(){
             </div>
             
             {/* 94 */}
-            <div style={{width:  sidebarState.state ? "86vw" : "94vw"}}>
+            <div>
                 <BrandTable />
             </div>
         </div>

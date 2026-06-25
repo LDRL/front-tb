@@ -1,7 +1,5 @@
-import { useSelector } from "react-redux";
 import { CategoryTable } from "./components";
 import { Header } from "./components/Header";
-import { AppStore } from "@/redux/store";
 
 export default function Category(){
     //const sidebarState = useSelector((store: AppStore) => store.sidebar)

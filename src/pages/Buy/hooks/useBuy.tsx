@@ -175,10 +175,8 @@ export const useBuyDetails = () => {
   };
 
   const deleteRow = (id: string) => {
-    console.log(id);
     setRows(prev => {
       const updated = prev.filter(r => r.id !== id);
-      console.log(updated);
       calculateTotal(updated);
       return updated;
     });

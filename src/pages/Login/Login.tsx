@@ -29,7 +29,6 @@ export default function Login() {
   const onSubmit = async (data: LoginData) => {
     try {
       const auth = await mutationLogin.mutateAsync(data);
-      console.log(auth);
       dispatch(login(auth));     
       dispatch(createSidebar({state: false}))
 
