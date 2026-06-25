@@ -8,6 +8,7 @@ import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
 import PersonIcon from '@mui/icons-material/Person';
 import GroupIcon from '@mui/icons-material/Group';
+import SecurityIcon from '@mui/icons-material/Security';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 export const DesplegableUser = [
@@ -121,6 +122,13 @@ export const LinksArray = [
     to: "/private/client",
     path: "/private/client",
     permission: PERMISSIONS.CLIENTS.READ
+  },
+  {
+    label: "Roles",
+    icon: <SecurityIcon />,
+    to: "/private/rol",
+    path: "/private/rol",
+    permission: PERMISSIONS.ROLES.READ
   },
   {
     label: "Reportes",

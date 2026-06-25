@@ -7,7 +7,7 @@ html {
 }
 
 * {
-    max-width: 100rem;
+    /*max-width: 100rem;*/
     /* margin: 0 auto; */
     padding: 0;
     box-sizing: inherit;

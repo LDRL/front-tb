@@ -25,3 +25,13 @@ dist-ssr
 .env
 .skill-registry.cache.json
 skill-registry.md
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Build output
+dist/
+
+# Generated Vite config
+vite.config.js
+vite.config.d.ts

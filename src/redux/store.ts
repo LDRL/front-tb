@@ -11,6 +11,7 @@ import saleSlice from './saleSlice';
 import clientSlice from './clientSlice';
 import userSlice from './userSlice';
 import supplierSlice from './supplierSlice';
+import rolSlice from './rolSlice';
 
 
 import { CategoryState } from '@/pages/Category';
@@ -21,6 +22,7 @@ import { ProductForm } from '@/pages/product/models/product.view.type';
 import { Client } from '@/pages/Client/models/client.domain.type';
 import { SaleState } from '@/pages/Sale/models/sale.domain.type';
 import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
+import { RoleState } from '@/pages/Rol/models/role.domain.type';
 import { AuthState } from '@/modules/auth/models/login.domain.type';
 
 
@@ -52,6 +54,7 @@ export interface AppStore {
   client:ClientState
   user:UserState
   supplier: SupplierState
+  rol: RoleState
 }
 
 export const store = configureStore<AppStore>({
@@ -65,7 +68,8 @@ export const store = configureStore<AppStore>({
     sale: saleSlice,
     client: clientSlice,
     user: userSlice,
-    supplier: supplierSlice
+    supplier: supplierSlice,
+    rol: rolSlice
   },
 });
 

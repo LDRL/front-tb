@@ -35,5 +35,9 @@ export const PrivateRoutes = {
 
     CLIENT: 'client',
     CLIENT_CREATE:'client/create',
-    CLIENT_EDIT:'client/:id/editar'
+    CLIENT_EDIT:'client/:id/editar',
+
+    ROL: 'rol',
+    ROL_CREATE: 'rol/create',
+    ROL_EDIT: 'rol/:id/editar'
 }

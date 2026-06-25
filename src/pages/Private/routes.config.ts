@@ -30,6 +30,8 @@ const Supplier = lazy(() => import("../Supplier/Supplier"))
 const SupplierCreate = lazy(() => import("../Supplier").then(m => ({ default: m.SupplierCreate })))
 const Client = lazy(() => import("../Client/Client"))
 const ClientCreate = lazy(() => import("../Client").then(m => ({ default: m.ClientCreate })))
+const Rol = lazy(() => import("../Rol/Rol"))
+const RolCreate = lazy(() => import("../Rol").then(m => ({ default: m.RoleCreate })))
 
 export const publicRoutes: RouteConfig[] = [
   { path: PrivateRoutes.DASHBOARD, Component: Dashboard },
@@ -72,4 +74,8 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.CLIENT, Component: Client, permission: PERMISSIONS.CLIENTS.READ },
   { path: PrivateRoutes.CLIENT_CREATE, Component: ClientCreate, permission: PERMISSIONS.CLIENTS.CREATE },
   { path: PrivateRoutes.CLIENT_EDIT, Component: ClientCreate, permission: PERMISSIONS.CLIENTS.UPDATE },
+
+  { path: PrivateRoutes.ROL, Component: Rol, permission: PERMISSIONS.ROLES.READ },
+  { path: PrivateRoutes.ROL_CREATE, Component: RolCreate, permission: PERMISSIONS.ROLES.CREATE },
+  { path: PrivateRoutes.ROL_EDIT, Component: RolCreate, permission: PERMISSIONS.ROLES.UPDATE },
 ];
