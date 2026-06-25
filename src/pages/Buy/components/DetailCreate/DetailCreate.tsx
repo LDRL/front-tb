@@ -92,7 +92,7 @@ export const DetailCreate: React.FC<Props> = ({
       headerName: '',
       width: 90,
       renderCell: (params: GridRenderCellParams) => (
-        <>{<Button variant='contained' color='error' size='small' onClick={() => deleteRow(params.row)}>X</Button>}</>
+        <>{<Button variant='contained' color='error' size='small' onClick={() => deleteRow(params.row.id)}>X</Button>}</>
       )
     },
     {
@@ -189,11 +189,11 @@ export const DetailCreate: React.FC<Props> = ({
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 5,
+                pageSize: 10,
               },
             },
           }}
-          pageSizeOptions={[5]}
+          pageSizeOptions={[10]}
           // checkboxSelection
           disableColumnSelector
           disableRowSelectionOnClick
@@ -201,7 +201,7 @@ export const DetailCreate: React.FC<Props> = ({
           autoHeight
           getRowId={(row:any) => row.id}
         />
-          <h3>Total: Q {total.toFixed(2)}</h3>
+
         </Box>
       </div>
     </>

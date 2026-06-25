@@ -1,8 +1,8 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
-import { ApiBuy, ApiDetail, CreateBuyPayload } from "../models/buy.api.type";
+import { ApiBuy,CreateBuyPayload } from "../models/buy.api.type";
 import { Buy, BuyList, Total } from "../models/buy.domain.type";
-import { CreateBuyResponse } from "../models/buy.response.type";
 import { BuyAdapter, BuyListAdapter } from "../adapter";
+import axiosClient from "@/utils/axiosClient";
 
 
 export const fetchBuyList = async (url: string, page: number, search: string): Promise<[Error?, BuyList?, Total?]> => {
@@ -14,7 +14,7 @@ export const fetchBuyList = async (url: string, page: number, search: string): P
     };
     
     try {
-        const response: AxiosResponse<{ compras: ApiBuy[], total: number }> = await axios.get(url, config);
+        const response: AxiosResponse<{ compras: ApiBuy[], total: number }> = await axiosClient.get(url, config);
         if (response.statusText !== 'OK') return [new Error(`Error fetching buys: ${response.statusText}`)];
         const {compras, total} = response.data
 
@@ -28,7 +28,7 @@ export const fetchBuyList = async (url: string, page: number, search: string): P
 
 export const fetchBuy = async (url: string): Promise<[Error?, Buy?]> => {    
     try {
-        const response: AxiosResponse<{ data: ApiBuy }> = await axios.get(url);
+        const response: AxiosResponse<{ data: ApiBuy }> = await axiosClient.get(url);
         
         if (response.statusText !== 'OK') return [new Error(`Error fetching buys: ${response.statusText}`)];
 
@@ -44,7 +44,7 @@ export const fetchBuy = async (url: string): Promise<[Error?, Buy?]> => {
 // CREATE
 export const fetchBuyCreate = async (url: string, payload: CreateBuyPayload ): Promise<[Error?, Buy?, any?]> => {
   try {
-    const response = await axios.post(url, payload);
+    const response = await axiosClient.post(url, payload);
     const { data } = response.data;
     return [undefined, BuyAdapter(data), response];
   } catch (error: any) {

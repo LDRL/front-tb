@@ -17,4 +17,87 @@
 }
 
 
+/*
+***
+***
+*/
 
+/* grid */
+
+.container_buy {
+  display: grid;
+  grid-template-columns: 1fr 360px; /* izquierda flexible, imagen fija */
+  gap: 15px;
+  align-items: stretch;
+  min-height: 90vh;
+}
+
+.buy_right {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ccc;
+  padding: 10px;
+}
+
+/* Columna izquierda */
+.buy_left {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Fila precio + unidad */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+/* Cada input ocupa igual */
+.row > * {
+  flex: 1;
+}
+
+
+/* Resumen */
+.resumen_header{
+  margin-top: auto;
+  border-top: 1px solid #ccc;
+  padding-top: 15px;
+
+
+}
+
+.resumen_header-title label {
+  font-weight: 700;
+
+}
+
+.resumen_subtotal label {
+  font-weight: 700;
+}
+
+.resumen_subtotal{
+  margin-bottom: 10px;
+      display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+
+}
+
+.resumen_total {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    
+  font-weight: 700;
+}
+
+.resumen_total label {
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .container_buy {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { userKey } from '@/redux/authSlice';
+import { clearLocalStorage } from './localStorage.utility';
 
 const axiosClient = axios.create({
   baseURL: '/api', // tu base URL del backend
@@ -19,6 +20,17 @@ axiosClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      clearLocalStorage(userKey);
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default axiosClient;
 

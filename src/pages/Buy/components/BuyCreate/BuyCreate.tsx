@@ -136,82 +136,119 @@ const BuyCreate: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div style={{ marginBottom: "10px" }}>
-            <FormAutocompleteAsync
-              name="idProvider"
-              control={control}
-              label="Proveedor"
+          <div className='container_buy'>
+            {/* Detalle  */}
+            <div className='buy_left'>
+              <div style={{border: '1px solid #ccc', borderRadius: '5px', padding: '15px'}} >
+                <DetailCreate
+                  control={control}
+                  getValues={getValues}
+                  setValue={setValue}
+                  addRow={addRow}
+                  deleteRow={deleteRow}
+                  rows={rows}
+                  total={total}
+                  errors={errors}
+                  setErrors={setErrors}
+                />
+              </div>
+            </div>
               
-              options={finalOptions}     // 👈 React Query data
-              isLoading={isProvidersLoading}
+            <div className='buy_right'>
+              {/* Encabezado compra --- proveedor */}
 
-              getOptionLabel={(opt) => opt.label}
-              getOptionValue={(opt) => opt.value}
+              <div style={{ marginBottom: "10px" }}>
+                <FormAutocompleteAsync
+                  name="idProvider"
+                  control={control}
+                  label="Proveedor"
+                  
+                  options={finalOptions}     // 👈 React Query data
+                  isLoading={isProvidersLoading}
 
-              onInputChange={(value) => {
-                debouncedSearchProvider(value);
-              }}
+                  getOptionLabel={(opt) => opt.label}
+                  getOptionValue={(opt) => opt.value}
 
-              onChangeExternal={(value) => {
-                setSelectedProvider(value);
-                setValue("name", value?.label ?? "");
-                setValue("address", value?.direction ?? "");
-              }}
-            />
-            
+                  onInputChange={(value) => {
+                    debouncedSearchProvider(value);
+                  }}
+
+                  onChangeExternal={(value) => {
+                    setSelectedProvider(value);
+                    setValue("name", value?.label ?? "");
+                    setValue("address", value?.direction ?? "");
+                  }}
+                />
+                
+              </div>
+              <div className='section'>
+                <FormInputText
+                  name="address"
+                  control={control}
+                  label="Direccion"
+                  rules={{ required: 'Direccion es un campo requerido' }}
+                />
+              </div>
+
+              <div className='section'>
+                <FormDate
+                  name="date"
+                  control={control}
+                  label='Fecha'
+                  rules={{required: 'Fecha es un campo requerido'}}
+                />
+              </div>
+              {/*Encabezado fin */}
+
+
+              {/* Inicio Resumen de total de la compra */}
+              <div className='resumen_header'>
+                <div className='resumen_header-title'>
+                  <label htmlFor="resumen">Resumen</label>
+                </div>
+                
+                <div className='resumen_body'>
+                  <hr />
+                  <div className='resumen_subtotal'>
+                    <label htmlFor="subtotal">Subtotal: </label>
+                    <label htmlFor="subtotalMount">Q {total.toFixed(2)}</label>
+                  </div>
+                  <hr />
+                </div>
+
+                <div className='resumen_total'>
+                  <label htmlFor="Total">Total: </label>
+                  <label htmlFor="totalMount">Q {total.toFixed(2)}</label>
+                </div>
+
+                <div className='container_button'>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    sx={{ mt: 2 }}
+                    disabled={createBrandMutation.isPending}
+                  >
+                    Crear compra
+                  </Button>
+                </div>
+                <div className='container_button'>
+                  <Button
+                    variant="contained"
+                    type="button"
+                    sx={{ mt: 2 }}
+                    color='error'
+                    onClick={() => navigate('/private/buy')}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+              {/* Final Resumen */}
+            </div>
           </div>
-          <div className='section'>
-            <FormInputText
-              name="address"
-              control={control}
-              label="Direccion"
-              rules={{ required: 'Direccion es un campo requerido' }}
-            />
-          </div>
 
-          <div className='section'>
-            <FormDate
-              name="date"
-              control={control}
-              label='Fecha'
-              rules={{required: 'Fecha es un campo requerido'}}
-            />
-          </div>
+          
 
-          {/* Detalle  */}
-          <div style={{border: '1px solid #ccc', borderRadius: '5px', padding: '15px'}} >
-            <DetailCreate
-              control={control}
-              getValues={getValues}
-              setValue={setValue}
-              addRow={addRow}
-              deleteRow={deleteRow}
-              rows={rows}
-              total={total}
-              errors={errors}
-              setErrors={setErrors}
-            />
-          </div>
-
-          <div className='container_button'>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ mt: 2 }}
-              disabled={createBrandMutation.isPending}
-            >
-              Guardar
-            </Button>
-            <Button
-              variant="contained"
-              type="button"
-              sx={{ mt: 2 }}
-              color='error'
-              onClick={() => navigate('/private/buy')}
-            >
-              Cancelar
-            </Button>
-          </div>
         </Box>
       </CardForm>
     </div>

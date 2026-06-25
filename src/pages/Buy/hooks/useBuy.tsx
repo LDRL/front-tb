@@ -42,7 +42,7 @@ export const useFetchBuys = (page: number = 1, search: string) => {
     });
 };
 
-//Hook for list brands and search for name
+//Hook for list buys and search for name
 export const useBuy = (initialPage: number = 1) => {
     const search = useSelector((state:any) => state.brand.search);
 
@@ -151,9 +151,23 @@ export const useBuyDetails = () => {
 
   const addRow = (detail: Detail) => {
     setRows(prev => {
+      const existing = prev.find(r => r.codProduct === detail.codProduct);
+      if (existing) {
+        const updated = prev.map(r =>
+          r.codProduct === detail.codProduct
+            ? {
+                ...r,
+                amount: r.amount + detail.amount,
+                subtotal: (r.amount + detail.amount) * r.cost,
+              }
+            : r
+        );
+        calculateTotal(updated);
+        return updated;
+      }
       const updated = [
         ...prev,
-        { ...detail, id: uuidv4() } // 👈 ID único real
+        { ...detail, id: uuidv4() },
       ];
       calculateTotal(updated);
       return updated;
@@ -161,8 +175,10 @@ export const useBuyDetails = () => {
   };
 
   const deleteRow = (id: string) => {
+    console.log(id);
     setRows(prev => {
       const updated = prev.filter(r => r.id !== id);
+      console.log(updated);
       calculateTotal(updated);
       return updated;
     });

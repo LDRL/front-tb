@@ -224,9 +224,23 @@ export const useSaleDetails = () => {
 
   const addRow = (detail: Detail) => {
     setRows(prev => {
+      const existing = prev.find(r => r.codProduct === detail.codProduct);
+      if (existing) {
+        const updated = prev.map(r =>
+          r.codProduct === detail.codProduct
+            ? {
+                ...r,
+                amount: r.amount + detail.amount,
+                subtotal: (r.amount + detail.amount) * r.cost,
+              }
+            : r
+        );
+        calculateTotal(updated);
+        return updated;
+      }
       const updated = [
         ...prev,
-        { ...detail, id: uuidv4() } // 👈 ID único real
+        { ...detail, id: uuidv4() },
       ];
       calculateTotal(updated);
       return updated;
