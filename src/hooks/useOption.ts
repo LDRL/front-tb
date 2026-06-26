@@ -231,6 +231,8 @@ const RolesAdapter = (roles: ApiRole[]): Option[] => {
     }));
 };
 
+// Tipo cliente
+
 export const useFetchTypeClientsOptions = () => {
     return useQuery<Option[], Error>({
         queryKey: ['dropdownUnit'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
@@ -245,5 +247,35 @@ const TypeClientsAdapter = (tipos: ApiTypeClient[]): Option[] => {
     return tipos.map(tipo => ({
         value: tipo.idtipoCli,
         label: tipo.nombre,
+    }));
+};
+
+//sucursales
+
+interface ApiSucursal {
+    idsucursal: number;
+    nombre: string;
+}
+
+interface ApiSucursalResponse {
+    msg: string;
+    data: ApiSucursal[];
+    ok: boolean;
+}
+
+export const useFetchSucursalOptions = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['dropdownSucursal'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiSucursalResponse>(`${apiUrl}sucursales/`);
+            return SucursalAdapter(response.data.data);
+        },
+    });
+};
+
+const SucursalAdapter = (roles: ApiSucursal[]): Option[] => {
+    return roles.map(role => ({
+        value: role.idsucursal,
+        label: role.nombre,
     }));
 };

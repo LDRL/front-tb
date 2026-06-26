@@ -102,9 +102,8 @@ export const useCreateUser = () => {
                 password: newUser.password,
                 imagen: "ruta_imagen",
                 estado: 1,
-                idsucursal: idsucursal,
-                codigoemp: newUser.codigoemp,
-                roles: newUser.roles ? newUser.roles : []
+                idsucursal: newUser.idsucursal,
+                roles: newUser.roles 
             };
 
             //const response = await axios.post<{ message: string, presentacion: Apiuser }>(`${apiUrl}usuarios/`, user);
@@ -140,7 +139,8 @@ export const useUpdateUser = () => {
                 email: updatedUser.email,
                 imagen: "update_ruta_imagen",
                 estado: 1,
-                roles: updatedUser.roles ? updatedUser.roles : []
+                idsucursal: updatedUser.idsucursal,
+                roles: updatedUser.roles
             };
 
             if (updatedUser.password) {

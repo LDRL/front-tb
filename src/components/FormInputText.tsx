@@ -1,7 +1,7 @@
 // src/form-component/FormInputText.tsx
 import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import {Autocomplete, Box, CircularProgress, FormControl, FormHelperText, IconButton, InputLabel, MenuItem } from "@mui/material";
+import {Autocomplete, Box, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { useEffect, useMemo, useState } from "react";
 
@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import 'dayjs/locale/es';
 dayjs.locale('es');
 import debounce from 'just-debounce-it';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 
 interface FormInputProps<T extends FieldValues> {
@@ -40,6 +41,10 @@ export const FormInputText = <T extends FieldValues>({
   type = "text",
   max,
 }: FormInputProps<T>) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isPassword = type === "password";
+  
   return (
     <Controller
       name={name}
@@ -52,7 +57,7 @@ export const FormInputText = <T extends FieldValues>({
       }}
       render={({ field, fieldState: { error } }) => (
         <TextField
-          type={type}
+          type={isPassword ? (showPassword ? "text" : "password") : type}
           helperText={error?.message}
           size="small"
           error={!!error}
@@ -65,6 +70,18 @@ export const FormInputText = <T extends FieldValues>({
           label={label}
           disabled={disabled}
           inputProps={{ maxLength: max }}
+          InputProps={{
+            endAdornment: isPassword ? (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ) : undefined,
+          }}
         />
       )}
     />

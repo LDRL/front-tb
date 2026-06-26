@@ -55,12 +55,12 @@ const RoleCreate: React.FC = () => {
       );
 
       reset({
-      _id: currentRole._id,
-      nombrerol: currentRole.nombrerol,
-      permisos: permisoIds,
-    });
+        _id: currentRole._id,
+        nombrerol: currentRole.nombrerol,
+        permisos: permisoIds,
+      });
 
-    setSelectedPermisos(permisoIds);
+      setSelectedPermisos(permisoIds);
       setSubtitulo('Editar');
     } else {
       reset({ _id: 0, nombrerol: '', permisos: [] });

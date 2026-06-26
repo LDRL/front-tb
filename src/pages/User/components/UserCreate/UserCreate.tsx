@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadMask from '@/components/LoadMask/LoadMask';
 import { FormAutocompleteAsync, FormInputText } from '@/components';
-import { Box, Button} from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, FormLabel} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { RootState } from '@/redux/store';
 import { PrivateRoutes } from '@/models';
@@ -16,16 +16,16 @@ import { toast } from 'react-toastify';
 
 import "./UserCreate.css"
 import Loading from '@/components/Loading';
-import { UserApi, UserForm } from '../../models/user.api.type';
+import { UserForm } from '../../models/user.api.type';
 
-import { Option, useFetchRoleOptions } from '@/hooks/useOption';
+import { useFetchRoleOptions, useFetchSucursalOptions } from '@/hooks/useOption';
 import { getErrorMessage } from '@/utils/axiosClient';
 
 const UserCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
 
-  const { data: roleOptions = [], isLoading: isRoleLoading } = useFetchRoleOptions();
+
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
@@ -36,8 +36,13 @@ const UserCreate: React.FC = () => {
     defaultValues: { _id: "", nombre: ''},
   });
 
+  const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
+
 
  // Llamar al hook aquí
+ const { data: roleOptions = [], isLoading: isRoleLoading } = useFetchRoleOptions();
+ const { data: sucursalOptions = [], isLoading: isSucursalLoading } = useFetchSucursalOptions();
+
  const { data, isLoading, isError } = id ? useGetUser(id) : { data: null, isLoading: false, isError: false };
 
  const createUserMutation = useCreateUser();
@@ -55,24 +60,37 @@ const UserCreate: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
+
+      const roleIds = currentUser.Roles.map(
+        (p: any) => p._id
+      );
+
       reset(currentUser);
+      setSelectedRoles(roleIds);
       setSubtitulo("Editar")
     } else {
       reset({ _id: "", nombre: ''});
       setSubtitulo("Nuevo")
+      setSelectedRoles([]);
     }
   }, [currentUser, reset]);
 
+  const handleToggleRole = (roleId: number) => {
+    setSelectedRoles((prev) =>
+      prev.includes(roleId)
+        ? prev.filter((id) => id !== roleId)
+        : [...prev, roleId]
+    );
+  };
 
+  {/** Guardar registro */}
   const onSubmit = async (data: UserForm) => {
     setLoading(true);
     try {
       const payload = {
-      ...data,
-      roles: data.rol
-        ? [data.rol]
-        : []
-    };
+        ...data,
+        roles: selectedRoles,
+      };
 
       if (currentUser) {
         await updateUserMutation.mutateAsync(payload);
@@ -131,14 +149,18 @@ const UserCreate: React.FC = () => {
               rules={{ required: 'El usuario es requerido' }}
             />
           </div>
-          <div className='section'>
-            <FormInputText
-              name="codigoemp"
-              control={control}
-              label="Código Empleado"
-              rules={{ required: 'El código de empleado es requerido' }}
-            />
-          </div>
+          
+          {currentUser && (
+            <div className="section">
+              <FormInputText
+                name="codigoemp"
+                control={control}
+                label="Código Empleado"
+                rules={{ required: "El código de empleado es requerido" }}
+              />
+            </div>
+          )}
+
           <div className='section'>
             <FormInputText
               name="email"
@@ -159,14 +181,37 @@ const UserCreate: React.FC = () => {
 
           <div className='section'>
             <FormAutocompleteAsync
-              name="rol"
+              name="idsucursal"
               control={control}
-              label="Rol"
-              options={roleOptions}
-              isLoading={isRoleLoading}
+              label="Sucursal"
+              options={sucursalOptions}
+              isLoading={isSucursalLoading}
               getOptionLabel={(opt) => opt.label}
               getOptionValue={(opt) => opt.value}
             />
+          </div>
+
+          <div className='section'>
+            <FormLabel component="legend">Roles</FormLabel>
+            {isRoleLoading ? (
+              <Loading loading />
+            ) : (
+              <FormGroup row>
+                {roleOptions.map((perm) => (
+                  <FormControlLabel
+                    key={perm.value}
+                    control={
+                      <Checkbox
+                        checked={selectedRoles.includes(perm.value)}
+                        onChange={() => handleToggleRole(perm.value)}
+                      />
+                    }
+                    label={perm.label}
+                  />
+                ))}
+              </FormGroup>
+
+            )}
           </div>
 
           <div className='container_button'>
