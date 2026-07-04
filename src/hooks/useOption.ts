@@ -164,13 +164,21 @@ const MarcasAdapter = (marcas: ApiBrand[]): Option[] => {
     }));
 };
 
-export const useFetchPresentacionOptions = () => {
+export const useFetchPresentacionOptions = (search: string) => {
     return useQuery<Option[], Error>({
-        queryKey: ['dropdownPresentacion'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
+        queryKey: ['dropdownPresentacion', search], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
-            const response = await axiosClient.get<ApiResponsePresentation>(apiUrl+"presentaciones/");
+
+            const url = search
+                ? `${apiUrl}presentaciones?search=${search}`
+                : `${apiUrl}presentaciones/`; // 🔥 default
+
+            const response = await axiosClient.get<ApiResponsePresentation>(url);
+            
             return PresentacionesAdapter(response.data.data);
-        }
+        },
+          //enabled: search.length >= 2, // 🔥 evita llamadas innecesarias
+    staleTime: 1000 * 60 * 5, // cache 5 min
     });
 };
 

@@ -48,12 +48,6 @@ const ListOfProducts: React.FC = () => {
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
         },
         {
-            field: 'price',
-            headerName: 'Precio',
-            flex: 1,
-            renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
-        },
-        {
             field: 'brand',
             headerName: 'Marca',
             flex: 1,

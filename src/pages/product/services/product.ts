@@ -2,9 +2,9 @@ import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 
 import { mapApiToProduct, ProductListAdapter } from "../adapter";
 import { Product, ProductList } from "../models/product.domain.type";
-import { Total } from "@/pages/Sale";
 import { ApiProduct } from "../models/product.api.type";
 import axiosClient from "@/utils/axiosClient";
+import { Total } from "@/pages/Sale/models/sale.domain.type";
 
 export const fetchProductList = async (url: string, page: number, search: string): Promise<[Error?, ProductList?, Total?]> => {
     const params: { page: number; search?: string } = { page };
@@ -34,7 +34,7 @@ export const fetchProductList = async (url: string, page: number, search: string
 
 export const fetchProduct = async (url: string): Promise<[Error?, Product?]> => {    
     try {
-        const response: AxiosResponse<{ data: ApiProduct }> = await axios.get(url);
+        const response: AxiosResponse<{ data: ApiProduct }> = await axiosClient.get(url);
         
         if (response.statusText !== 'OK') return [new Error(`Error fetching products: ${response.statusText}`)];
 

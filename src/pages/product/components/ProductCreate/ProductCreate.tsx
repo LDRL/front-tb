@@ -14,9 +14,10 @@ import { openModal, clearProduct } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
 import "./ProductCreate.css"
 import { toast } from 'react-toastify';
-import { Product } from '../../models/product.domain.type';
-import { ProductForm } from '../../models/product.view.type';
-import { useCreateProduct, useUpdateProduct } from '../../hooks/useProduct';
+import { Detail } from '../../models/product.domain.type';
+import { ProductForm } from '../../models/product.domain.type';
+import { useCreateProduct, useProductDetails, useUpdateProduct } from '../../hooks/useProduct';
+import { DetailCreate } from '../ProductDetail/ProductDetail';
 
 
 const CreateProduct: React.FC = () => {
@@ -31,14 +32,24 @@ const CreateProduct: React.FC = () => {
   const dispatch = useDispatch();
   const { currentProduct } = useSelector((state: RootState) => state.product);
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<Product>({
-    defaultValues: { name: '', price: 0 },
+  const { control, handleSubmit, reset, getValues, setValue} = useForm<ProductForm>({
+    defaultValues: { name: '' },
   });
 
   const {data: options, isLoading, isError} = useFetchOptions();
   const {data: marcaOptions, isLoading: isMarcaLoading, isError: isMarcaError} = useFetchMarcaOptions();
-  const {data: presentacionOptions, isLoading: isPresentacionLoading, isError: isPresentacionError} = useFetchPresentacionOptions();
+
   const {data: unitOptions, isLoading: isUnitLoading, isError: isUnitError} =   useFetchUnitOptions();
+
+  const { rows, addRow, deleteRow, editRow, editingId, setEditingId, setRows } = useProductDetails();
+
+  const [errors, setErrors] = useState({
+      idPresentation: false,
+      price: false,
+      barCode: false,
+      baseQuantity: false,
+      detailProduct: false
+  });
 
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
@@ -49,7 +60,7 @@ const CreateProduct: React.FC = () => {
 
       reset({
         name: '',
-        price: 0,
+        //price: 0,
         description: '',
         idCategory: undefined,
         idBrand: undefined,
@@ -80,21 +91,42 @@ const CreateProduct: React.FC = () => {
     if (currentProduct && id) {
       reset(currentProduct);
       setSubtitulo("Editar");
+      setRows(
+        (currentProduct.presentacions || []).map((p: Detail) => ({ ...p, id: crypto.randomUUID() }))
+      );
     }
   }, [currentProduct, id, reset]);
 
   const onSubmit = async (data: ProductForm) => {
+    setErrors({
+      idPresentation: false,
+      price: false,
+      barCode: false,
+      baseQuantity: false,
+      detailProduct: false
+    });
+
+    if (rows.length === 0) {
+      setErrors(prev => ({ ...prev, detailProduct: true }));
+      return;
+    }
+
+    const newProduct = {
+      ...data,
+      presentacions: rows
+    }
+
     setLoading(true);  
     try {
       if (currentProduct) {
         await updateProductMutation.mutateAsync({
         productCode: currentProduct.productCode,
-        data,
+        data: newProduct,
       });
 
         toast.success("Producto actualizado exitosamente");
       } else {
-        await createProductMutation.mutateAsync (data);
+        await createProductMutation.mutateAsync (newProduct);
         toast.success("Producto creado exitosamente");
       }
 
@@ -120,12 +152,7 @@ const CreateProduct: React.FC = () => {
     return <p>Error al cargar las opciones</p>
   }
 
-  if (isPresentacionLoading){
-    return <p>Cargando opciones ....</p>
-  }
-  if(isPresentacionError){
-    return <p>Error al cargar las opciones</p>
-  }
+
 
   return (    
     <div>
@@ -158,21 +185,30 @@ const CreateProduct: React.FC = () => {
               </div>
 
               <div className="row">
-                <FormInputNumber
-                  name="price"
-                  label="Precio"
+                <FormDropdown
+                  name="idCategory"
                   control={control}
-                  rules={{ required: 'Precio es un campo requerido' }}
+                  label="categoria......"
+                  rules={{ required: 'categorie name is required' }}
+                  options={options || []}
                 />
 
                 <FormDropdown
-                  name="idUnit"
-                  control={control}
-                  
-                  label="Unidad"
-                  rules={{ required: 'Unidad de medida es un campo requerido' }}
-                  options={unitOptions || []}
-                />
+                    name="idUnit"
+                    control={control}
+                    
+                    label="Unidad"
+                    rules={{ required: 'Unidad de medida es un campo requerido' }}
+                    options={unitOptions || []}
+                  />
+                
+                  <FormDropdown
+                    name="idBrand"
+                    control={control}
+                    label="marca"
+                    rules={{ required: 'marca name is required' }}
+                    options={marcaOptions || []}
+                  />
               </div>
             </div>
 
@@ -187,32 +223,13 @@ const CreateProduct: React.FC = () => {
             </div>
           </div>
 
-          {/* categoria, marca y presentacion */}
+          {/* unidad, categoria, marca */}
 
-          <div className='container_selector'>
-              <FormDropdown
-                name="idCategory"
-                control={control}
-                label="categoria......"
-                rules={{ required: 'categorie name is required' }}
-                options={options || []}
-              />
+
+          {/** Opcion para agregar al detalle producto */}
+
+          <div className="container_selector">
             
-              <FormDropdown
-                name="idBrand"
-                control={control}
-                label="marca"
-                rules={{ required: 'marca name is required' }}
-                options={marcaOptions || []}
-              />         
-
-              <FormDropdown
-                name="idPresentation"
-                control={control}
-                label="presentacion"
-                rules={{ required: 'presentación es un campo requerido' }}
-                options={presentacionOptions || []}
-              /> 
           </div>
 
           {/*Descripcion */}
@@ -230,6 +247,24 @@ const CreateProduct: React.FC = () => {
               }}
               rows={6}
               placeholder="Escribe algo aquí..."
+            />
+          </div>
+
+          {/*Detalle */}
+
+          <div style={{border: '1px solid #ccc', borderRadius: '5px', padding: '15px'}} >
+            <DetailCreate
+              control={control}
+              getValues={getValues}
+              setValue={setValue}
+              addRow={addRow}
+              deleteRow={deleteRow}
+              editRow={editRow}
+              editingId={editingId}
+              setEditingId={setEditingId}
+              rows={rows}
+              errors={errors}
+              setErrors={setErrors}
             />
           </div>
 

@@ -3,13 +3,16 @@ import { PaginationModel, pageSize } from '@/utils';
 import { ProductListAdapter } from '@/pages/product';
 import { useSelector } from 'react-redux';
 import { ApiProduct } from '../models/product.api.type';
-import { ProductList, Product } from '@/pages/product/models/product.domain.type';
+import { ProductList, Product, Detail } from '@/pages/product/models/product.domain.type';
 import { ApiResponseProductList } from '../models/product.response.type';
-import { ProductForm } from '../models/product.view.type';
+import { ProductForm } from '../models/product.domain.type';
 import { fetchProductCreate, fetchProductUpdate } from '../services/product';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { mapApiToProduct, mapProductToApi } from '../adapter';
 import axiosClient from '@/utils/axiosClient';
+
+import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const productUrl = `${apiUrl}productos`;
@@ -95,18 +98,25 @@ export const useCreateProduct = () => {
 
   return useMutation({
     mutationFn: async (newProduct: ProductForm) => {
+
       const data = mapProductToApi(newProduct);
       const formData = new FormData();
 
       // agregar campos normales
       Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, String(value));
-      });
+        if (key === "presentaciones") {
+            formData.append(key, JSON.stringify(value));
+        } else {
+            formData.append(key, value);
+        }
+    });
 
       // agregar imagen
       if (newProduct.image instanceof File) {
         formData.append("imagen", newProduct.image);
       }
+
+
 
       const [error, producto] = await fetchProductCreate(
         `${apiUrl}productos`,
@@ -142,7 +152,11 @@ export const useUpdateProduct = () => {
 
             // agregar campos normales
             Object.entries(dataNew).forEach(([key, value]) => {
-                formData.append(key, String(value));
+                if (key === "presentaciones") {
+                    formData.append(key, JSON.stringify(value));
+                } else {
+                    formData.append(key, String(value));
+                }
             });
 
             // agregar imagen
@@ -170,3 +184,43 @@ export const useUpdateProduct = () => {
         },
     });
 };
+
+
+export const useProductDetails = () => {
+  const [rows, setRows] = useState<Detail[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const addRow = (detail: Detail) => {
+    if (!editingId) {
+      const existing = rows.find(r => r.idPresentation === detail.idPresentation);
+      if (existing) {
+        toast.error("No puedes asignar la misma presentación más de una vez");
+        return;
+      }
+    }
+
+    setRows(prev => {
+      if (editingId) {
+        const updated = prev.map(r =>
+          r.id === editingId ? { ...r, ...detail, id: r.id } : r
+        );
+        setEditingId(null);
+        return updated;
+      }
+
+      return [...prev, { ...detail, id: uuidv4() }];
+    });
+  };
+
+  const deleteRow = (id: string) => {
+    setRows(prev => prev.filter(r => r.id !== id));
+  };
+
+  const editRow = (row: Detail) => {
+    setEditingId(row.id!);
+  };
+
+  return { rows, addRow, deleteRow, editRow, editingId, setEditingId, setRows };
+};
+
+
