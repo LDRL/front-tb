@@ -107,7 +107,7 @@ export interface CreateBuyPayload {
 }
 
 export interface CreateBuyDetail {
-  codigoprod: number;
+  idprodPresenta: number;
   cantidad: number;
   costo: number;
 }

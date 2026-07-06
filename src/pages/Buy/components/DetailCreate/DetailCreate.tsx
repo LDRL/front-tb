@@ -33,8 +33,7 @@ export const DetailCreate: React.FC<Props> = ({
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Option | null>(null);
 
-  const { data: productOptions = [], isLoading } =
-    useFetchProductOptions(search);
+  const { data: productOptions = [], isLoading } = useFetchProductOptions(search);
 
   const debouncedSearch = useMemo(
     () => debounce((v: string) => setSearch(v), 300),
@@ -50,7 +49,7 @@ export const DetailCreate: React.FC<Props> = ({
   }, [productOptions, selectedProduct]);
 
   const handleAdd = () => {
-    const { amount, cost, codProduct } = getValues();
+    const { amount, cost, codProductPresentation } = getValues();
 
     let hasError = false;
 
@@ -64,7 +63,7 @@ export const DetailCreate: React.FC<Props> = ({
       hasError = true;
     }
 
-    if (!codProduct) {
+    if (!codProductPresentation) {
       setErrors((e: any) => ({ ...e, idProduct: true }));
       hasError = true;
     }
@@ -72,7 +71,7 @@ export const DetailCreate: React.FC<Props> = ({
     if (hasError) return;
 
     addRow({
-      codProduct,
+      codProductPresentation,
       amount,
       cost,
       subtotal: amount * cost,
@@ -81,7 +80,7 @@ export const DetailCreate: React.FC<Props> = ({
 
     setValue("amount", 0);
     setValue("cost", 0);
-    setValue("codProduct", undefined);
+    setValue("codProductPresentation", undefined);
   };
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
@@ -129,7 +128,7 @@ export const DetailCreate: React.FC<Props> = ({
     <>
       <div style={{ marginBottom: '10px'}}>
         <FormAutocompleteAsync
-          name="codProduct"
+          name="codProductPresentation"
           control={control}
           label="Producto"
           options={finalProducts}

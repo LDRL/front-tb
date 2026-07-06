@@ -27,7 +27,7 @@ export const BuyAdapter = (buy: ApiBuy): Buy => {
         details: (buy.Detalles ?? []).map((d: ApiDetail): Detail => ({
             amount: d.cantidad,
             cost: d.costo,
-            codProduct: d.codigoprod,
+            codProductPresentation: d.codigoprod,
             subtotal: d.cantidad * d.costo,
         })),
     }
@@ -79,7 +79,7 @@ export const mapBuyToCreatePayload = (
   total: buy.total ?? 0,
 
   detalles: buy.details.map(d => ({
-    codigoprod: d.codProduct,
+    idprodPresenta: d.codProductPresentation,
     cantidad: d.amount,
     costo: d.cost,
   })),

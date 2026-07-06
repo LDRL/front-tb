@@ -29,7 +29,7 @@ interface Product {
     _id: number;
     nombre: string;
     Marca: ApiBrand;
-    Presentacion: ApiPresentation;
+    Presentaciones: ApiProductPresentation[];
     Categoria: ApiCategory;
 }
 
@@ -37,6 +37,13 @@ interface ApiProductResponse {
     msg: string;
     data: Product[];
 }
+
+interface ApiProductPresentation {
+    codigo_barras: string;
+    idprodPresenta: number;
+    Presentacion: ApiPresentation;
+}
+
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -82,10 +89,12 @@ export const useFetchProductOptions = (search: string) => {
 };
 
 const ProductsAdapter = (products: Product[]): Option[] => {
-    return products.map(product => ({
-        value: product.codigoprod,
-        label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre}  - ${product.Presentacion.nombre}`
-    }));
+    return products.flatMap(product =>
+        product.Presentaciones.map(Presentacion => ({
+            value: Presentacion.idprodPresenta,
+            label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre} - ${Presentacion.Presentacion.nombre}`
+        }))
+    );
 };
 
 
