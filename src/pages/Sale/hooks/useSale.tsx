@@ -33,7 +33,7 @@ interface ApiResponse {
 }
 
 interface ApiResponseHeader {
-    orden: ApiHeaderSale;
+    data: ApiHeaderSale;
 }
 
 // Hook para obtener la lista de ventas
@@ -224,10 +224,10 @@ export const useSaleDetails = () => {
 
   const addRow = (detail: Detail) => {
     setRows(prev => {
-      const existing = prev.find(r => r.codProduct === detail.codProduct);
+      const existing = prev.find(r => r.codProductPresentation === detail.codProductPresentation);
       if (existing) {
         const updated = prev.map(r =>
-          r.codProduct === detail.codProduct
+          r.codProductPresentation === detail.codProductPresentation
             ? {
                 ...r,
                 amount: r.amount + detail.amount,

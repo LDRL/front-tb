@@ -24,22 +24,20 @@ function BuyShow() {
   const navigate = useNavigate();
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const { data, isLoading, isError } = id ? useShowSale(id) : { data: null, isLoading: false, isError: false };
-  const adaptedData = data ? HeaderSaleAdapter(data.orden):null;
+  const adaptedData = data ? HeaderSaleAdapter(data.data):null;
 
   const { control, reset, getValues} = useForm<HeaderS>({
     defaultValues: { id:0, date: dayjs(), address: '', total:0 }
   });
 
-  const [total, setTotal] = useState(0);
 
   const [color] = useState("#ffffff")
 
   const columns: GridColDef[] = [
     {
-        field: '_id',
-        headerName: 'Codigo',
+        field: 'product',
+        headerName: 'Producto',
         flex: 1,
-        minWidth: 150,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
     },
     {
@@ -54,12 +52,7 @@ function BuyShow() {
         flex: 1,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
     },
-    {
-        field: 'product',
-        headerName: 'Producto',
-        flex: 1,
-        renderCell: (params: GridRenderCellParams) => <>{params.value.name}</>,
-    }
+
   ];
 
   useEffect(() => {
@@ -159,12 +152,15 @@ function BuyShow() {
                 },
               }}
               pageSizeOptions={[10]}
-              getRowId={(row: any) => row._id}
+              getRowId={(row: any) => row.id}
               paginationMode="server"
           />
+          <br />
           
-          <h3>Total: Q {total}</h3>
-
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <h2>Total: Q {adaptedData?.header.total}</h2>
+          </div>
+          
           <div className='container_button'>
             <Button
               variant="contained"

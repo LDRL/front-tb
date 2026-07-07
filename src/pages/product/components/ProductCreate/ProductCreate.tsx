@@ -19,10 +19,7 @@ import { ProductForm } from '../../models/product.domain.type';
 import { useCreateProduct, useProductDetails, useUpdateProduct } from '../../hooks/useProduct';
 import { DetailCreate } from '../ProductDetail/ProductDetail';
 
-
 const CreateProduct: React.FC = () => {
-  //const productUrl = `${apiUrl}productos`;
-  const productUrl ="http://localhost:8080/api/productos/";
 
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
@@ -73,8 +70,7 @@ const CreateProduct: React.FC = () => {
 
     const fetchProductData = async () => {
       try {
-        const productId = productUrl + id;
-        const [err, responseData] = await fetchProduct(productId);
+        const [err, responseData] = await fetchProduct(id);
 
         if (!err && responseData) {
           dispatch(openModal(responseData));
@@ -151,8 +147,6 @@ const CreateProduct: React.FC = () => {
   if(isMarcaError){
     return <p>Error al cargar las opciones</p>
   }
-
-
 
   return (    
     <div>

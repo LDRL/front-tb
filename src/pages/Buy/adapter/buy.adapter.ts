@@ -45,6 +45,7 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
             address: buy.direccion,
             providerId: buy.idproveedor,
             providerName: buy.Proveedor?.nombre ?? "",
+            total: buy.total,
         },
 
         details: (buy.Detalles ?? []).map((d) => ({

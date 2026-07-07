@@ -6,6 +6,7 @@ export interface HeaderH {
   address: string;
   providerId: number;
   providerName: string;
+  total:number;
 }
 
 export interface HeaderDetail {

@@ -151,6 +151,11 @@ function BuyShow() {
             paginationMode="server"
           />
 
+          <br />
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <h2>Total: Q {adaptedData?.header.total}</h2>
+          </div>
+
           <div className='container_button'>
             <Button
               variant="contained"

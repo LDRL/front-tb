@@ -6,6 +6,9 @@ import { ApiProduct } from "../models/product.api.type";
 import axiosClient from "@/utils/axiosClient";
 import { Total } from "@/pages/Sale/models/sale.domain.type";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+const productUrl = `${apiUrl}productos`;
+
 export const fetchProductList = async (url: string, page: number, search: string): Promise<[Error?, ProductList?, Total?]> => {
     const params: { page: number; search?: string } = { page };
     if (search !== "") params.search = search;
@@ -32,9 +35,10 @@ export const fetchProductList = async (url: string, page: number, search: string
 };
 
 
-export const fetchProduct = async (url: string): Promise<[Error?, Product?]> => {    
+export const fetchProduct = async (productId: string): Promise<[Error?, Product?]> => {    
     try {
-        const response: AxiosResponse<{ data: ApiProduct }> = await axiosClient.get(url);
+        `${productUrl}/${productId}`
+        const response: AxiosResponse<{ data: ApiProduct }> = await axiosClient.get(`${productUrl}/${productId}`);
         
         if (response.statusText !== 'OK') return [new Error(`Error fetching products: ${response.statusText}`)];
 

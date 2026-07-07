@@ -1,4 +1,5 @@
 import { ApiClient } from "@/pages/Client/models";
+import { ApiPresentation } from "@/pages/Presentation";
 
 export interface ApiDetail {
     cantidad: number,
@@ -50,8 +51,13 @@ export interface ApiHeaderDetailSale{
     _id: number,
     cantidad: number,
     precio: number,    
-    Producto: ApiProduct,
+    ProductoPresentacion: ApiProductoPresentacion;
     
+}
+
+interface ApiProductoPresentacion {
+    Presentacion: ApiPresentation;
+    Producto: ApiProduct;
 }
 
 export interface ApiHeaderSale {
@@ -81,7 +87,7 @@ export interface CreateSalePayload {
 }
 
 export interface CreateSaleDetail {
-  codigoprod: number;
+  idprodPresenta: number;
   cantidad: number;
   precio: number;
 }

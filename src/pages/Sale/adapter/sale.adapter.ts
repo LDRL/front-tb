@@ -32,7 +32,7 @@ export const SaleAdapter = (sale: ApiSale): Sale => {
         ? sale.detalles.map((d: ApiDetail): Detail => ({
             amount: d.cantidad,
             cost: d.precio,
-            codProduct: d.codigoprod,
+            codProductPresentation: d.codigoprod,
         }))
         : []
     }
@@ -58,7 +58,7 @@ export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
             id: d._id,
             amount: d.cantidad,
             cost: d.precio,
-            product: d.Producto?.nombre ?? "",
+            product: `${d.ProductoPresentacion.Producto.nombre} - ${d.ProductoPresentacion.Presentacion.nombre}`
         })),
         
         pay:sale.Pago ? {
@@ -89,7 +89,7 @@ export const mapSaleToCreatePayload = (
   total: sale.total ?? 0,
 
   detalles: sale.details.map(d => ({
-    codigoprod: d.codProduct,
+    idprodPresenta: d.codProductPresentation,
     cantidad: d.amount,
     precio: d.cost,
   })),

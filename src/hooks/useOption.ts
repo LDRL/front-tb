@@ -9,6 +9,7 @@ export interface Option{
     value: number;
     label: string;
     direction?: string;
+    price?: number;
 }
 
 interface Provider {
@@ -41,6 +42,7 @@ interface ApiProductResponse {
 interface ApiProductPresentation {
     codigo_barras: string;
     idprodPresenta: number;
+    precio_venta?: number;
     Presentacion: ApiPresentation;
 }
 
@@ -92,7 +94,8 @@ const ProductsAdapter = (products: Product[]): Option[] => {
     return products.flatMap(product =>
         product.Presentaciones.map(Presentacion => ({
             value: Presentacion.idprodPresenta,
-            label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre} - ${Presentacion.Presentacion.nombre}`
+            label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre} - ${Presentacion.Presentacion.nombre}`,
+            price: Presentacion.precio_venta ?? 0
         }))
     );
 };

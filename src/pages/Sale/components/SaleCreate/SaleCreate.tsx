@@ -44,15 +44,10 @@ const SaleCreate: React.FC = () => {
     detailProduct: false,
   });
 
-  const {
-    client,
-    isLoading: isClientLoading,
-    error: isClientError
-  } = useClientSearch();
+  const { client, isLoading: isClientLoading, error: isClientError } = useClientSearch();
 
-  // 👉 SOLO cliente completo
+  //SOLO cliente completo
   const currentClient = useSelector((state: any) => state.client.currentClient);
-
 
   useEffect(() => {
 

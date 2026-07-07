@@ -3,7 +3,7 @@ import { Client } from "@/pages/Client/models";
 export interface Detail{
     amount: number,
     cost: number, 
-    codProduct: number, 
+    codProductPresentation: number, 
     name?: string,
     subtotal?: number,
     id?: string,

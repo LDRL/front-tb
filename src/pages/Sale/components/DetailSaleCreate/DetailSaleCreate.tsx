@@ -33,9 +33,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Option | null>(null);
-
-  const { data: productOptions = [], isLoading } =
-    useFetchProductOptions(search);
+  const { data: productOptions = [], isLoading } = useFetchProductOptions(search);
 
   const debouncedSearch = useMemo(
     () => debounce((v: string) => setSearch(v), 300),
@@ -51,7 +49,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
   }, [productOptions, selectedProduct]);
 
   const handleAdd = () => {
-    const { amount, cost, codProduct } = getValues();
+    const { amount, cost, codProductPresentation } = getValues();
 
     let hasError = false;
 
@@ -65,7 +63,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
       hasError = true;
     }
 
-    if (!codProduct) {
+    if (!codProductPresentation) {
       setErrors((e: any) => ({ ...e, idProduct: true }));
       hasError = true;
     }
@@ -73,7 +71,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
     if (hasError) return;
 
     addRow({
-      codProduct,
+      codProductPresentation,
       amount,
       cost,
       subtotal: amount * cost,
@@ -82,7 +80,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
 
     setValue("amount", 0);
     setValue("cost", 0);
-    setValue("codProduct", undefined);
+    setValue("codProductPresentation", undefined);
   };
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
@@ -130,7 +128,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
     <>
       <div style={{ marginBottom: '10px'}}>
         <FormAutocompleteAsync
-          name="codProduct"
+          name="codProductPresentation"
           control={control}
           label="Producto"
           options={finalProducts}
@@ -138,9 +136,10 @@ export const DetailSaleCreate: React.FC<Props> = ({
           getOptionLabel={(o) => o.label}
           getOptionValue={(o) => o.value}
           onInputChange={debouncedSearch}
-          onChangeExternal={(v) =>
-            setSelectedProduct(v as Option | null)
-          }
+          onChangeExternal={(v) => { 
+            setSelectedProduct(v as Option | null);
+            setValue("cost", v?.price);
+          }}
         />
       </div>
       <div className='container_selector'>

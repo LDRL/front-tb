@@ -41,7 +41,7 @@ export interface ApiHeaderBuy {
     direccion: string;
     estado: boolean;
     idproveedor: number;
-    total: string; // 👈 importante
+    total: number; // 👈 importante
     idusuario: number;
     idsucursal: number;
 
