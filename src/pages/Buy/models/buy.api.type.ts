@@ -1,3 +1,5 @@
+import { ApiPresentation } from "@/pages/Presentation";
+
 export interface ApiDetail {
     cantidad: number,
     costo: number,
@@ -77,20 +79,27 @@ export interface ApiHeaderDetail{
     _id: string,
     cantidad: number,
     costo: number,
-    Producto: {
-        codigoprod: number;
-        nombre: string;
-        descripcion?: string;
-        imagen?: string | null;
-        idmarca?: number;
-        idpresentacion?: number;
-        idcategoria?: number;
-        estado?: number;
-        precio?: string;
-        idunidad?: number | null;
-    };
+    ProductoPresentacion: ApiProductoPresentacion;
 }
 
+interface ApiProductoPresentacion {
+    Presentacion: ApiPresentation;
+    Producto: ApiProducDetail;
+}
+
+interface ApiProducDetail {
+    codigoprod: number;
+    nombre: string;
+    descripcion?: string;
+    imagen?: string | null;
+    idmarca?: number;
+    idpresentacion?: number;
+    idcategoria?: number;
+    estado?: number;
+    precio?: string;
+    idunidad?: number | null;
+    
+}
 //Para crear la compra con su detalle
 
 export interface CreateBuyPayload {

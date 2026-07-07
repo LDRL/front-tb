@@ -37,11 +37,6 @@ export function BuyListAdapter(apiBuyList: ApiBuy[]): Buy[] {
     return apiBuyList.map(BuyAdapter);
 }
 
-export const toDecimal = (value: number | string, decimals = 2) => {
-  const factor = Math.pow(10, decimals);
-  return Math.round(Number(value) * factor) / factor;
-};
-
 export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
     return {
         header: {
@@ -56,7 +51,8 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
             id: d._id,
             amount: d.cantidad,
             cost: d.costo,
-            product: d.Producto?.nombre ?? "",
+            product: `${d.ProductoPresentacion.Producto.nombre} - ${d.ProductoPresentacion.Presentacion.nombre}` 
+            
         })),
     };
 };
@@ -64,11 +60,7 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
 //Adapter para crear la compra
 
 
-export const mapBuyToCreatePayload = (
-  buy: Buy,
-  idusuario: number,
-  idsucursal: number
-): CreateBuyPayload => ({
+export const mapBuyToCreatePayload = (buy: Buy,idusuario: number, idsucursal: number ): CreateBuyPayload => ({
   nombre: buy.name,
   fecha: buy.date,
   direccion: buy.address,
@@ -84,3 +76,9 @@ export const mapBuyToCreatePayload = (
     costo: d.cost,
   })),
 });
+
+
+export const toDecimal = (value: number | string, decimals = 2) => {
+  const factor = Math.pow(10, decimals);
+  return Math.round(Number(value) * factor) / factor;
+};
