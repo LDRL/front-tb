@@ -68,7 +68,9 @@ const SaleCreate: React.FC = () => {
     });
 
     if (data.date) {
-      data.date = dayjs(data.date).toISOString();
+      //data.date = dayjs(data.date).toISOString();
+
+      data.date = dayjs(data.date).format("YYYY-MM-DD");
     }
 
     if (rows.length === 0) {
@@ -82,7 +84,7 @@ const SaleCreate: React.FC = () => {
       const newData: Sale = {
         id: 0,
         name: data.name,
-        date: dayjs(data.date).toISOString(),
+        date: dayjs(data.date).format("YYYY-MM-DD"),
         address: data.address,
 
         // 🔥 AQUÍ EL CAMBIO IMPORTANTE
@@ -104,7 +106,7 @@ const SaleCreate: React.FC = () => {
         },
 
         details: rows,
-      };
+      }; 
 
       await createSaleMutation.mutateAsync(newData);
 
@@ -209,6 +211,8 @@ const SaleCreate: React.FC = () => {
               control={control}
               label="Fecha"
               rules={{ required: 'Fecha es requerida' }}
+              defaultValue={dayjs()}
+              disabled
             />
           </div>
 

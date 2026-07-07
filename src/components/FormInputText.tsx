@@ -18,6 +18,7 @@ import 'dayjs/locale/es';
 dayjs.locale('es');
 import debounce from 'just-debounce-it';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Dayjs } from 'dayjs';
 
 
 interface FormInputProps<T extends FieldValues> {
@@ -233,6 +234,9 @@ interface DateProps<T extends FieldValues> {
   control: Control<T>;
   rules?: any;
   disabled?: boolean;
+  defaultValue?: Dayjs;
+  minDate?: Dayjs;
+  maxDate?: Dayjs;
 }
 
 export const FormDate = <T extends FieldValues>({
@@ -241,12 +245,16 @@ export const FormDate = <T extends FieldValues>({
   control,
   rules,
   disabled,
+  defaultValue,
+  minDate,
+  maxDate,
 }: DateProps<T>) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
       <Controller
         name={name}
         control={control}
+        defaultValue={defaultValue as any}
         rules={rules}
         render={({ field, fieldState: { error } }) => (
           <>
@@ -255,6 +263,8 @@ export const FormDate = <T extends FieldValues>({
               onChange={(date) => field.onChange(date)}
               label={label}
               disabled={disabled}
+              minDate={minDate}
+              maxDate={maxDate}
             />
 
             {error && (

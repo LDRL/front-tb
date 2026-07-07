@@ -85,7 +85,7 @@ const BuyCreate: React.FC = () => {
     const newBuy: Buy = {
       id: 0,
       name: data.name,
-      date: dayjs(data.date).toISOString(),
+      date: dayjs(data.date).format("YYYY-MM-DD"),
       address: data.address,
       state: true,
       idProvider: data.idProvider!,
@@ -196,6 +196,7 @@ const BuyCreate: React.FC = () => {
                   control={control}
                   label='Fecha'
                   rules={{required: 'Fecha es un campo requerido'}}
+                  maxDate={dayjs()}
                 />
               </div>
               {/*Encabezado fin */}
