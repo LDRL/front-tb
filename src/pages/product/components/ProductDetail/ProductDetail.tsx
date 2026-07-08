@@ -80,11 +80,6 @@ export const DetailCreate: React.FC<Props> = ({
       hasError = true;
     }
 
-    if (!barCode || barCode <= 0) {
-      setErrors((e: any) => ({ ...e, barCode: true }));
-      hasError = true;
-    }
-
     if (!baseQuantity || baseQuantity <= 0) {
       setErrors((e: any) => ({ ...e, baseQuantity: true }));
       hasError = true;

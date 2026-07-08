@@ -5,7 +5,7 @@ export interface ProductTableInterface {
 
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@mui/material';
+import { Button, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { openModal } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
@@ -13,6 +13,8 @@ import Loading from '@/components/Loading';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../../models/product.domain.type';
 import { useGetProducts } from '../../hooks/useProduct';
+import { totalPagesMovile } from '@/utils';
+import TableMovil from '../TableMovil/TableMovil';
 
 const urlSinImage = "/sinImagen.png";
 
@@ -20,6 +22,10 @@ const ListOfProducts: React.FC = () => {
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+    
     const {
         products,
         totalProduct,
@@ -114,26 +120,42 @@ const ListOfProducts: React.FC = () => {
     }
 
     return (
-        <DataGrid
-            rows={products}
-            rowCount={totalProduct}
-            columns={columns}
-            disableColumnSelector
-            disableRowSelectionOnClick
-            autoHeight
-            initialState={{
-                pagination: {
-                    paginationModel: {
-                        pageSize: paginationModel.pageSize,
-                        page: paginationModel.page,
+
+        <div>
+            {isMobile ? (
+                <TableMovil
+                    products={products}
+                    totalProduct={totalProduct}
+                    paginationModel={paginationModel}
+                    handleEditProduct={handleEditProduct}
+                    handlePaginationModelChange={handlePaginationModelChange}
+                    totalPagesMobile={totalPagesMovile}
+                />
+                
+            ) : (
+
+            <DataGrid
+                rows={products}
+                rowCount={totalProduct}
+                columns={columns}
+                disableColumnSelector
+                disableRowSelectionOnClick
+                autoHeight
+                initialState={{
+                    pagination: {
+                        paginationModel: {
+                            pageSize: paginationModel.pageSize,
+                            page: paginationModel.page,
+                        },
                     },
-                },
-            }}
-            onPaginationModelChange={handlePaginationModelChange}
-            pageSizeOptions={[paginationModel.pageSize]}
-            getRowId={(row: any) => row.productCode}
-            paginationMode="server"
-        />
+                }}
+                onPaginationModelChange={handlePaginationModelChange}
+                pageSizeOptions={[paginationModel.pageSize]}
+                getRowId={(row: any) => row.productCode}
+                paginationMode="server"
+            />
+            )}
+        </div>
     );
 };
 

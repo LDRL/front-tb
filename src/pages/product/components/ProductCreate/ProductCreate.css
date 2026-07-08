@@ -1,36 +1,6 @@
-.section{
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.container_selector{
-    display:flex;
-    margin-bottom: 15px;
-    gap:10px;
-}
-
-.container_button{
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-}
-
-.container_prueba {
-    display: flex;
-    margin-bottom: 15px;
-    gap:10px;
-    justify-content: space-between;
-
-}
-
-
-
-
 /* grid */
 
-.container_prueba {
+.container_image {
   display: grid;
   grid-template-columns: 1fr 120px; /* izquierda flexible, imagen fija */
   gap: 15px;
@@ -63,11 +33,18 @@
 
 
 @media (max-width: 600px) {
-  .container_prueba {
+  .container_image {
     grid-template-columns: 1fr;
   }
 
   .image {
     justify-content: flex-start;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+  .container_selector{
+    flex-direction: column;
   }
 }

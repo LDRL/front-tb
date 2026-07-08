@@ -31,7 +31,7 @@ const CreateProduct: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div className='header_page'>
       <div style={{ alignItems: "right" }}>
         <FormInputText
           name="search"

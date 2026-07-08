@@ -19,3 +19,49 @@
   grid-template-rows: 100px 100px 60px auto;
 }
 
+
+/* headers de pages product, category others*/
+.header_page{
+    display: flex; 
+    gap: 20px;
+    flex-direction: column;
+}
+
+@media (min-width: 1024px) /* and (max-width: 1200px) */ {
+    .header_page{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0;
+    }    
+}
+
+
+/* Estilos para formulario */
+.section{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.container_selector{
+    display:flex;
+    margin-bottom: 15px;
+    gap:10px;
+}
+
+.container_button{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+@media (max-width: 600px) {
+  .container_selector{
+    flex-direction: column;
+  }
+}

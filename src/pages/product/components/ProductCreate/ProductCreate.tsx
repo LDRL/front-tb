@@ -166,7 +166,7 @@ const CreateProduct: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div className="container_prueba">
+          <div className="container_image">
             {/* Columna izquierda */}
             <div className="left">
               <div className="section">

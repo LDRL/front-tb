@@ -15,10 +15,7 @@ export default function Productt(){
                 <Header />
             </div>
             
-
-            <div>
-                <ProductTable />
-            </div>
+            <ProductTable />
         </div>
     )
 }
