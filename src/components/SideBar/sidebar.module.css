@@ -13,6 +13,37 @@
   }
 }
 
+@media (max-width: 767px) {
+  .aside_mobile_open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+
+  .aside_mobile_open .container_sidebar {
+    z-index: 51;
+  }
+
+  .aside_mobile_open .span {
+    display: none;
+  }
+}
+
+.mobile_backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile_backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 49;
+  }
+}
+
 .aside_open {
   width: 220px;
 }

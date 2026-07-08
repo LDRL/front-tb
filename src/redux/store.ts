@@ -17,17 +17,18 @@ import rolSlice from './rolSlice';
 import { CategoryState } from '@/pages/Category';
 import { BrandState } from '@/pages/Brand';
 import { PresentationState } from '@/pages/Presentation';
-import { UserState } from '@/pages/User';
-import { ProductForm } from '@/pages/product/models/product.view.type';
 import { Client } from '@/pages/Client/models/client.domain.type';
 import { SaleState } from '@/pages/Sale/models/sale.domain.type';
 import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
 import { RoleState } from '@/pages/Rol/models/role.domain.type';
 import { AuthState } from '@/modules/auth/models/login.domain.type';
+import { ProductForm } from '@/pages/product/models/product.domain.type';
+import { UserState } from '@/pages/User/models/user.domain.type';
 
 
 interface sidebarInfo {
   state: boolean;
+  mobileOpen: boolean;
 }
 
 interface ProductState {

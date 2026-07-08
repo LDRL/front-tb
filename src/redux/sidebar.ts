@@ -2,11 +2,13 @@ import { clearLocalStorage, persistLocalStorage } from "@/utils/localStorage.uti
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface SidebarInfo{
-    state: false
+    state: boolean;
+    mobileOpen: boolean;
 }
 
 export const EmptySidebarState: SidebarInfo = {
-    state: false
+    state: false,
+    mobileOpen: false
 }
 
 export const sidebarKey = 'sidebar';
@@ -24,6 +26,11 @@ export const sidebarSlice = createSlice({
             persistLocalStorage<SidebarInfo>(sidebarKey, result);
             return result;
         },
+        toggleMobileMenu: (state) => {
+            const result = { ...state, mobileOpen: !state.mobileOpen };
+            persistLocalStorage<SidebarInfo>(sidebarKey, result);
+            return result;
+        },
         resetSidebar: () => {
             clearLocalStorage(sidebarKey);
             return EmptySidebarState;
@@ -31,5 +38,5 @@ export const sidebarSlice = createSlice({
     }
 });
 
-export const { createSidebar,resetSidebar, updateSidebar } = sidebarSlice.actions;
+export const { createSidebar, resetSidebar, updateSidebar, toggleMobileMenu } = sidebarSlice.actions;
 export default sidebarSlice.reducer;
