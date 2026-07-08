@@ -40,10 +40,10 @@ const ListOfSales: React.FC = () => {
             renderCell: (params: GridRenderCellParams) => <>{moment(params.value).format("DD/MM/YYYY")}</>,
         },
         {
-            field: 'client',
+            field: 'name',
             headerName: 'Cliente',
             flex: 1,
-            renderCell: (params: GridRenderCellParams) =>  <>{params.value ? `${params.value.name} ${params.value.lastName}` : 'Sin Proveedor'}</>,
+            renderCell: (params: GridRenderCellParams) =>  <>{params.value}</>,
         },
         {
             field: 'address',

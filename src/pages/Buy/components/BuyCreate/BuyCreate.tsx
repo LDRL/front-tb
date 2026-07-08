@@ -74,6 +74,22 @@ const BuyCreate: React.FC = () => {
     detailProduct: false,
   });
 
+
+  const now = dayjs();
+  const fecha = dayjs(data.date)
+    .hour(now.hour())
+    .minute(now.minute())
+    .second(now.second())
+    .millisecond(now.millisecond())
+    .toISOString();
+
+
+  if (data.date) {
+    data.date = fecha;
+
+    //data.date = dayjs(data.date).format("YYYY-MM-DD");
+  }
+
   if (rows.length === 0) {
     setErrors(prev => ({ ...prev, detailProduct: true }));
     return;
@@ -85,7 +101,7 @@ const BuyCreate: React.FC = () => {
     const newBuy: Buy = {
       id: 0,
       name: data.name,
-      date: dayjs(data.date).format("YYYY-MM-DD"),
+      date: fecha,
       address: data.address,
       state: true,
       idProvider: data.idProvider!,
@@ -139,7 +155,7 @@ const BuyCreate: React.FC = () => {
           <div className='container_buy'>
             {/* Detalle  */}
             <div className='buy_left'>
-              <div style={{border: '1px solid #ccc', borderRadius: '5px', padding: '15px'}} >
+              <div className="detail_container">
                 <DetailCreate
                   control={control}
                   getValues={getValues}

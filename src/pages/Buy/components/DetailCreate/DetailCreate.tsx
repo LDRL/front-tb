@@ -126,7 +126,7 @@ export const DetailCreate: React.FC<Props> = ({
 
   return (
     <>
-      <div style={{ marginBottom: '10px'}}>
+      <div style={{ marginBottom: '10px'}} className='section'>
         <FormAutocompleteAsync
           name="codProductPresentation"
           control={control}

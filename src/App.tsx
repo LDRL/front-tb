@@ -35,8 +35,8 @@ function App() {
         </Provider>
 
         <ToastContainer 
-         pauseOnHover={false}
-         pauseOnFocusLoss={false}/>
+          pauseOnHover={false}
+          pauseOnFocusLoss={false}/>
       </Suspense>
 
     </>

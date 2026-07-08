@@ -68,9 +68,7 @@ const SaleCreate: React.FC = () => {
     });
 
     if (data.date) {
-      //data.date = dayjs(data.date).toISOString();
-
-      data.date = dayjs(data.date).format("YYYY-MM-DD");
+      data.date = dayjs(data.date).toISOString();
     }
 
     if (rows.length === 0) {
@@ -84,10 +82,9 @@ const SaleCreate: React.FC = () => {
       const newData: Sale = {
         id: 0,
         name: data.name,
-        date: dayjs(data.date).format("YYYY-MM-DD"),
+        date: dayjs(data.date).toISOString(),
         address: data.address,
 
-        // 🔥 AQUÍ EL CAMBIO IMPORTANTE
         idClient: currentClient?.id ?? 0,
 
         idSucursal: 0,
@@ -106,7 +103,7 @@ const SaleCreate: React.FC = () => {
         },
 
         details: rows,
-      }; 
+      };
 
       await createSaleMutation.mutateAsync(newData);
 
@@ -175,6 +172,17 @@ const SaleCreate: React.FC = () => {
               control={control}
               label="Nit"
               rules={{ required: 'NIT es requerido' }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+
+                  const nit = getValues("nit")?.trim();
+
+                  if (nit) {
+                    searchClient();
+                  }
+                }
+              }}
             />
 
             <Button onClick={searchClient} variant="contained">

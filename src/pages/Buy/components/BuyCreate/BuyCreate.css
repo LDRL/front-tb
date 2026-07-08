@@ -1,103 +1,142 @@
-/* .sweet-loading{
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 2;
-} */
+/* ==========================
+   Mobile (por defecto)
+========================== */
 
-.container_selector{
-    display:flex;
-    margin-bottom: 15px;
-    gap:10px;
+.container_selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.detail_container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.container_buy {
+  border:1px solid #ccc;
+  border-radius:5px;
+  padding:15px;
 }
 
 
-/*
-***
-***
-*/
-
-/* grid */
-
-.container_buy {
-  display: grid;
-  grid-template-columns: 1fr 360px; /* izquierda flexible, imagen fija */
-  gap: 15px;
-  align-items: stretch;
-  min-height: 90vh;
+.buy_left,
+.buy_right {
+  width: 100%;
 }
 
 .buy_right {
   display: flex;
   flex-direction: column;
-  border-left: 1px solid #ccc;
-  padding: 10px;
+  border-left: none;
+  border-top: 1px solid #ccc;
+  padding-top: 15px;
 }
 
-/* Columna izquierda */
-.buy_left {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Fila precio + unidad */
 .row {
   display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-/* Cada input ocupa igual */
 .row > * {
-  flex: 1;
+  width: 100%;
 }
 
-
-/* Resumen */
-.resumen_header{
-  margin-top: auto;
+.resumen_header {
+  margin-top: 20px;
   border-top: 1px solid #ccc;
   padding-top: 15px;
-
-
 }
 
-.resumen_header-title label {
-  font-weight: 700;
-
-}
-
-.resumen_subtotal label {
-  font-weight: 700;
-}
-
-.resumen_subtotal{
-  margin-bottom: 10px;
-      display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-
-}
-
-.resumen_total {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-    
-  font-weight: 700;
-}
-
+.resumen_header-title label,
+.resumen_subtotal label,
 .resumen_total label {
   font-weight: 700;
 }
 
-@media (max-width: 600px) {
+.resumen_subtotal,
+.resumen_total {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.resumen_total {
+  font-weight: 700;
+}
+
+/* ==========================
+   Tablet (600px - 899px)
+========================== */
+
+@media (min-width: 600px) {
+
+  .container_selector {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .container_selector > :first-child {
+    flex: 1;
+  }
+
+  .row {
+    flex-direction: row;
+  }
+
+  .row > * {
+    flex: 1;
+  }
+
   .container_buy {
     grid-template-columns: 1fr;
   }
+
+  .buy_right {
+    border-top: 1px solid #ccc;
+    border-left: none;
+  }
 }
+
+/* ==========================
+   Desktop (900px en adelante)
+========================== */
+
+@media (min-width: 900px) {
+
+
+
+  .buy_right {
+    border-top: none;
+    border-left: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  .resumen_header {
+    margin-top: auto;
+  }
+
+  .detail_container{
+    border:1px solid #ccc;
+    border-radius:5px;
+    padding:15px;
+  }
+
+
+  .container_buy {
+
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+
+    grid-template-columns: 1fr 360px;
+    align-items: stretch;
+    min-height: 85vh;
+  }
+}
+
+

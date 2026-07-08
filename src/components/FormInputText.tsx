@@ -1,12 +1,11 @@
 // src/form-component/FormInputText.tsx
 import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import {Autocomplete, Box, CircularProgress, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem } from "@mui/material";
+import {Box, FormHelperText, IconButton, InputAdornment } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 
 import Select from "react-select";
-import AsyncSelect from "react-select/async";
 
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -16,7 +15,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import 'dayjs/locale/es';
 dayjs.locale('es');
-import debounce from 'just-debounce-it';
+
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Dayjs } from 'dayjs';
 
@@ -30,6 +29,7 @@ interface FormInputProps<T extends FieldValues> {
   disabled?: boolean;
   type?: string;
   max?: number;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 export const FormInputText = <T extends FieldValues>({
@@ -41,6 +41,7 @@ export const FormInputText = <T extends FieldValues>({
   disabled,
   type = "text",
   max,
+  onKeyDown,
 }: FormInputProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -67,6 +68,7 @@ export const FormInputText = <T extends FieldValues>({
             field.onChange(e.target.value);
             externalOnChange?.(e.target.value);
           }}
+          onKeyDown={onKeyDown}
           fullWidth
           label={label}
           disabled={disabled}
@@ -143,10 +145,7 @@ export const FormTextArea = <T extends FieldValues>({
 
 {/**Selectores */}
 
-interface Option {
-  label: string;
-  value: number;
-}
+
 
 
 
