@@ -1,38 +1,41 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSearch } from '@/redux/productSlice';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
-import { Product } from '../../models/product.domain.type';
 
 
-const CreateProduct: React.FC = () => {
+const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
+  const search = useSelector((state: any) => state.product.search);
 
-  const debouncedGetProducts= useCallback(debounce((search: string) =>{
+  const debouncedSetSearch = useCallback(debounce((search: string) => {
     dispatch(setSearch(search));
-  },300 ),[])
+  }, 300), [])
 
   const handleClick = () => {
     navigate("create")
-
   };
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<Product>({
-    defaultValues: { productCode: 0, name: '', price: 0},
+  const { control, reset } = useForm({
+    defaultValues: { search },
   });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    debouncedGetProducts(event.target.value)
+  useEffect(() => {
+    reset({ search });
+  }, [search, reset]);
+
+  const handleSearchChange = (value: string) => {
+    debouncedSetSearch(value);
   };
 
   return (
     <div className='header_page'>
-      <div style={{ alignItems: "right" }}>
+      <div>
         <FormInputText
           name="search"
           control={control}
@@ -50,4 +53,4 @@ const CreateProduct: React.FC = () => {
   );
 };
 
-export default CreateProduct;
+export default Header;

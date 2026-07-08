@@ -29,7 +29,7 @@ export const useGetProducts = (initialPage: number = 1) => {
         pageSize: pageSize,
     });
 
-    const { data, error, isLoading } = useFetchProducts(page,search);
+    const { data, error, isLoading } = useFetchProducts(page, search);
 
     useEffect(() => {
         if(data){
@@ -45,6 +45,8 @@ export const useGetProducts = (initialPage: number = 1) => {
         setPage(newPage);
     };
 
+
+
     return {
         products,
         totalProduct,
@@ -57,15 +59,16 @@ export const useGetProducts = (initialPage: number = 1) => {
 
 
 export const useFetchProducts = (page: number = 1, search: string) => {
+    const queryKey = search ? ['products', search] : ['products', page];
     return useQuery<ApiResponseProductList, Error>({
-        queryKey: ['products', page, search],
+        queryKey,
         queryFn: async () => {
-            const response = await axiosClient.get<ApiResponseProductList>(`${productUrl}?page=${page}&search=${search}`);
+            const params = search
+                ? `?search=${encodeURIComponent(search)}`
+                : `?page=${page}&search=`;
+            const response = await axiosClient.get<ApiResponseProductList>(`${productUrl}${params}`);
             return response.data;
-            
         },
-        // staleTime: 60000, // 1 minuto
-        // cacheTime: 300000, // 5 minutos
     });
 };
 
