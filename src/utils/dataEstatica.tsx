@@ -11,6 +11,26 @@ import GroupIcon from '@mui/icons-material/Group';
 import SecurityIcon from '@mui/icons-material/Security';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
+
+
+export interface SidebarLink {
+  label: string;
+  icon: React.ReactNode;
+  to: string;
+  path?: string;
+  permission: string | null;
+
+  subNav?: {
+    title: string;
+    path: string;
+  }[];
+
+  iconOpened?: React.ReactNode;
+  iconClosed?: React.ReactNode;
+}
+
+
+
 export const DesplegableUser = [
   {
     text: "Mi perfil",
@@ -32,7 +52,7 @@ export const DesplegableUser = [
 
 
 //data SIDEBAR
-export const LinksArray = [
+export const LinksArray: SidebarLink[]= [
   // {
   //   label: "Home",
   //   icon: <HomeIcon />,

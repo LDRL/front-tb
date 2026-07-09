@@ -109,7 +109,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
     },
     {
       field: 'cost',
-      headerName: 'Costo',
+      headerName: 'Precio',
       flex:1,
       type: 'number',
       sortable: false
@@ -158,10 +158,10 @@ export const DetailSaleCreate: React.FC<Props> = ({
         <FormInputNumber
           name="cost"
           control={control}
-          label="Costo"
+          label="Precio"
         />
         {errors.cost && (
-          <FormHelperText sx={{color: 'red'}}>Costo es un campo requerido</FormHelperText>
+          <FormHelperText sx={{color: 'red'}}>Precio es un campo requerido</FormHelperText>
         )}
         </div>
       </div>

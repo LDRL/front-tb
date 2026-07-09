@@ -1,17 +1,16 @@
 import { FormDropdown, FormInputText } from "@/components";
 import CardForm from "@/components/Cards/CardForm";
-import LoadMask from '@/components/LoadMask/LoadMask';
 import { Box, Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { dialogCloseSubject$ } from "@/components/CustomDialog/CustomDialog";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
 import { toast } from 'react-toastify';
 import { createClient } from "../../services/client";
 import { useDispatch } from "react-redux";
 import { editClient } from "@/redux/clientSlice";
 import { ClientForm } from "@/pages/Client/models";
 import { useFetchTypeClientsOptions } from "@/hooks/useOption";
+import Loading from "@/components/Loading";
 
 const ClientCreate: React.FC = () => {
     const dispatch = useDispatch();
@@ -28,7 +27,7 @@ const ClientCreate: React.FC = () => {
         },
     });
 
-    const [loading, setLoading] = useState(false);
+
     const {data: typeCliOptions} =   useFetchTypeClientsOptions();
     
 
@@ -48,11 +47,10 @@ const ClientCreate: React.FC = () => {
     };
 
     const onSubmit = async (data: ClientForm) => {
-        setLoading(true);
+
 
         mutation.mutate(data, {
             onSuccess: (response) => {
-                setLoading(false);
 
                 const createdClient = response;
 
@@ -62,9 +60,6 @@ const ClientCreate: React.FC = () => {
                 dispatch(editClient(createdClient));
 
                 dialogCloseSubject$.setSubject = false;
-            },
-            onSettled: () => {
-                setLoading(false);
             }
         });
     };
@@ -72,7 +67,7 @@ const ClientCreate: React.FC = () => {
     return (
         <div className="container">
             <CardForm titulo="Cliente" subtitulo="Nuevo">
-                <LoadMask />
+                <Loading loading={mutation.isPending} />
                 <Box
                     component="form"
                     onSubmit={handleSubmit(onSubmit)}

@@ -19,7 +19,6 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({
     name,
     control,
     label,
-    rules,
     options
 }) => {
     const generateSingleOptions = () => {

@@ -108,7 +108,7 @@ const Sidebar = () => {
               </h2>
             </div>
 
-            {filteredLinks.map(({ icon, label, to, subNav, iconOpened, iconClosed }) => (
+            {filteredLinks.map(({ icon, label, to, subNav }) => (
               <li className={styles.LinkLi} key={label}>
                 <div
                   className={classNames(styles.LinkContainer, {
