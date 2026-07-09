@@ -2,22 +2,15 @@ export interface Product {
   productCode: number;
   name: string;
   description: string;
-  //price: number;
 
   brand: Brand;
-  //presentation: Presentation;
   category: Category;
   unit: Unit;
-
   idBrand: number;
   idCategory: number;
-
   idUnit: number;
-
   imageUrl: string;     // 👈 backend
   image?: File | null | string;
-
-  //Oter
 
   //Detalle
   idPresentation: number;
@@ -43,9 +36,9 @@ export interface Category {
 }
 
 export interface Unit {
-     id: number;
-    name: string;
-    abbreviation: string;
+  id: number;
+  name: string;
+  abbreviation: string;
 }
 
 

@@ -1,9 +1,6 @@
 // redux/productSlice.ts
-import { Product } from '@/pages/product/models/product.domain.type';
-import { ProductForm } from '@/pages/product/models/product.view.type';
+import { Product, ProductForm } from '@/pages/product/models/product.domain.type';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-// import { Product } from '../models';
-
 
 interface ProductState {
   open: boolean;
@@ -22,7 +19,26 @@ const productSlice = createSlice({
   initialState: EmptyProductState,
   reducers: {
     openModal: (state, action: PayloadAction<Product | null>) => {
-      state.currentProduct = action.payload;
+      if (action.payload) {
+        state.currentProduct = {
+          productCode: action.payload.productCode,
+          name: action.payload.name,
+          idBrand: action.payload.idBrand,
+          idPresentation: action.payload.idPresentation,
+          idCategory: action.payload.idCategory,
+          idUnit: action.payload.idUnit,
+          description: action.payload.description,
+          image: action.payload.image,
+
+          presentacions: action.payload.presentacions ?? [],
+
+          price: action.payload.price ?? 0,
+          barCode: action.payload.barCode ?? '',
+          baseQuantity: action.payload.baseQuantity ?? 0,
+        };
+      } else {
+        state.currentProduct = null;
+      }
     },
     clearProduct: (state) => {
       state.currentProduct = null;

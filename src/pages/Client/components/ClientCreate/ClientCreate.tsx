@@ -44,7 +44,7 @@ const ClientCreate: React.FC = () => {
     const { data: typeCliOptions = [], isLoading: isTypeCliLoading } =
         useFetchTypeClientsOptions();
 
-    const { data, isLoading } = id ? useGetClient(id) : { data: null, isLoading: false };
+    const { data} = id ? useGetClient(id) : { data: null };
 
     const createClientMutation = useCreateClient();
     const updateClientMutation = useUpdateClient();

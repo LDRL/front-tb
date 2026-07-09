@@ -2,7 +2,7 @@ import { BuyTable } from "./components/BuyTable";
 import { Header } from "./components/Header";
 
 
-export default function Buy(){
+export default function BuyPage(){
     //const sidebarState = useSelector((store: AppStore) => store.sidebar)    
     return(
         <div>

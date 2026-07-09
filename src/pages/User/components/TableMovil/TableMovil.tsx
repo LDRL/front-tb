@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, CardContent, Pagination } from '@mui/material';
-import { User } from '../../models';
+import { User } from '../../models/user.domain.type';
 
 interface BrandListProps {
     users: User[];
@@ -39,7 +39,7 @@ const TableMovil: React.FC<BrandListProps> = ({
             <Pagination
                 count={Math.ceil(totalUser / totalPagesMobile)}
                 page={paginationModel.page + 1}
-                onChange={(event, value) =>
+                onChange={(_, value) =>
                     handlePaginationModelChange({ page: value - 1, pageSize: paginationModel.pageSize })
                 }
                 color="primary"

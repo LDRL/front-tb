@@ -1,4 +1,3 @@
-import { Product } from "@/pages/product/models/product.domain.type";
 import { Dayjs } from "dayjs";
 
 export interface HeaderS {

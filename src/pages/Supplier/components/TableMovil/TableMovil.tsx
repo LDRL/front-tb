@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, CardContent, Pagination } from '@mui/material';
-import { Supplier } from '../../models';
+import { Supplier } from '../../models/supplier.domain.type';
 
 interface SupplierListProps {
     suppliers: Supplier[];
@@ -22,13 +22,13 @@ const TableMovil: React.FC<SupplierListProps> = ({
     return (
         <>
             {suppliers.map((supplier) => (
-                <Card key={supplier._id} style={{ marginBottom: '16px' }}>
+                <Card key={supplier.code} style={{ marginBottom: '16px' }}>
                     <CardContent>
-                        <h3>{supplier.nombre}</h3>
-                        <p>Código: {supplier._id}</p>
-                        <p>Direccion: {supplier.direccion}</p>
-                        <p>Telefonos: {supplier.telefono}</p>
-                        <p>Correo Electronico: {supplier.email}</p>
+                        <h3>{supplier.name}</h3>
+                        <p>Código: {supplier.code}</p>
+                        <p>Direccion: {supplier.address}</p>
+                        <p>Telefonos: {supplier.phone}</p>
+                        <p>Correo Electronico: {supplier.mail}</p>
                         <Button
                             variant="contained"
                             color="success"
@@ -42,7 +42,7 @@ const TableMovil: React.FC<SupplierListProps> = ({
             <Pagination
                 count={Math.ceil(totalSupplier / totalPagesMobile)}
                 page={paginationModel.page + 1}
-                onChange={(event, value) =>
+                onChange={(_, value) =>
                     handlePaginationModelChange({ page: value - 1, pageSize: paginationModel.pageSize })
                 }
                 color="primary"

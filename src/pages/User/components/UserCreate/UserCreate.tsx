@@ -39,34 +39,34 @@ const UserCreate: React.FC = () => {
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
 
 
- // Llamar al hook aquí
- const { data: roleOptions = [], isLoading: isRoleLoading } = useFetchRoleOptions();
- const { data: sucursalOptions = [], isLoading: isSucursalLoading } = useFetchSucursalOptions();
+  // Llamar al hook aquí
+  const { data: roleOptions = [], isLoading: isRoleLoading } = useFetchRoleOptions();
+  const { data: sucursalOptions = [], isLoading: isSucursalLoading } = useFetchSucursalOptions();
 
- const { data, isLoading, isError } = id ? useGetUser(id) : { data: null, isLoading: false, isError: false };
+  const { data} = id ? useGetUser(id) : { data: null };
 
- const createUserMutation = useCreateUser();
- const updateUserMutation = useUpdateUser();
+  const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
 
- useEffect(() => {
-  if (id && data) {
-    dispatch(editUser(data));
-    return
-  }
+  useEffect(() => {
+    if (id && data) {
+      dispatch(editUser(data));
+      return
+    }
 
-  dispatch(clearUser())
- }, [dispatch, data]); // Agregar 'data' e 'isError' a las dependencias
+    dispatch(clearUser())
+  }, [dispatch, data]); // Agregar 'data' e 'isError' a las dependencias
 
 
   useEffect(() => {
     if (currentUser) {
 
-      const roleIds = currentUser.Roles.map(
+      const roleIds = currentUser.Roles?.map(
         (p: any) => p._id
       );
 
       reset(currentUser);
-      setSelectedRoles(roleIds);
+      setSelectedRoles(roleIds ?? []);
       setSubtitulo("Editar")
     } else {
       reset({ _id: "", nombre: ''});

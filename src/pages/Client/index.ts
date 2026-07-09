@@ -1,4 +1,4 @@
-export * from "./Client";
+export * from "./ClientPage";
 export * from "./adapter";
 export * from "./components";
 export * from "./components/ClientCreate";

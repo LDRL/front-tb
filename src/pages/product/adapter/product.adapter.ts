@@ -69,3 +69,49 @@ export const mapProductToApi = (p: ProductForm): ApiCreateProduct => ({
   }))
 });
 
+
+export const productFormToProduct = (
+  form: ProductForm
+): Product => {
+  return {
+    productCode: form.productCode,
+    name: form.name,
+    description: form.description,
+
+    idBrand: form.idBrand,
+    idCategory: form.idCategory,
+    idUnit: form.idUnit,
+
+    // Si tu backend necesita objetos completos,
+    // aquí puedes llenarlos después con los datos reales
+    brand: {
+      id: form.idBrand,
+      name: '',
+    },
+
+    category: {
+      id: form.idCategory,
+      name: '',
+    },
+
+    unit: {
+      id: form.idUnit,
+      name: '',
+      abbreviation: '',
+    },
+
+    imageUrl: typeof form.image === 'string'
+      ? form.image
+      : '',
+
+    image: form.image,
+
+    idPresentation: form.idPresentation,
+
+    price: form.price,
+    barCode: form.barCode,
+    baseQuantity: form.baseQuantity,
+
+    presentacions: form.presentacions ?? [],
+  };
+};

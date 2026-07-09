@@ -1,7 +1,7 @@
 import { SupplierTable } from "./components";
 import { Header } from "./components/Header";
 
-export default function Supplier(){
+export default function SupplierPage(){
     return(
         <div>
 

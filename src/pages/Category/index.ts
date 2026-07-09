@@ -3,6 +3,5 @@ export * from './components/index';
 export * from './components/CategoryCreate/index';
 export * from './components/CategoryTable/index';
 export * from './models/Category.type';
-export * from './Category';
-// export * from './services/product';
+export { default as CategoryPage } from './CategoryPage';
 export * from './components/Header/index';

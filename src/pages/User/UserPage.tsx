@@ -1,12 +1,13 @@
-import { PresentationTable } from "./components";
+
+import { UserTable } from "./components";
 import { Header } from "./components/Header";
 
-export default function Presentation(){
+export default function UserPage(){
     return(
         <div>
 
             <div>
-                <h2>Listado de presentaciones</h2>
+                <h2>Listado de usuarios</h2>
                 <hr />
             </div>
 
@@ -15,8 +16,8 @@ export default function Presentation(){
             </div>
             
             {/* 94 */}
-            <div >
-                <PresentationTable />
+            <div>
+                <UserTable />
             </div>
         </div>
 

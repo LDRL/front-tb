@@ -1,12 +1,11 @@
-
-import { SaleTable } from "./components/SaleTable";
+import { BrandTable } from "./components";
 import { Header } from "./components/Header";
 
-export default function Sale(){    
+export default function BrandPage(){
     return(
         <div>
             <div>
-                <h2>Listado de ventas</h2>
+                <h2>Listado de marcas</h2>
                 <hr />
             </div>
 
@@ -15,9 +14,10 @@ export default function Sale(){
             </div>
             
             {/* 94 */}
-            <div >
-                <SaleTable />
+            <div>
+                <BrandTable />
             </div>
         </div>
+
     )
 }

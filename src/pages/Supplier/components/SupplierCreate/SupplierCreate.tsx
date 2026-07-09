@@ -30,7 +30,7 @@ const SupplierCreate: React.FC = () => {
   });
 
  // Llamar al hook aquí
- const { data, isLoading, isError } = id ? useGetSupplier(id) : { data: null, isLoading: false, isError: false };
+ const { data } = id ? useGetSupplier(id) : { data: null };
 
  const createSupplierMutation = useCreateSupplier();
  const updateSupplierMutation = useUpdateSupplier();

@@ -29,7 +29,7 @@ const ClientCreate: React.FC = () => {
     });
 
     const [loading, setLoading] = useState(false);
-    const {data: typeCliOptions, isLoading: isTypeCliLoading, isError: isTypeCliError} =   useFetchTypeClientsOptions();
+    const {data: typeCliOptions} =   useFetchTypeClientsOptions();
     
 
     const mutation = useMutation({

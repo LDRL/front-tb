@@ -107,7 +107,7 @@ export const useCreateSupplier = () => {
 };
 
 export type UpdateSupplierDTO = {
-  code: number;
+  code?: number;
   data: SupplierForm;
 };
 

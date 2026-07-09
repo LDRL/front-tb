@@ -4,7 +4,6 @@ export * from './components/SaleCreate/index';
 export * from './components/SaleTable/index';
 export * from './components/SaleShow/index';
 
-export * from './models/sale.type';
-export * from './Sale';
+export * from './SalePage';
 export * from './services/sale';
 export * from './components/Header/index';

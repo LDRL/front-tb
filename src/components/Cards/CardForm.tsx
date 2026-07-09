@@ -1,4 +1,4 @@
-import React, { CSSProperties, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import "./CardForm.css"
 
 interface CardFormProps {
@@ -10,11 +10,7 @@ interface CardFormProps {
     children?: React.ReactNode;
 }
 
-
-
-
-
-function CardForm({titulo, subtitulo, col = 8, noPaddingXContent, noPaddingYContent, children }: CardFormProps) {
+function CardForm({titulo, subtitulo, children }: CardFormProps) {
 
     // const {noPaddingXContent, noPaddingYContent} = props;
     return (

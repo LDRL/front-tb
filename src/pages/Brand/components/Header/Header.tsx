@@ -1,20 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
-
-
 import { useNavigate } from 'react-router-dom';
-import { Brand } from '../../models';
-
+import { setSearchBrand } from '@/redux/brandSlice';
 import debounce from 'just-debounce-it';
 import "./Header.css"
-import { setSearchBrand } from '@/redux/brandSlice';
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const search = useSelector((state: any) => state.brand.search);
 
   const debouncedGetBrands = useCallback(debounce((search: string) =>{
     dispatch(setSearchBrand(search));
@@ -24,16 +21,21 @@ const Header: React.FC = () => {
     navigate("create")
   };
 
-  const { control } = useForm<Brand>({
-    defaultValues: { id: 0, name: ''},
+  const { control, reset } = useForm({
+    defaultValues: { search },
   });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    debouncedGetBrands(event.target.value)
+  useEffect(() => {
+    reset({ search });
+  }, [search, reset]);
+
+  const handleSearchChange = (value: string) => {
+    debouncedGetBrands(value)
   };
 
   return (
     <div className='header'>
+      
       <div style={{ alignItems: "right" }}>
         <FormInputText
           name="search"

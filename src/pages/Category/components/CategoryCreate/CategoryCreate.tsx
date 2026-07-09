@@ -30,7 +30,7 @@ const CreateCategory: React.FC = () => {
 
 
  // Llamar al hook aquí
- const { data, isLoading, isError } = id ? useGetCategory(id) : { data: null, isLoading: false, isError: false };
+ const { data} = id ? useGetCategory(id) : { data: null};
 
 
  const createCategoryMutation = useCreateCategory();

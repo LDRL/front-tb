@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardForm from '../../../../components/Cards/CardForm'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ const BrandCreate: React.FC = () => {
 
 
  // Llamar al hook aquí
- const { data, isLoading, isError } = id ? useGetBrand(id) : { data: null, isLoading: false, isError: false };
+ const { data} = id ? useGetBrand(id) : { data: null };
 
  const createBrandMutation = useCreateBrand();
  const updateBrandMutation = useUpdateBrand();

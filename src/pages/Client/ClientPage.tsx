@@ -1,7 +1,7 @@
 import { ClientTable } from "./components";
 import { Header } from "./components/Header";
 
-export default function Client() {
+export default function ClientPage() {
     return (
         <div>
             <div>

@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, useMediaQuery,useTheme} from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { User } from '../../models';
 
 import Loading from '@/components/Loading';
 import { totalPagesMovile } from '@/utils';
 import TableMovil from '../TableMovil/TableMovil';
 import { useUser } from '../../hooks/useUser';
 import { editUser } from '@/redux/userSlice';
+import { User } from '../../models/user.domain.type';
 
 const ListOfUsers: React.FC = () => {
     const dispatch = useDispatch();

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import "./Header.css"
 import { setSearchSale } from '@/redux/saleSlice';
-import { SaleState } from '../../models/sale.domain.type';
 import { hasPermission } from '@/modules/auth/helper/auth.helper';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
@@ -18,6 +17,8 @@ import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
+
+  const search = useSelector((state: any) => state.auth.search);
 
   const user = useSelector((state: any) => state.auth.user);
   const canCreateSale = hasPermission(user,PERMISSIONS.SALES.CREATE
@@ -31,12 +32,16 @@ const Header: React.FC = () => {
     navigate("create")
   };
 
-  const { control } = useForm<SaleState>({
-    defaultValues: { search: ''},
+  const { control, reset } = useForm({
+    defaultValues: { search },
   });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    debouncedGetSales(event.target.value)
+  useEffect(() => {
+    reset({ search });
+  }, [search, reset]);
+
+  const handleSearchChange = (value: string) => {
+    debouncedGetSales(value);
   };
 
   return (

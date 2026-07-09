@@ -1,5 +1,4 @@
 import { ApiSupplier } from "./supplier.api.type";
-import { Supplier } from "./supplier.domain.type";
 
 
 export interface ApiResponseSupplierList {

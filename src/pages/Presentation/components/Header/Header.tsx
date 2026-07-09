@@ -1,12 +1,11 @@
 import React, { useCallback } from 'react';
 import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
 
 
 import { useNavigate } from 'react-router-dom';
-import { Presentation } from '../../models';
 
 import debounce from 'just-debounce-it';
 import "./Header.css"
@@ -15,6 +14,8 @@ import { setSearchPresentation } from '@/redux/presentationSlice';
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
+  const search = useSelector((state: any) => state.presentation.search);
+
 
   const debouncedGetPresentations = useCallback(debounce((search: string) =>{
     dispatch(setSearchPresentation(search));
@@ -24,12 +25,12 @@ const Header: React.FC = () => {
     navigate("create")
   };
 
-  const { control } = useForm<Presentation>({
-    defaultValues: { id: 0, name: ''},
+ const { control} = useForm({
+    defaultValues: { search },
   });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    debouncedGetPresentations(event.target.value)
+  const handleSearchChange = (value: string) => {
+    debouncedGetPresentations(value)
   };
 
   return (

@@ -1,5 +1,5 @@
 import { CSSProperties, useState } from "react";
-import { GridLoader, MoonLoader } from "react-spinners";
+import { GridLoader } from "react-spinners";
 
 
 interface LoaderProps {

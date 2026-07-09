@@ -9,6 +9,8 @@ export interface User {
     codigoemp?: number;
     estado?: number;
     idsucursal?: number;
+    roles?: number[];
+    Roles?: number[];
 }
 
 
@@ -22,7 +24,7 @@ export const EmptyUser: User = {
     imagen:'',
     codigoemp:0,
     estado:1,
-    idsucursal:0,
+    idsucursal:0
 }
 
 
@@ -36,3 +38,4 @@ export const EmptyUserState: UserState = {
     currentUser: null,
     search: ''
 };
+

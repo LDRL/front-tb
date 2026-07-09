@@ -1,7 +1,7 @@
 import { CategoryTable } from "./components";
 import { Header } from "./components/Header";
 
-export default function Category(){
+export default function CategoryPage(){
     //const sidebarState = useSelector((store: AppStore) => store.sidebar)
 
     return(

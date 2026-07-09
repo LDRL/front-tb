@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardForm from '../../../../components/Cards/CardForm'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,7 +32,7 @@ const PresentationCreate: React.FC = () => {
 
 
  // Llamar al hook aquí
- const { data, isLoading, isError } = id ? useGetPresentation(id) : { data: null, isLoading: false, isError: false };
+ const { data } = id ? useGetPresentation(id) : { data: null};
 
  const createPresentationMutation = useCreatePresentation();
  const updatePresentationMutation = useUpdatePresentation();

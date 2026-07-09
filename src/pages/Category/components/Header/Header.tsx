@@ -1,22 +1,19 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
-
-
+import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { setSearchCategory } from '@/redux/categorySlice';
 
 import debounce from 'just-debounce-it';
-
-import { Navigate, useNavigate } from 'react-router-dom';
-import { setSearchCategory } from '@/redux/categorySlice';
-import { Category } from '../../models';
 
 import "./Header.css"
 
 const CreateProduct: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const search = useSelector((state: any) => state.category.search);
 
   const debouncedGetCategories = useCallback(debounce((search: string) =>{
     dispatch(setSearchCategory(search));
@@ -26,12 +23,16 @@ const CreateProduct: React.FC = () => {
     navigate("create")
   };
 
-  const { control } = useForm<Category>({
-    defaultValues: { id: 0, name: ''},
+  const { control, reset } = useForm({
+    defaultValues: { search },
   });
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    debouncedGetCategories(event.target.value)
+  useEffect(() => {
+    reset({ search });
+  }, [search, reset]);
+
+  const handleSearchChange = (value: string) => {
+    debouncedGetCategories(value)
   };
 
   return (

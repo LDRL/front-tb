@@ -3,6 +3,6 @@ export * from './components/index';
 export * from './components/BrandCreate/index';
 export * from './components/BrandTable/index';
 export * from './models/brand.type';
-export * from './Brand';
+export * from './BrandPage';
 // export * from './services/product';
 export * from './components/Header/index';

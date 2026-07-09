@@ -1,7 +1,7 @@
 import { ProductTable } from "./components";
 import { Header } from "./index";
 
-export default function Productt(){
+export default function ProductPage(){
     //const sidebarState = useSelector((store: AppStore) => store.sidebar)
     
     return(

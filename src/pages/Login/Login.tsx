@@ -20,7 +20,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<LoginData>({
+  const { control, handleSubmit} = useForm<LoginData>({
       defaultValues: { email: '', password: '' },
   });
 

@@ -26,7 +26,7 @@ function BuyShow() {
   const { data, isLoading, isError } = id ? useShowSale(id) : { data: null, isLoading: false, isError: false };
   const adaptedData = data ? HeaderSaleAdapter(data.data):null;
 
-  const { control, reset, getValues} = useForm<HeaderS>({
+  const { control, reset} = useForm<HeaderS>({
     defaultValues: { id:0, date: dayjs(), address: '', total:0 }
   });
 

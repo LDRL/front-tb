@@ -2,11 +2,11 @@ import React, {useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import { Box, Button} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormDropdown,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea } from '@/components';
+import { FormDropdown,  FormInputImage,  FormInputText, FormTextArea } from '@/components';
 import { useForm } from 'react-hook-form';
 import CardForm from '../../../../components/Cards/CardForm'
 import LoadMask from '@/components/LoadMask/LoadMask';
-import { useFetchMarcaOptions, useFetchOptions, useFetchPresentacionOptions, useFetchUnitOptions } from '@/hooks/useOption';
+import { useFetchMarcaOptions, useFetchOptions, useFetchUnitOptions } from '@/hooks/useOption';
 import { fetchProduct } from '../../services/product';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/models';
@@ -36,7 +36,7 @@ const CreateProduct: React.FC = () => {
   const {data: options, isLoading, isError} = useFetchOptions();
   const {data: marcaOptions, isLoading: isMarcaLoading, isError: isMarcaError} = useFetchMarcaOptions();
 
-  const {data: unitOptions, isLoading: isUnitLoading, isError: isUnitError} =   useFetchUnitOptions();
+  const {data: unitOptions} =   useFetchUnitOptions();
 
   const { rows, addRow, deleteRow, editRow, editingId, setEditingId, setRows } = useProductDetails();
 

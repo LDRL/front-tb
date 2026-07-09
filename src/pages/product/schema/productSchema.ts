@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const productSchema = z.object({
   name: z.string().min(1, "Nombre requerido"),
@@ -11,4 +11,4 @@ export const productSchema = z.object({
   image: z.any().optional(),
 });
 
-export type ProductFormData = z.infer<typeof productSchema>;
+export type ProductFormData = z.infer<typeof productSchema>;*/

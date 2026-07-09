@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 import { UserApiResponseList } from '../models/user.response.type';
-import { UserApi } from '../models/user.api.type';
+import { UserApi, UserApiPayload } from '../models/user.api.type';
 import { UserList } from '../models/user.view.type';
 import { AuthUser } from '@/modules/auth/models/login.domain.type';
 import { userKey } from '@/redux/authSlice';
@@ -89,7 +89,7 @@ export const useCreateUser = () => {
     
     const idsucursal = usuario?.branchId;
 
-    return useMutation<UserApi, unknown, UserApi>({
+    return useMutation<UserApiPayload, unknown, UserApiPayload>({
         mutationFn: async (newUser) => {
 
             if (!idsucursal) throw new Error("No sucursal");
@@ -103,7 +103,7 @@ export const useCreateUser = () => {
                 imagen: "ruta_imagen",
                 estado: 1,
                 idsucursal: newUser.idsucursal,
-                roles: newUser.roles 
+                roles: newUser.roles
             };
 
             //const response = await axios.post<{ message: string, presentacion: Apiuser }>(`${apiUrl}usuarios/`, user);
@@ -130,9 +130,9 @@ export const useCreateUser = () => {
 export const useUpdateUser = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<UserApi, Error, UserApi>({
+    return useMutation<UserApiPayload, Error, UserApiPayload>({
         mutationFn: async (updatedUser) => {
-            const user: Partial<UserApi> = {
+            const user: Partial<UserApiPayload> = {
                 nombre: updatedUser.nombre,
                 apellido: updatedUser.apellido,
                 username: updatedUser.username,

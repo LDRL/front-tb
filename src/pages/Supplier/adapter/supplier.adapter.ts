@@ -2,7 +2,6 @@ import { ApiCreateSupplier, ApiSupplier } from "../models/supplier.api.type";
 import { Supplier } from "../models/supplier.domain.type";
 import { SupplierForm } from "../models/supplier.view.type";
 
-
 export const mapApiToSupplier = (p: ApiSupplier): Supplier => ({
   code: p._id,
   name: p.nombre,
@@ -10,8 +9,7 @@ export const mapApiToSupplier = (p: ApiSupplier): Supplier => ({
   phone: p.telefono,
   mail: p.email,
   state: p.estado,
-  nit: p.nit
-  
+  nit: p.nit  
 });
 
 export function SupplierListAdapter(apiList: ApiSupplier[]): Supplier[] {
@@ -26,4 +24,3 @@ export const mapSupplierToApi = (p: SupplierForm): ApiCreateSupplier => ({
   email: p.mail,
   nit: p.nit,
 });
-

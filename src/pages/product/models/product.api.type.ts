@@ -1,4 +1,3 @@
-import { ApiPresentation } from '@/pages/Presentation';
 import { ApiCategory } from '@/pages/Category';
 import { ApiBrand } from '@/pages/Brand';
 

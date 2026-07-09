@@ -39,7 +39,7 @@ const TableMovil: React.FC<CategoryListProps> = ({
             <Pagination
                 count={Math.ceil(totalCategory / totalPagesMobile)}
                 page={paginationModel.page + 1}
-                onChange={(event, value) =>
+                onChange={(_, value) =>
                     handlePaginationModelChange({ page: value - 1, pageSize: paginationModel.pageSize })
                 }
                 color="primary"

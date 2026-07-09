@@ -17,7 +17,7 @@ export const sidebarSlice = createSlice({
     name:"sidebar",
     initialState: localStorage.getItem('sidebar') ? JSON.parse(localStorage.getItem('sidebar') as string): EmptySidebarState,
     reducers: {
-        createSidebar: (state, action)=>{
+        createSidebar: (_, action)=>{
             persistLocalStorage<SidebarInfo>(sidebarKey, action.payload);
             return action.payload;
         },

@@ -44,7 +44,7 @@ const SaleCreate: React.FC = () => {
     detailProduct: false,
   });
 
-  const { client, isLoading: isClientLoading, error: isClientError } = useClientSearch();
+  const { client, isLoading: isClientLoading } = useClientSearch();
 
   //SOLO cliente completo
   const currentClient = useSelector((state: any) => state.client.currentClient);

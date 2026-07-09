@@ -1,16 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Button } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FormInputText } from "@/components";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import debounce from "just-debounce-it";
-import { Client } from "../../models";
 import { setSearchClient } from "@/redux/clientSlice";
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const search = useSelector((state: any) => state.client.search);
 
     const debouncedSearch = useCallback(
         debounce((search: string) => {
@@ -23,14 +23,16 @@ const Header: React.FC = () => {
         navigate("create");
     };
 
-    const { control } = useForm<Client>({
-        defaultValues: { id: 0, name: "", lastName: "", direccion: "", email: "", telefono: "", estado: 1, nit: "" },
+    const { control, reset } = useForm({
+        defaultValues: { search },
     });
 
-    const handleSearchChange = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-        debouncedSearch(event.target.value);
+    useEffect(() => {
+        reset({ search });
+    }, [search, reset]);
+
+    const handleSearchChange = (value: string) => {
+        debouncedSearch(value);
     };
 
     return (
