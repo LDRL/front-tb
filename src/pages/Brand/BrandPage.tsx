@@ -9,7 +9,7 @@ export default function BrandPage(){
                 <hr />
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px", marginRight: "20px"}}>
+            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
                 <Header /> 
             </div>
             

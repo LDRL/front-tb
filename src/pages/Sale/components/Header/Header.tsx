@@ -45,7 +45,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <div className='header'>
+    <div className='header_page'>
       <div style={{ alignItems: "right" }}>
         <FormInputText
           name="search"

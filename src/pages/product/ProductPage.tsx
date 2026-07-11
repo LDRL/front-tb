@@ -11,7 +11,7 @@ export default function ProductPage(){
                 <hr />
             </div>
 
-            <div className="" style={{marginBottom:"10px"}}>
+            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
                 <Header />
             </div>
             

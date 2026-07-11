@@ -44,7 +44,7 @@ const ListOfBrands: React.FC = () => {
         },
         {
             field: 'name',
-            headerName: 'Producto',
+            headerName: 'Marca',
             flex: 1,
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: isMobile ? 'block' : 'inline' }}>{params.value}</div>

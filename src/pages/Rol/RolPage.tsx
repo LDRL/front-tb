@@ -10,7 +10,7 @@ export default function RolPage() {
                 <hr />
             </div>
 
-            <div style={{ marginBottom: "10px", marginTop: "10px", marginRight: "20px" }}>
+            <div style={{ marginBottom: "10px", marginTop: "10px" }}>
                 <Header />
             </div>
 

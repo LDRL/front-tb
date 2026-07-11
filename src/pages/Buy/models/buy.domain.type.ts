@@ -53,3 +53,15 @@ export interface BuyForm {
 
 export type BuyList = Buy[];
 export type Total = number;
+
+
+/// Slice 
+export interface BuyState {
+    currentBuy: Buy | null;
+    search: string;
+}
+
+export const EmptyBuyState: BuyState = {
+    currentBuy: null,
+    search: ''
+};
