@@ -41,8 +41,7 @@ const ClientCreate: React.FC = () => {
         },
     });
 
-    const { data: typeCliOptions = [], isLoading: isTypeCliLoading } =
-        useFetchTypeClientsOptions();
+    const { data: typeCliOptions = [], isLoading: isTypeCliLoading } =useFetchTypeClientsOptions();
 
     const { data} = id ? useGetClient(id) : { data: null };
 
@@ -66,7 +65,7 @@ const ClientCreate: React.FC = () => {
                 address: currentClient.direccion,
                 email: currentClient.email,
                 telphone: currentClient.telefono,
-                idTypeCli: 0,
+                idTypeCli: currentClient.idTypeCli,
             });
             setSubtitulo("Editar");
         } else {

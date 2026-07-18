@@ -14,6 +14,7 @@ const defaultClient = (): Client => ({
     email: "",
     telefono: "",
     estado: 1,
+    idTypeCli: 0
 });
 
 export const SaleAdapter = (sale: ApiSale): Sale => {

@@ -11,6 +11,7 @@ export const ClientAdapter = (api: ApiClient): Client => ({
     telefono: api.telefono,
     estado: api.estado,
     fullName: `${api.nombres} ${api.apellidos}`,
+    idTypeCli: api.idtipoCli
 });
 
 export const ClientListAdapter = (apiList: ApiClient[]): Client[] =>

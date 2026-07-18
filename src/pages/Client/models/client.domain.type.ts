@@ -8,6 +8,7 @@ export interface Client {
     telefono: string;
     estado: number;
     fullName?: string;
+    idTypeCli: number;
 }
 
 export type ClientList = Client[];
@@ -21,6 +22,7 @@ export const ClientEmptyState: Client = {
     email: "",
     telefono: "",
     estado: 1,
+    idTypeCli: 0
 };
 
 export interface ClientForm {
