@@ -169,7 +169,6 @@ export const DetailSaleCreate: React.FC<Props> = ({
       <div style={{display:'flex', justifyContent:'flex-end', gap: '5px'}}>
         <Button
           variant="contained"
-          // type="submit"
           sx={{ mt: 2, mb:2}}
           color='info'
           onClick={handleAdd}

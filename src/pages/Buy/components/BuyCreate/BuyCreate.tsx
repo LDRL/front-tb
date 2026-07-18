@@ -213,6 +213,7 @@ const BuyCreate: React.FC = () => {
                   label='Fecha'
                   rules={{required: 'Fecha es un campo requerido'}}
                   maxDate={dayjs()}
+                  defaultValue={dayjs()}
                 />
               </div>
               {/*Encabezado fin */}
