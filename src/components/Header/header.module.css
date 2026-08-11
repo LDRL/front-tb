@@ -1,6 +1,6 @@
 .header{
     padding: .75rem .75rem;
-    background-color: rgb(255 255 255);
+    background-color: var(--header-bg);
     border-bottom-width: 1px;
 }
 
@@ -24,12 +24,12 @@
     border: none;
     cursor: pointer;
     padding: 8px;
-    color: #0284c7;
+    color: var(--color-primary);
     border-radius: 8px;
 }
 
 .menu_btn:hover {
-    background-color: rgba(2, 132, 199, 0.1);
+    background-color: var(--hamburger-hover-bg);
 }
 
 @media (min-width: 768px) {
@@ -40,7 +40,7 @@
 
 .custom_text {
     font-size: 1.25rem;
-    color: #0284c7;
+    color: var(--color-primary);
     font-weight: 900;
     text-align: center;
     flex: 1;
