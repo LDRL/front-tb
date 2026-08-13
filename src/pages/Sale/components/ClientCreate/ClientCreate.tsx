@@ -65,7 +65,7 @@ const ClientCreate: React.FC = () => {
     };
 
     return (
-        <div className="container">
+        <div className="container" style={{marginTop: '1.5rem'}}>
             <CardForm titulo="Cliente" subtitulo="Nuevo">
                 <Loading loading={mutation.isPending} />
                 <Box

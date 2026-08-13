@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Loading from '@/components/Loading';
 import {useSale } from '../../hooks/useSale';
 import moment from 'moment';
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Sale } from '../../models/sale.domain.type';
 
@@ -38,6 +38,12 @@ const ListOfSales: React.FC = () => {
             headerName: 'Fecha',
             flex: 1,
             renderCell: (params: GridRenderCellParams) => <>{moment(params.value).format("DD/MM/YYYY")}</>,
+        },
+        {
+            field: 'typeOfSale',
+            headerName: 'Tipo',
+            flex: 1,
+            renderCell: (params: GridRenderCellParams) => <>{params.row.typeOfSale.name}</>,
         },
         {
             field: 'name',
@@ -81,6 +87,9 @@ const ListOfSales: React.FC = () => {
     }
 
     return (
+        <Box sx={{ width: '100%' }}>
+
+
         <DataGrid
             rows={sales}
             rowCount={totalSale}
@@ -101,6 +110,7 @@ const ListOfSales: React.FC = () => {
             getRowId={(row: any) => row.id}
             paginationMode="server"
         />
+                </Box>
     );
 };
 

@@ -3,12 +3,12 @@ import CardForm from '../../../../components/Cards/CardForm';
 import { useNavigate } from 'react-router-dom';
 import LoadMask from '@/components/LoadMask/LoadMask';
 import { CustomDialog, FormDate, FormInputText } from '@/components';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { PrivateRoutes } from '@/models';
 
 import "./SaleCreate.css";
-import { useClientSearch, useCreateSale, useSaleDetails } from '../../hooks/useSale';
+import { useClientSearch, useCreateSale, useSaleDetails, useFetchPaymentTypes } from '../../hooks/useSale';
 import dayjs from 'dayjs';
 
 import { toast } from 'react-toastify';
@@ -21,6 +21,7 @@ import { ClientCreate } from '../ClientCreate';
 import { DetailSaleCreate } from '../DetailSaleCreate/DetailSaleCreate';
 import { Sale, SaleForm } from '../../models/sale.domain.type';
 import { getErrorMessage } from '@/utils/axiosClient';
+import { FormDropdown } from '@/components';
 
 const SaleCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -31,11 +32,15 @@ const SaleCreate: React.FC = () => {
 
   const createSaleMutation = useCreateSale();
 
-  const { control, handleSubmit, reset, getValues, setValue } = useForm<SaleForm>({
-    defaultValues: { id: 0, address: '', details: [] },
+  const { control, handleSubmit, reset, getValues, setValue, watch } = useForm<SaleForm>({
+    defaultValues: { id: 0, address: '', details: [], idTypePay: 1, isQuote: false },
   });
 
+  const isQuote = watch('isQuote');
+
   const { rows, total, addRow, deleteRow } = useSaleDetails();
+
+  const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
 
   const [errors, setErrors] = useState({
     amount: false,
@@ -90,6 +95,8 @@ const SaleCreate: React.FC = () => {
         idSucursal: 0,
         idUser: "",
         total: parseFloat(total.toFixed(2)),
+        isQuote: data.isQuote,
+        idTypePay: data.idTypePay,
 
         client: currentClient ?? {
           id: 0,
@@ -101,6 +108,8 @@ const SaleCreate: React.FC = () => {
           telefono: '',
           estado: 1,
         },
+
+        typeOfSale: {id:0, name:''},
 
         details: rows,
       };
@@ -223,6 +232,35 @@ const SaleCreate: React.FC = () => {
               disabled
             />
           </div>
+
+          <div className='section'>
+
+            <FormControlLabel
+              label="Es cotización"
+              control={
+                <Checkbox
+                  name='isQuote'
+                  checked={!!isQuote}
+                  onChange={(e) => setValue('isQuote', e.target.checked)}
+                />
+              }
+
+            />
+
+          </div>
+
+          {!isQuote && (
+            <div className='section'>
+
+              <FormDropdown
+                name="idTypePay"
+                control={control}
+                label="Tipo de pago"
+                options={paymentTypeOptions}
+              />
+
+            </div>
+          )}
 
           <div style={{
             border: '1px solid #ccc',

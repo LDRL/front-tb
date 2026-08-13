@@ -57,9 +57,11 @@ const Header: React.FC = () => {
 
       <div>
         {canCreateSale && (
-          <Button variant="contained" color="primary" onClick={handleClick}>
-            Nueva venta
-          </Button>
+          <div style={{display: 'flex', gap: '10px'}}>
+            <Button variant="contained" color="primary" onClick={handleClick}>
+              Nueva venta
+            </Button>
+          </div>
         )}
       </div>
     </div>

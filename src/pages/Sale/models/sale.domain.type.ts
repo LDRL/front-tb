@@ -9,6 +9,11 @@ export interface Detail{
     id?: string,
 }
 
+export interface TypeOfSale {
+    name:string;
+    id: number;
+}
+
 export interface Sale {
     id?: number;
     name: string;
@@ -18,10 +23,13 @@ export interface Sale {
     
     idSucursal: number;
     idUser: string;
+
     total?: number;
-    
+    isQuote: boolean;
+    idTypePay: number;
     client: Client;
     details: Detail[];
+    typeOfSale: TypeOfSale
 }
 
 
@@ -34,6 +42,8 @@ export interface SaleForm {
     idSucursal: number;
     details: Detail[];
     pay: PayForm;
+    isQuote: boolean;
+    idTypePay: number;
 
     // campos temporales del form (detalle)
 

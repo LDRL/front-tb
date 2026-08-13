@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import { SaleAdapter, SaleListAdapter } from "../adapter";
 import axiosClient, { getErrorMessage } from "@/utils/axiosClient";
-import { ApiSale, CreateSalePayload } from "../models/sale.api.type";
+import { ApiSale, CreateSalePayload, CreateSalePay } from "../models/sale.api.type";
 import { Sale, SaleList, Total } from "../models/sale.domain.type";
 
 export const fetchSaleList = async (url: string, page: number, search: string): Promise<[Error?, SaleList?, Total?]> => {
@@ -89,6 +89,21 @@ export const fetchSaleCreate = async (url: string, saleN: Sale):  Promise<[Error
 
 
 export const fetchSaleCreate = async (url: string, payload: CreateSalePayload ): Promise<[Error?, Sale?, any?]> => {
+  try {
+    const response = await axiosClient.post(url, payload);
+    const { data } = response.data;
+    return [undefined, SaleAdapter(data), response];
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return [error, undefined, undefined];
+    }
+    return [new Error("Error de red"), undefined, undefined];
+  }
+};
+
+// Convertir cotización a venta
+
+export const convertQuote = async (url: string, payload: { pago: CreateSalePay }): Promise<[Error?, Sale?, any?]> => {
   try {
     const response = await axiosClient.post(url, payload);
     const { data } = response.data;

@@ -8,10 +8,14 @@ export interface ApiDetail {
     nombre?: string,
 }
 
-
 interface ApiPago {
     estado:string;
     idtipopago: number;
+}
+
+export interface ApiState {
+    nombre:string;
+    idestado: number;
 }
 
 export interface ApiSale {
@@ -26,9 +30,14 @@ export interface ApiSale {
     total?:number;
     idsucursal: number;
     idusuario: string;
+    esCotizacion: boolean;
     //cliente?: ApiClientPost;
     pago?: ApiPago;
+    Estado: ApiState;
 }
+
+
+
 
 
 export interface ApiPay {
@@ -66,9 +75,11 @@ export interface ApiHeaderSale {
     fecha: string,
     direccion: string,
     total:number,
+    idestado: number,
     Cliente: ApiClient,
     Detalles: ApiHeaderDetailSale[]
-    Pago: ApiPay,
+    Pago: ApiPay | null,
+    Estado: ApiState,
 }
 
 //Para crear la venta con su detalle
@@ -80,10 +91,11 @@ export interface CreateSalePayload {
   idcliente: number;
   idusuario: number;
   idsucursal: number;
+  esCotizacion: boolean;
   total: number;
 
   detalles: CreateSaleDetail[];
-  pago: CreateSalePay;
+  pago?: CreateSalePay;
 }
 
 export interface CreateSaleDetail {
@@ -92,7 +104,7 @@ export interface CreateSaleDetail {
   precio: number;
 }
 
-interface CreateSalePay {
+export interface CreateSalePay {
     idtipopago: number;
-    estado:string;
+    estado: string;
 }

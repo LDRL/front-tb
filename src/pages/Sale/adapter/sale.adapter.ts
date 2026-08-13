@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { ApiDetail, ApiHeaderSale, ApiSale, CreateSalePayload } from "../models/sale.api.type";
-import { Detail, Sale } from "../models/sale.domain.type";
+import { ApiDetail, ApiHeaderSale, ApiSale, ApiState, CreateSalePayload } from "../models/sale.api.type";
+import { Detail, Sale, TypeOfSale } from "../models/sale.domain.type";
 import { HeaderSale } from "../models/sale.view.type";
 import { ClientAdapter } from "@/pages/Client/adapter";
 import { Client } from "@/pages/Client/models";
@@ -27,8 +27,10 @@ export const SaleAdapter = (sale: ApiSale): Sale => {
         idUser: sale.idusuario,
         idSucursal: sale.idsucursal,
         total: sale.total,
+        isQuote: sale.esCotizacion,
+        idTypePay: sale.pago?.idtipopago ?? 0,
         client: sale.Cliente ? ClientAdapter(sale.Cliente) : defaultClient(),
-
+        typeOfSale: TypeSaleAdapter(sale.Estado),
         details: sale.detalles && sale.detalles.length > 0
         ? sale.detalles.map((d: ApiDetail): Detail => ({
             amount: d.cantidad,
@@ -53,7 +55,9 @@ export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
             name: sale.nombre,
             total: sale.total,
             nit: sale.Cliente.nit,
-            pay:sale.Pago.estado,
+            pay: sale.Pago ? sale.Pago.estado : '',
+            idState: sale.idestado ?? sale.Estado?.idestado ?? 0,
+            paymentType: '',
         },
         details: (sale.Detalles ?? []).map((d) => ({
             id: d._id,
@@ -75,27 +79,33 @@ export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
 
 //Mandar a guardar una venta
 
-export const mapSaleToCreatePayload = (
-  sale: Sale,
-  idusuario: number,
-  idsucursal: number
-): CreateSalePayload => ({
+export const mapSaleToCreatePayload = (sale: Sale,idusuario: number,idsucursal: number ): CreateSalePayload => ({
   nombre: sale.name,
   fecha: sale.date,
-  direccion: sale.address,
-  
+  direccion: sale.address,  
   idcliente: sale.idClient,
   idusuario,
   idsucursal,
   total: sale.total ?? 0,
-
+  esCotizacion: sale.isQuote,
   detalles: sale.details.map(d => ({
     idprodPresenta: d.codProductPresentation,
     cantidad: d.amount,
     precio: d.cost,
   })),
-  pago: {
-    idtipopago: 1,
-    estado: "Pagado"
-  }
+  ...(sale.isQuote
+    ? {}
+    : {
+        pago: {
+          idtipopago: sale.idTypePay,
+          estado: "Pagado"
+        }
+      })
 });
+
+//
+
+export const TypeSaleAdapter = (api: ApiState): TypeOfSale => ({
+    id: api.idestado,
+    name: api.nombre,
+ });

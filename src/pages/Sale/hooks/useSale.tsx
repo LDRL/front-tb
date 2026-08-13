@@ -6,7 +6,7 @@ import { mapSaleToCreatePayload, SaleListAdapter } from '../adapter';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
-import { fetchSaleCreate } from '../services/sale';
+import { fetchSaleCreate, convertQuote } from '../services/sale';
 import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
 import { ApiHeaderSale, ApiSale } from '../models/sale.api.type';
 import { ApiResponseClient, Client } from '@/pages/Client/models';
@@ -17,6 +17,7 @@ import { ClientAdapter } from '@/pages/Client/adapter';
 import { userKey } from '@/redux/authSlice';
 import { editClient } from '@/redux/clientSlice';
 import { AuthUser } from '@/modules/auth/models/login.domain.type';
+import { Option } from '@/hooks/useOption';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -42,7 +43,7 @@ export const useFetchSales = (page: number = 1, search: string) => {
     return useQuery<ApiResponse, Error>({
         queryKey: ['sales', page, search],
         queryFn: async () => {
-            const response = await axiosClient.get<ApiResponse>(`${apiUrl}ventas/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponse>(`${apiUrl}ventas?page=${page}&search=${search}`);
             return response.data;   
         }
     });
@@ -90,7 +91,39 @@ export const useSale = (initialPage: number = 1) => {
 };
 
 
-// Hook para crear un nuevo producto
+interface ApiPaymentType {
+    idtipopago: number;
+    nombre: string;
+    estado: number;
+}
+
+interface ApiPaymentTypeResponse {
+    ok: boolean;
+    message: string;
+    data: ApiPaymentType[];
+}
+
+const PaymentTypesAdapter = (tipos: ApiPaymentType[]): Option[] => {
+    return tipos.map(tipo => ({
+        value: tipo.idtipopago,
+        label: tipo.nombre,
+    }));
+};
+
+// Hook para obtener los tipos de pago
+
+export const useFetchPaymentTypes = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['paymentTypes'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiPaymentTypeResponse>(`${apiUrl}tipo-pago`);
+            return PaymentTypesAdapter(response.data.data);
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
+// Hook para crear un nueva venta
 export const useCreateSale = () => {
     const queryClient = useQueryClient();
     const auth = localStorage.getItem(userKey);
@@ -141,6 +174,42 @@ export const useShowSale = (id:string) => {
         queryFn: async () => {
             const response = await axiosClient.get<ApiResponseHeader>(`${apiUrl}ventas/${id}/`);
             return response.data;   
+        }
+    });
+};
+
+// Hook para convertir una cotización a venta
+
+export const useConvertQuote = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<string, Error, { id: string; idTypePay: number }>({
+        mutationFn: async ({ id, idTypePay }) => {
+            const payload = {
+                pago: {
+                    idtipopago: idTypePay,
+                    estado: "Pagado",
+                },
+            };
+
+            const [error, converted] = await convertQuote(
+                `${apiUrl}ventas/${id}/convertir`,
+                payload
+            );
+
+            if (error) {
+                throw error;
+            }
+
+            if (!converted) {
+                throw new Error('Cotización no convertida');
+            }
+
+            return "convertido";
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['sales'] });
+            queryClient.invalidateQueries({ queryKey: ['showSale'] });
         }
     });
 };

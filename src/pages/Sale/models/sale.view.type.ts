@@ -8,6 +8,8 @@ export interface HeaderS {
   total: number;  
   nit: string;
   pay:string;
+  idState: number;
+  paymentType: string;
 }
 
 export interface HeaderDetailSale {

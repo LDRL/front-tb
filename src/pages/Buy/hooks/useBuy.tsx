@@ -36,7 +36,7 @@ export const useFetchBuys = (page: number = 1, search: string) => {
     return useQuery<ApiResponse, Error>({
         queryKey: ['buys', page, search],
         queryFn: async () => {
-            const response = await axiosClient.get<ApiResponse>(`${apiUrl}compras/?page=${page}&search=${search}`);
+            const response = await axiosClient.get<ApiResponse>(`${apiUrl}compras?page=${page}&search=${search}`);
             return response.data;   
         }
     });
