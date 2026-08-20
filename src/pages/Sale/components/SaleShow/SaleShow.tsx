@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 
 import { HeaderS } from "../../models/sale.view.type";
 import { HeaderSaleAdapter } from "../../adapter";
+import { pageSize } from "@/utils";
 
 const override: CSSProperties = {
   display: "block",
@@ -175,11 +176,11 @@ function BuyShow() {
               initialState={{
                 pagination: {
                   paginationModel: {
-                    pageSize: 10,
+                    pageSize: pageSize,
                   },
                 },
               }}
-              pageSizeOptions={[10]}
+              pageSizeOptions={[pageSize]}
               getRowId={(row: any) => row.id}
               paginationMode="server"
             />

@@ -11,6 +11,7 @@ import { FormDate, FormInputText } from "@/components";
 import { useForm } from 'react-hook-form';
 import dayjs from "dayjs";
 import { HeaderH } from "../../models/buy.view.type";
+import { pageSize } from "@/utils";
 
 const override: CSSProperties = {
   display: "block",
@@ -142,11 +143,11 @@ function BuyShow() {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 10,
+                  pageSize: pageSize,
                 },
               },
             }}
-            pageSizeOptions={[10]}
+            pageSizeOptions={[pageSize]}
             getRowId={(row: any) => row.id}
             paginationMode="server"
           />

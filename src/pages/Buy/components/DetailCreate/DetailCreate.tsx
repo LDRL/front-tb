@@ -6,6 +6,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import "../BuyCreate/BuyCreate.css"
 import { Detail } from '../../models/buy.domain.type';
 import debounce from 'just-debounce-it';
+import { pageSize } from '@/utils';
 
 type Props = {
   control: any;
@@ -187,11 +188,11 @@ export const DetailCreate: React.FC<Props> = ({
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 10,
+                pageSize: pageSize,
               },
             },
           }}
-          pageSizeOptions={[10]}
+          pageSizeOptions={[pageSize]}
           // checkboxSelection
           disableColumnSelector
           disableRowSelectionOnClick
