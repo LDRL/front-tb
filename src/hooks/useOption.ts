@@ -255,7 +255,7 @@ const RolesAdapter = (roles: ApiRole[]): Option[] => {
 
 export const useFetchTypeClientsOptions = () => {
     return useQuery<Option[], Error>({
-        queryKey: ['dropdownUnit'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
+        queryKey: ['dropdownTypeClient'], // Se maneja como un objeto dentro de useQueryOptions para el uso de TypeScript 
         queryFn: async() => { // queryFn especifica la funcion para el consumo de la api
             const response = await axiosClient.get<ApiTypeClientResponse>(apiUrl+"tipocliente/");
             return TypeClientsAdapter(response.data.data);

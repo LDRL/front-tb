@@ -42,6 +42,14 @@ export interface Unit {
 }
 
 
+// Precio por tipo de cliente
+export interface PrecioCliente {
+  idprecios?: number;
+  idtipoCli: number;
+  precio: number;
+  tipoprecio: string;
+}
+
 //Detail product 
 export interface Detail {
   idPresentation: number;
@@ -51,6 +59,7 @@ export interface Detail {
   name?: string;
   id?: string;
   idprodPresenta?: number;
+  precios?: PrecioCliente[];
 }
 
 

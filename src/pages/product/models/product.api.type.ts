@@ -1,6 +1,26 @@
 import { ApiCategory } from '@/pages/Category';
 import { ApiBrand } from '@/pages/Brand';
 
+export interface ApiTipoClienteRef {
+  idtipoCli: number;
+  nombre: string;
+  estado: boolean;
+}
+
+export interface ApiPrecioCliente {
+  idprecios: number;
+  precio: string;
+  fechaefecto: string | null;
+  fechafin: string | null;
+  tipoprecio: string;
+  idprodPresenta: number;
+  idtipoCli: number;
+  estado: number;
+  createdAt: string;
+  updatedAt: string;
+  TipoCliente: ApiTipoClienteRef;
+}
+
 export interface ApiProductPresentacionResponse {
   idprodPresenta: number;
   codigoprod: number;
@@ -14,6 +34,7 @@ export interface ApiProductPresentacionResponse {
     nombre: string;
     estado: boolean;
   };
+  Precios?: ApiPrecioCliente[];
 }
 
 export interface ApiProduct {
@@ -55,10 +76,18 @@ export interface ApiCreateProduct {
   presentaciones: ApiProductPresentacion[];
 }
 
+interface ApiPrecioClienteCreate {
+  idtipoCli: number;
+  precio: number;
+  tipoprecio: string;
+  idprecios?: number;
+}
+
 interface ApiProductPresentacion {
   idpresentacion: number,
 	cantidad_base:number
 	precio_venta:number,
 	codigo_barras:string,
-  idprodPresenta?: number
+  idprodPresenta?: number,
+  precios?: ApiPrecioClienteCreate[]
 }

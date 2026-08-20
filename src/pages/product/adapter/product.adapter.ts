@@ -44,6 +44,12 @@ export const mapApiToProduct = (p: ApiProduct): Product => ({
     price: Number(pres.precio_venta),
     barCode: pres.codigo_barras,
     name: pres.Presentacion?.nombre || '',
+    precios: (pres.Precios || []).map(precio => ({
+      idprecios: precio.idprecios,
+      idtipoCli: precio.idtipoCli,
+      precio: Number(precio.precio),
+      tipoprecio: precio.tipoprecio,
+    })),
   })) || [],
 });
 
@@ -66,6 +72,14 @@ export const mapProductToApi = (p: ProductForm): ApiCreateProduct => ({
     precio_venta:d.price,
     codigo_barras:d.barCode,
     ...(d.idprodPresenta != null ? { idprodPresenta: d.idprodPresenta } : {}),
+    ...(d.precios && d.precios.length > 0 ? {
+      precios: d.precios.map(p => ({
+        idtipoCli: p.idtipoCli,
+        precio: p.precio,
+        tipoprecio: p.tipoprecio,
+        ...(p.idprecios != null ? { idprecios: p.idprecios } : {}),
+      }))
+    } : {}),
   }))
 });
 
