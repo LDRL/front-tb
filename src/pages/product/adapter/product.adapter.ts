@@ -72,7 +72,7 @@ export const mapProductToApi = (p: ProductForm): ApiCreateProduct => ({
     precio_venta:d.price,
     codigo_barras:d.barCode,
     ...(d.idprodPresenta != null ? { idprodPresenta: d.idprodPresenta } : {}),
-    ...(d.precios && d.precios.length > 0 ? {
+    ...(d.precios !== undefined ? {
       precios: d.precios.map(p => ({
         idtipoCli: p.idtipoCli,
         precio: p.precio,

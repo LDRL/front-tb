@@ -178,7 +178,7 @@ export const DetailCreate: React.FC<Props> = ({
       barCode,
       baseQuantity,
       name: selectedPresentation?.label ?? "",
-      precios: hasMultiPrice && validPrecios.length > 0 ? validPrecios : undefined,
+      precios: hasMultiPrice ? validPrecios : undefined,
     });
 
     resetForm();
