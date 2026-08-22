@@ -1,6 +1,7 @@
-import React, {useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState } from 'react';
+import { useWatch } from 'react-hook-form';
 import { FormAutocompleteAsync, FormInputNumber } from '@/components';
-import { Box, Button, FormHelperText} from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormHelperText} from '@mui/material';
 import {Option, useFetchProductOptions } from '@/hooks/useOption';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 //import "../BuyCreate/BuyCreate.css"
@@ -15,6 +16,7 @@ type Props = {
   setValue: any;
   addRow: (detail: Detail) => void;
   deleteRow: (id: string) => void;
+  clearRows: () => void;
   rows: Detail[];
   total: number;
   errors: any;
@@ -27,6 +29,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
   setValue,
   addRow,
   deleteRow,
+  clearRows,
   rows,
   total,
   errors,
@@ -34,7 +37,49 @@ export const DetailSaleCreate: React.FC<Props> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Option | null>(null);
-  const { data: productOptions = [], isLoading } = useFetchProductOptions(search);
+  const idTypeCli = useWatch({ control, name: "idTypeCli" }) as number | undefined;
+  const { data: productOptions = [], isLoading } = useFetchProductOptions(search, idTypeCli);
+
+  // Al cambiar el tipo de cliente los precios cambian: se pide confirmación y se limpian los productos agregados
+  const prevIdTypeCli = useRef<number | undefined>(idTypeCli);
+  const [pendingTypeChange, setPendingTypeChange] = useState<{
+    from: number | undefined;
+    to: number | undefined;
+  } | null>(null);
+
+  useEffect(() => {
+    const prev = prevIdTypeCli.current;
+    if (prev === idTypeCli) return;
+
+    // Sin productos el cambio es directo
+    if (rows.length === 0) {
+      prevIdTypeCli.current = idTypeCli;
+      return;
+    }
+
+    setPendingTypeChange({ from: prev, to: idTypeCli });
+  }, [idTypeCli, rows.length]);
+
+  const handleAcceptTypeChange = () => {
+    const change = pendingTypeChange;
+    setPendingTypeChange(null);
+
+    if (!change) return;
+
+    prevIdTypeCli.current = change.to;
+    clearRows();
+    setSelectedProduct(null);
+  };
+
+  const handleCancelTypeChange = () => {
+    const change = pendingTypeChange;
+    setPendingTypeChange(null);
+
+    if (!change) return;
+
+    // Revertir el dropdown al tipo anterior, no se limpia la grilla
+    setValue("idTypeCli", change.from);
+  };
 
   const debouncedSearch = useMemo(
     () => debounce((v: string) => setSearch(v), 300),
@@ -204,6 +249,27 @@ export const DetailSaleCreate: React.FC<Props> = ({
           <h3>Total: Q {total.toFixed(2)}</h3>
         </Box>
       </div>
+
+      <Dialog
+        open={pendingTypeChange !== null}
+        onClose={handleCancelTypeChange}
+      >
+        <DialogTitle>Cambiar tipo de venta</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Hay productos agregados con precios del tipo de venta actual. Si
+            continúa se eliminarán todos los productos del detalle. ¿Desea continuar?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelTypeChange} color="error">
+            No
+          </Button>
+          <Button onClick={handleAcceptTypeChange} variant="contained" autoFocus>
+            Sí
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

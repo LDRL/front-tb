@@ -15,13 +15,14 @@ import { toast } from 'react-toastify';
 
 import Loading from '@/components/Loading';
 import { useDispatch, useSelector } from 'react-redux';
-import { editClient, setSearchNit } from '@/redux/clientSlice';
+import { editClient, setSearchNit, clearClient } from '@/redux/clientSlice';
 import { dialogOpenSubject$ } from '@/components/CustomDialog/CustomDialog';
 import { ClientCreate } from '../ClientCreate';
 import { DetailSaleCreate } from '../DetailSaleCreate/DetailSaleCreate';
 import { Sale, SaleForm } from '../../models/sale.domain.type';
 import { getErrorMessage } from '@/utils/axiosClient';
 import { FormDropdown } from '@/components';
+import { useFetchTypeClientsOptions } from '@/hooks/useOption';
 
 const SaleCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -38,9 +39,11 @@ const SaleCreate: React.FC = () => {
 
   const isQuote = watch('isQuote');
 
-  const { rows, total, addRow, deleteRow } = useSaleDetails();
+  const { rows, total, addRow, deleteRow, clearRows } = useSaleDetails();
 
   const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
+
+  const { data: clientTypeOptions = [] } = useFetchTypeClientsOptions();
 
   const [errors, setErrors] = useState({
     amount: false,
@@ -61,6 +64,8 @@ const SaleCreate: React.FC = () => {
     setValue('nit', currentClient.nit ?? '');
     setValue('name',`${currentClient.name ?? ''} ${currentClient.lastName ?? ''}`.trim() );
     setValue('address', currentClient.direccion ?? '');
+    //
+    setValue('idTypeCli', currentClient.idTypeCli ?? 0);
 
   }, [currentClient, setValue]);
 
@@ -110,6 +115,7 @@ const SaleCreate: React.FC = () => {
         },
 
         typeOfSale: {id:0, name:''},
+        idTypeCli: data.idTypeCli,
 
         details: rows,
       };
@@ -145,10 +151,18 @@ const SaleCreate: React.FC = () => {
   };
 
   useEffect(() => {
+    // Nueva venta: arranca sin cliente previo (redux sobrevive a la navegación)
+    dispatch(clearClient());
+    dispatch(setSearchNit(""));
     reset({ address: '', date: undefined });
     setSubtitulo("Nuevo");
-  }, [reset]);
 
+    // Al salir se limpia para que la próxima entrada no cargue estado viejo
+    return () => {
+      dispatch(clearClient());
+      dispatch(setSearchNit(""));
+    };
+  }, [reset, dispatch]);
   useEffect(() => {
     if (!client) return;
 
@@ -234,7 +248,15 @@ const SaleCreate: React.FC = () => {
           </div>
 
           <div className='section'>
+            <FormDropdown
+              name="idTypeCli"
+              control={control}
+              label="Tipo venta"
+              options={clientTypeOptions}
+            />
+          </div>
 
+          <div className='section' style={{borderRadius: 5,  border: '1px solid rgb(204, 204, 204)', paddingInline: '10px'}}>
             <FormControlLabel
               label="Es cotización"
               control={
@@ -244,9 +266,7 @@ const SaleCreate: React.FC = () => {
                   onChange={(e) => setValue('isQuote', e.target.checked)}
                 />
               }
-
             />
-
           </div>
 
           {!isQuote && (
@@ -273,6 +293,7 @@ const SaleCreate: React.FC = () => {
               setValue={setValue}
               addRow={addRow}
               deleteRow={deleteRow}
+              clearRows={clearRows}
               rows={rows}
               total={total}
               errors={errors}

@@ -30,6 +30,7 @@ export interface Sale {
     client: Client;
     details: Detail[];
     typeOfSale: TypeOfSale
+    idTypeCli?: number;
 }
 
 
@@ -54,6 +55,8 @@ export interface SaleForm {
     amount?: number;
     cost?: number;
     codProduct?: number;
+
+    idTypeCli?: number;
 }
 
 export interface PayForm {

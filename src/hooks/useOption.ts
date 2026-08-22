@@ -39,11 +39,21 @@ interface ApiProductResponse {
     data: Product[];
 }
 
+interface ApiProductPrice {
+    idprecios: number;
+    precio: string;
+    tipoprecio: string;
+    idprodPresenta: number;
+    idtipoCli: number;
+    estado: number;
+}
+
 interface ApiProductPresentation {
     codigo_barras: string;
     idprodPresenta: number;
-    precio_venta?: number;
+    precio_venta?: number | string;
     Presentacion: ApiPresentation;
+    Precios?: ApiProductPrice[];
 }
 
 
@@ -74,18 +84,21 @@ const ProvidersAdapter = (providers: Provider[]): Option[] => {
     }));
 };
 
-export const useFetchProductOptions = (search: string) => {
+export const useFetchProductOptions = (search: string, idTipoCli?: number) => {
   return useQuery<Option[], Error>({
-    queryKey: ['dropdownProduct', search], // 🔥 IMPORTANTE
+    queryKey: ['dropdownProduct', search, idTipoCli], // 🔥 IMPORTANTE: idTipoCli en la key refresca al cambiar de tipo cliente
     queryFn: async () => {
-      const url = search
-        ? `${apiUrl}productos?search=${search}`
-        : `${apiUrl}productos/`; // 🔥 default
+      const url = idTipoCli
+        ? search
+          ? `${apiUrl}productos?idtipoCli=${idTipoCli}&search=${search}`
+          : `${apiUrl}productos?idtipoCli=${idTipoCli}/`
+        : search
+          ? `${apiUrl}productos?search=${search}`
+          : `${apiUrl}productos/`; // 🔥 default
 
       const response = await axiosClient.get<ApiProductResponse>(url);
       return ProductsAdapter(response.data.data);
     },
-    //enabled: search.length >= 2, // 🔥 evita llamadas innecesarias
     staleTime: 1000 * 60 * 5, // cache 5 min
   });
 };
@@ -95,9 +108,18 @@ const ProductsAdapter = (products: Product[]): Option[] => {
         product.Presentaciones.map(Presentacion => ({
             value: Presentacion.idprodPresenta,
             label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre} - ${Presentacion.Presentacion.nombre}`,
-            price: Presentacion.precio_venta ?? 0
+            price: getPresentationPrice(Presentacion)
         }))
     );
+};
+
+// Precio por tipo de cliente: usa el precio del arreglo Precios si viene, si no el precio_venta
+const getPresentationPrice = (presentacion: ApiProductPresentation): number => {
+    const raw = presentacion.Precios?.length
+        ? presentacion.Precios[0].precio
+        : presentacion.precio_venta;
+
+    return Number(raw ?? 0);
 };
 
 

@@ -96,6 +96,7 @@ export interface CreateSalePayload {
 
   detalles: CreateSaleDetail[];
   pago?: CreateSalePay;
+  idTipoCliVenta?: number;
 }
 
 export interface CreateSaleDetail {

@@ -78,29 +78,29 @@ export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
 }
 
 //Mandar a guardar una venta
-
 export const mapSaleToCreatePayload = (sale: Sale,idusuario: number,idsucursal: number ): CreateSalePayload => ({
-  nombre: sale.name,
-  fecha: sale.date,
-  direccion: sale.address,  
-  idcliente: sale.idClient,
-  idusuario,
-  idsucursal,
-  total: sale.total ?? 0,
-  esCotizacion: sale.isQuote,
-  detalles: sale.details.map(d => ({
-    idprodPresenta: d.codProductPresentation,
-    cantidad: d.amount,
-    precio: d.cost,
-  })),
-  ...(sale.isQuote
-    ? {}
-    : {
-        pago: {
-          idtipopago: sale.idTypePay,
-          estado: "Pagado"
-        }
-      })
+    nombre: sale.name,
+    fecha: sale.date,
+    direccion: sale.address,  
+    idcliente: sale.idClient,
+    idusuario,
+    idsucursal,
+    total: sale.total ?? 0,
+    esCotizacion: sale.isQuote,
+    detalles: sale.details.map(d => ({
+        idprodPresenta: d.codProductPresentation,
+        cantidad: d.amount,
+        precio: d.cost,
+    })),
+    ...(sale.isQuote
+        ? {}
+        : {
+            pago: {
+            idtipopago: sale.idTypePay,
+            estado: "Pagado"
+            }
+        }),
+    idTipoCliVenta : sale.idTypeCli
 });
 
 //

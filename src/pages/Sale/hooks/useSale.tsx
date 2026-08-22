@@ -324,5 +324,10 @@ export const useSaleDetails = () => {
     });
   };
 
-  return { rows, total, addRow, deleteRow };
+  const clearRows = () => {
+    setRows([]);
+    setTotal(0);
+  };
+
+  return { rows, total, addRow, deleteRow, clearRows };
 };
