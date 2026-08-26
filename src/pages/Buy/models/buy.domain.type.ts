@@ -5,6 +5,7 @@ export interface Detail {
   name?: string;
   subtotal?: number;
   id?: string;
+  expirationDate?: string;
 }
 
 export interface Provider {

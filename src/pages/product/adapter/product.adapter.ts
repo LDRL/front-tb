@@ -37,6 +37,8 @@ export const mapApiToProduct = (p: ApiProduct): Product => ({
   imageUrl: p.imagen,
   image: p.imageUrl,
 
+  hasExpiration: p.controla_vencimiento,
+
   presentacions: p.Presentaciones?.map(pres => ({
     idprodPresenta: pres.idprodPresenta,
     idPresentation: pres.idpresentacion,
@@ -66,6 +68,7 @@ export const mapProductToApi = (p: ProductForm): ApiCreateProduct => ({
   idpresentacion: p.idPresentation,
   idunidad: p.idUnit,
   descripcion: p.description,
+  controla_vencimiento: p.hasExpiration,
   presentaciones: p.presentacions.map(d => ({
     idpresentacion: d.idPresentation,
     cantidad_base:d.baseQuantity,
@@ -127,5 +130,7 @@ export const productFormToProduct = (
     baseQuantity: form.baseQuantity,
 
     presentacions: form.presentacions ?? [],
+
+    hasExpiration: form.hasExpiration
   };
 };

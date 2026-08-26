@@ -1,6 +1,6 @@
 import React, {useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
-import { Box, Button} from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormDropdown,  FormInputImage,  FormInputText, FormTextArea } from '@/components';
 import { useForm } from 'react-hook-form';
@@ -29,9 +29,12 @@ const CreateProduct: React.FC = () => {
   const dispatch = useDispatch();
   const { currentProduct } = useSelector((state: RootState) => state.product);
 
-  const { control, handleSubmit, reset, getValues, setValue} = useForm<ProductForm>({
-    defaultValues: { name: '' },
+  const { control, handleSubmit, reset, getValues, setValue, watch} = useForm<ProductForm>({
+    defaultValues: { name: '', hasExpiration: false },
   });
+
+  const hasExpiration = watch('hasExpiration');
+
 
   const {data: options, isLoading, isError} = useFetchOptions();
   const {data: marcaOptions, isLoading: isMarcaLoading, isError: isMarcaError} = useFetchMarcaOptions();
@@ -112,6 +115,8 @@ const CreateProduct: React.FC = () => {
       presentacions: rows
     }
 
+    console.log(newProduct);
+
     setLoading(true);  
     try {
       if (currentProduct) {
@@ -188,21 +193,33 @@ const CreateProduct: React.FC = () => {
                 />
 
                 <FormDropdown
-                    name="idUnit"
-                    control={control}
-                    
-                    label="Unidad"
-                    rules={{ required: 'Unidad de medida es un campo requerido' }}
-                    options={unitOptions || []}
+                  name="idUnit"
+                  control={control} 
+                  label="Unidad"
+                  rules={{ required: 'Unidad de medida es un campo requerido' }}
+                  options={unitOptions || []}
+                />
+              
+                <FormDropdown
+                  name="idBrand"
+                  control={control}
+                  label="marca"
+                  rules={{ required: 'marca name is required' }}
+                  options={marcaOptions || []}
+                />
+
+                <div className='section' style={{borderRadius: 5,  border: '1px solid rgb(204, 204, 204)', paddingInline: '10px'}}>
+                  <FormControlLabel
+                    label="Permite vencimiento"
+                    control={
+                      <Checkbox
+                        name='hasExpiration'
+                        checked={!!hasExpiration}
+                        onChange={(e) => setValue('hasExpiration', e.target.checked)}
+                      />
+                    }
                   />
-                
-                  <FormDropdown
-                    name="idBrand"
-                    control={control}
-                    label="marca"
-                    rules={{ required: 'marca name is required' }}
-                    options={marcaOptions || []}
-                  />
+                </div>
               </div>
             </div>
 

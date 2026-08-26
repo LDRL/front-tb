@@ -12,6 +12,7 @@ export interface Product {
   imageUrl: string;     // 👈 backend
   image?: File | null | string;
 
+  hasExpiration: boolean;
   //Detalle
   idPresentation: number;
   price?: number;
@@ -75,6 +76,8 @@ export interface ProductForm {
   idUnit: number;
 
   description: string;
+
+  hasExpiration: boolean;
 
   image?: File | null | string;
 

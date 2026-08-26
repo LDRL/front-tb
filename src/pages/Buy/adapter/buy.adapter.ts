@@ -75,6 +75,7 @@ export const mapBuyToCreatePayload = (buy: Buy,idusuario: number, idsucursal: nu
     idprodPresenta: d.codProductPresentation,
     cantidad: d.amount,
     costo: d.cost,
+    ...(d.expirationDate ? { fecha_vencimiento: d.expirationDate } : {}),
   })),
 });
 

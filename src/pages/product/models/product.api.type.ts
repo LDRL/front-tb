@@ -50,6 +50,7 @@ export interface ApiProduct {
   idcategoria: number;
   idunidad: number;
   estado: number;
+  controla_vencimiento: false;
 
   Marca: ApiBrand;
   //Presentacion: ApiPresentation;
@@ -73,6 +74,7 @@ export interface ApiCreateProduct {
   idpresentacion: number;
   idunidad: number;
   descripcion: string;
+  controla_vencimiento: boolean;
   presentaciones: ApiProductPresentacion[];
 }
 

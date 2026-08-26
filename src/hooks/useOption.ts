@@ -10,6 +10,7 @@ export interface Option{
     label: string;
     direction?: string;
     price?: number;
+    hasExpiration?: boolean;
 }
 
 interface Provider {
@@ -32,6 +33,7 @@ interface Product {
     Marca: ApiBrand;
     Presentaciones: ApiProductPresentation[];
     Categoria: ApiCategory;
+    controla_vencimiento?: boolean;
 }
 
 interface ApiProductResponse {
@@ -108,7 +110,8 @@ const ProductsAdapter = (products: Product[]): Option[] => {
         product.Presentaciones.map(Presentacion => ({
             value: Presentacion.idprodPresenta,
             label: `${product.Categoria.nombre} - ${product.Marca.nombre} - ${product.nombre} - ${Presentacion.Presentacion.nombre}`,
-            price: getPresentationPrice(Presentacion)
+            price: getPresentationPrice(Presentacion),
+            hasExpiration: product.controla_vencimiento ?? false,
         }))
     );
 };

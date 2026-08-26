@@ -29,6 +29,7 @@ const productSlice = createSlice({
           idUnit: action.payload.idUnit,
           description: action.payload.description,
           image: action.payload.image,
+          hasExpiration: action.payload.hasExpiration ?? false,
 
           presentacions: action.payload.presentacions ?? [],
 

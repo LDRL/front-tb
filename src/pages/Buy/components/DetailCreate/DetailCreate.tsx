@@ -1,5 +1,5 @@
 import React, {useMemo, useState } from 'react';
-import { FormAutocompleteAsync, FormInputNumber } from '@/components';
+import { FormAutocompleteAsync, FormDate, FormInputNumber } from '@/components';
 import { Box, Button, FormHelperText} from '@mui/material';
 import {Option, useFetchProductOptions } from '@/hooks/useOption';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -7,6 +7,7 @@ import "../BuyCreate/BuyCreate.css"
 import { Detail } from '../../models/buy.domain.type';
 import debounce from 'just-debounce-it';
 import { pageSize } from '@/utils';
+import dayjs from 'dayjs';
 
 type Props = {
   control: any;
@@ -48,8 +49,10 @@ export const DetailCreate: React.FC<Props> = ({
       : [selectedProduct, ...productOptions];
   }, [productOptions, selectedProduct]);
 
+  const needsExpiration = selectedProduct?.hasExpiration ?? false;
+
   const handleAdd = () => {
-    const { amount, cost, codProductPresentation } = getValues();
+    const { amount, cost, codProductPresentation, expirationDate } = getValues();
 
     let hasError = false;
 
@@ -68,6 +71,11 @@ export const DetailCreate: React.FC<Props> = ({
       hasError = true;
     }
 
+    if (needsExpiration && !expirationDate) {
+      setErrors((e: any) => ({ ...e, expirationDate: true }));
+      hasError = true;
+    }
+
     if (hasError) return;
 
     addRow({
@@ -75,12 +83,17 @@ export const DetailCreate: React.FC<Props> = ({
       amount,
       cost,
       subtotal: amount * cost,
-      name: selectedProduct?.label ?? ""
+      name: selectedProduct?.label ?? "",
+      ...(needsExpiration && expirationDate
+        ? { expirationDate: dayjs(expirationDate).format("YYYY-MM-DD") }
+        : {}),
     });
 
     setValue("amount", 0);
     setValue("cost", 0);
     setValue("codProductPresentation", undefined);
+    setValue("expirationDate", undefined);
+    setSelectedProduct(null);
   };
 
   const columns: GridColDef<(typeof rows)[number]>[] = [
@@ -122,6 +135,13 @@ export const DetailCreate: React.FC<Props> = ({
       type: 'number',
       sortable: false
     },
+    {
+      field: 'expirationDate',
+      headerName: 'Vencimiento',
+      flex: 0.5,
+      sortable: false,
+      renderCell: (params) => params.row.expirationDate ?? '-',
+    },
   ];
 
   return (
@@ -136,9 +156,11 @@ export const DetailCreate: React.FC<Props> = ({
           getOptionLabel={(o) => o.label}
           getOptionValue={(o) => o.value}
           onInputChange={debouncedSearch}
-          onChangeExternal={(v) =>
-            setSelectedProduct(v as Option | null)
-          }
+          onChangeExternal={(v) => {
+            setSelectedProduct(v as Option | null);
+            setErrors((e: any) => ({ ...e, expirationDate: false }));
+            setValue("expirationDate", undefined);
+          }}
         />
       </div>
       <div className='container_selector'>
@@ -163,6 +185,20 @@ export const DetailCreate: React.FC<Props> = ({
           <FormHelperText sx={{color: 'red'}}>Precio es un campo requerido</FormHelperText>
         )}
         </div>
+
+        {needsExpiration && (
+        <div>
+          <FormDate
+            name="expirationDate"
+            control={control}
+            label='Fecha vencimiento'
+            rules={needsExpiration ? {required: 'Fecha vencimiento es un campo requerido'} : undefined}
+          />
+          {errors.expirationDate && (
+            <FormHelperText sx={{color: 'red'}}>Fecha de vencimiento es requerida</FormHelperText>
+          )}
+        </div>
+        )}
       </div>
 
       <div style={{display:'flex', justifyContent:'flex-end', gap: '5px'}}>
@@ -206,4 +242,3 @@ export const DetailCreate: React.FC<Props> = ({
     </>
   );
 };
-

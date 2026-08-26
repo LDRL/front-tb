@@ -119,4 +119,5 @@ export interface CreateBuyDetail {
   idprodPresenta: number;
   cantidad: number;
   costo: number;
+  fecha_vencimiento?: string;
 }

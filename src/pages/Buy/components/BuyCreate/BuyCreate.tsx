@@ -38,7 +38,8 @@ const BuyCreate: React.FC = () => {
     amount: false,
     cost: false,
     idProduct: false,
-    detailProduct: false
+    detailProduct: false,
+    expirationDate: false,
   });
 
   const [providerSearch, setProviderSearch] = useState("");
@@ -72,6 +73,7 @@ const BuyCreate: React.FC = () => {
     cost: false,
     idProduct: false,
     detailProduct: false,
+    expirationDate: false,
   });
 
 
