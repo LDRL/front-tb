@@ -101,7 +101,7 @@ const PresentationCreate: React.FC = () => {
             <FormInputText
               name="name"
               control={control}
-              label="Nombre categoría"
+              label="Nombre presentación"
               rules={{ required: 'Product name is required' }}
             />
           </div>
