@@ -10,8 +10,12 @@ import TableMovil from "../TableMovil/TableMovil";
 import { useSupplier } from "../../hooks/useSupplier";
 import { editSupplier } from "@/redux/supplierSlice";
 import { Supplier } from "../../models/supplier.domain.type";
+import { PERMISSIONS } from "@/modules/auth/helper/permissions";
+import { usePermission } from "@/hooks/usePermission";
 
 const ListOfSuppliers: React.FC = () => {
+  const { can } = usePermission();
+  const canEdit = can(PERMISSIONS.PROVIDERS.UPDATE);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -92,22 +96,26 @@ const ListOfSuppliers: React.FC = () => {
         </div>
       ),
     },
-    {
-      field: "actions",
-      type: "actions",
-      sortable: false,
-      headerName: "Actions",
-      width: 200,
-      renderCell: (params: GridRenderCellParams) => (
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => handleEditPresentation(params.row as Supplier)}
-        >
-          Editar
-        </Button>
-      ),
-    },
+    ...(canEdit
+      ? [
+          {
+            field: "actions",
+            type: "actions",
+            sortable: false,
+            headerName: "Actions",
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => handleEditPresentation(params.row as Supplier)}
+              >
+                Editar
+              </Button>
+            ),
+          } as GridColDef,
+        ]
+      : []),
   ];
 
   if (isLoading) {
@@ -121,15 +129,21 @@ const ListOfSuppliers: React.FC = () => {
           suppliers={providers}
           totalSupplier={totalProvieder}
           paginationModel={paginationModel}
-          handleEditSupplier={handleEditPresentation}
-          handlePaginationModelChange={handlePaginationModelChange}
-          totalPagesMobile={totalPagesMovile}
-        />
+handleEditSupplier={handleEditPresentation}
+        handlePaginationModelChange={handlePaginationModelChange}
+        totalPagesMobile={totalPagesMovile}
+        canEdit={canEdit}
+      />
       ) : (
         <DataGrid
           rows={providers}
           rowCount={totalProvieder}
           columns={columns}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0
+            ? 'even-row'
+            : 'odd-row'
+          }
           disableColumnSelector
           disableRowSelectionOnClick
           autoHeight

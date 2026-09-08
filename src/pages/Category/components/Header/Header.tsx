@@ -9,11 +9,15 @@ import { setSearchCategory } from '@/redux/categorySlice';
 import debounce from 'just-debounce-it';
 
 import "./Header.css"
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 const CreateProduct: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const search = useSelector((state: any) => state.category.search);
+  const { can } = usePermission();
+  const canCreate = can(PERMISSIONS.CATEGORIES.CREATE);
 
   const debouncedGetCategories = useCallback(debounce((search: string) =>{
     dispatch(setSearchCategory(search));
@@ -46,11 +50,13 @@ const CreateProduct: React.FC = () => {
         />
       </div>
 
-      <div>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Crear Categoría
-        </Button>
-      </div>
+      {canCreate && (
+        <div>
+          <Button variant="contained" color="primary" onClick={handleClick}>
+            Crear Categoría
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -6,11 +6,15 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import debounce from "just-debounce-it";
 import { setSearchClient } from "@/redux/clientSlice";
+import { usePermission } from "@/hooks/usePermission";
+import { PERMISSIONS } from "@/modules/auth/helper/permissions";
 
 const Header: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const search = useSelector((state: any) => state.client.search);
+    const { can } = usePermission();
+    const canCreate = can(PERMISSIONS.CLIENTS.CREATE);
 
     const debouncedSearch = useCallback(
         debounce((search: string) => {
@@ -46,11 +50,13 @@ const Header: React.FC = () => {
                 />
             </div>
 
-            <div>
-                <Button variant="contained" color="primary" onClick={handleClick}>
-                    Crear Cliente
-                </Button>
-            </div>
+            {canCreate && (
+                <div>
+                    <Button variant="contained" color="primary" onClick={handleClick}>
+                        Crear Cliente
+                    </Button>
+                </div>
+            )}
         </div>
     );
 };

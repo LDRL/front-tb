@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import "./Header.css"
 import { setSearchSale } from '@/redux/saleSlice';
-import { hasPermission } from '@/modules/auth/helper/auth.helper';
+import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 
@@ -18,11 +18,9 @@ const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
-  const search = useSelector((state: any) => state.auth.search);
-
-  const user = useSelector((state: any) => state.auth.user);
-  const canCreateSale = hasPermission(user,PERMISSIONS.SALES.CREATE
-  );
+  const search = useSelector((state: any) => state.sale.search);
+  const { can } = usePermission();
+  const canCreateSale = can(PERMISSIONS.SALES.CREATE);
 
   const debouncedGetSales = useCallback(debounce((search: string) =>{
     dispatch(setSearchSale(search));

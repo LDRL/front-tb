@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import debounce from 'just-debounce-it';
 import { setSearchUser } from '@/redux/userSlice';
 import { useForm } from 'react-hook-form';
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 //import { setSearchUser } from '@/redux/userSlice';
 
 
@@ -17,6 +19,8 @@ const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const search = useSelector((state: any) => state.user.search);
+  const { can } = usePermission();
+  const canCreate = can(PERMISSIONS.USERS.CREATE);
 
   const debouncedSetSearch = useCallback(debounce((search: string) => {
     dispatch(setSearchUser(search));
@@ -49,11 +53,13 @@ const Header: React.FC = () => {
         />
       </div>
 
-      <div>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Crear Usuario
-        </Button>
-      </div>
+      {canCreate && (
+        <div>
+          <Button variant="contained" color="primary" onClick={handleClick}>
+            Crear Usuario
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

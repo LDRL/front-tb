@@ -10,8 +10,12 @@ import { totalPagesMovile } from '@/utils';
 import TableMovil from '../TableMovil/TableMovil';
 import { usePresentation } from '../../hooks/usePresentation';
 import { editPresentation } from '@/redux/presentationSlice';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { usePermission } from '@/hooks/usePermission';
 
 const ListOfPresentations: React.FC = () => {
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.PRESENTATIONS.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -48,22 +52,24 @@ const ListOfPresentations: React.FC = () => {
                 <div style={{ display: isMobile ? 'block' : 'inline' }}>{params.value}</div>
             ),
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditPresentation(params.row as Presentation)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: 'actions',
+                type: 'actions',
+                sortable: false,
+                headerName: 'Actions',
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditPresentation(params.row as Presentation)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
 
@@ -81,6 +87,7 @@ const ListOfPresentations: React.FC = () => {
                     handleEditPresentation={handleEditPresentation}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
+                    canEdit={canEdit}
                 />
                 
             ) : (
@@ -88,6 +95,11 @@ const ListOfPresentations: React.FC = () => {
                     rows={presentations}
                     rowCount={totalPresentation}
                     columns={columns}
+                    getRowClassName={(params) =>
+                        params.indexRelativeToCurrentPage % 2 === 0
+                        ? 'even-row'
+                        : 'odd-row'
+                    }
                     disableColumnSelector
                     disableRowSelectionOnClick
                     autoHeight

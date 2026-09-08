@@ -6,12 +6,17 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { setSearchBrand } from '@/redux/brandSlice';
 import debounce from 'just-debounce-it';
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import "./Header.css"
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const search = useSelector((state: any) => state.brand.search);
+  const { can } = usePermission();
+
+  const canCreateBrand = can(PERMISSIONS.BRANDS.CREATE);
 
   const debouncedGetBrands = useCallback(debounce((search: string) =>{
     dispatch(setSearchBrand(search));
@@ -45,11 +50,13 @@ const Header: React.FC = () => {
         />
       </div>
 
-      <div>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Crear Marca
-        </Button>
-      </div>
+      {canCreateBrand && (
+        <div>
+          <Button variant="contained" color="primary" onClick={handleClick}>
+            Crear Marca
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

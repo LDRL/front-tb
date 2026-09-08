@@ -1,24 +1,19 @@
-import { BuyTable } from "./components/BuyTable";
-import { Header } from "./components/Header";
+import { BuyTable } from "./components";
+import { Header } from "./index";
 
-
-export default function BuyPage(){
-    //const sidebarState = useSelector((store: AppStore) => store.sidebar)    
+export default function BuyPage(){    
     return(
         <div>
             <div>
-                <h2>Listado de compras</h2>
-                <hr />
+                <div className="page-title-box" style={{display:"flex", justifyContent:'space-between'}}>
+                    <h4>Listado de compras</h4>
+                    <Header />
+                </div>
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
-                <Header /> 
-            </div>
-            
-            {/* 94 */}
-            <div >
+            <div className="" style={{margin:'10px'}}>
                 <BuyTable />
-            </div>
+            </div>       
         </div>
     )
 }

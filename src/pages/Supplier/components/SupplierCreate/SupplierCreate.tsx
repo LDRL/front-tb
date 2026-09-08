@@ -84,7 +84,7 @@ const SupplierCreate: React.FC = () => {
   };
 
   return (    
-    <div className='container'>
+    <div>
       {loading && (
         <Loading loading/>
       )}

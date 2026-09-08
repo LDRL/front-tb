@@ -1,23 +1,19 @@
-
-import { SaleTable } from "./components/SaleTable";
-import { Header } from "./components/Header";
+import { SaleTable } from "./components";
+import { Header } from "./index";
 
 export default function SalePage(){    
     return(
         <div>
             <div>
-                <h2>Listado de ventas</h2>
-                <hr />
+                <div className="page-title-box" style={{display:"flex", justifyContent:'space-between'}}>
+                    <h4>Listado de ventas</h4>
+                    <Header />
+                </div>
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
-                <Header /> 
-            </div>
-            
-            {/* 94 */}
-            <div >
+            <div className="" style={{margin:'10px'}}>
                 <SaleTable />
-            </div>
+            </div>       
         </div>
     )
 }

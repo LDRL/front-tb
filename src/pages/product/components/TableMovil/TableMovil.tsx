@@ -9,6 +9,7 @@ interface ProductListProps {
     handleEditProduct: (product: Product) => void;
     handlePaginationModelChange: (newPaginationModel: { page: number; pageSize: number }) => void;
     totalPagesMobile: number;
+    canEdit: boolean;
 }
 
 const urlSinImage = "/sinImagen.png";
@@ -30,6 +31,7 @@ const TableMovil: React.FC<ProductListProps> = ({
     handleEditProduct,
     handlePaginationModelChange,
     totalPagesMobile,
+    canEdit,
 }) => {
     return (
         <>
@@ -56,13 +58,15 @@ const TableMovil: React.FC<ProductListProps> = ({
                             />
                             <br />
 
-                            <Button
-                                variant="contained"
-                                color="success"
-                                onClick={() => handleEditProduct(product)}
-                            >
-                                Editar
-                            </Button>
+                            {canEdit && (
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={() => handleEditProduct(product)}
+                                >
+                                    Editar
+                                </Button>
+                            )}
                         </CardContent>
                     </Card>
                 );

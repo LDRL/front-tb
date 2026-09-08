@@ -8,11 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import debounce from 'just-debounce-it';
 import { setSearchSupplier } from '@/redux/supplierSlice';
 import { useForm } from 'react-hook-form';
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const search = useSelector((state: any) => state.supplier.search);
+  const { can } = usePermission();
+  const canCreate = can(PERMISSIONS.PROVIDERS.CREATE);
 
   const debouncedSetSearch = useCallback(debounce((search: string) => {
     dispatch(setSearchSupplier(search));
@@ -45,11 +49,13 @@ const Header: React.FC = () => {
         />
       </div>
 
-      <div>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Crear Proveedor
-        </Button>
-      </div>
+      {canCreate && (
+        <div>
+          <Button variant="contained" color="primary" onClick={handleClick}>
+            Crear Proveedor
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

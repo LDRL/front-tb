@@ -5,7 +5,7 @@
 
   /* Fondos  generales */
   --bg-page: #f8fafc;
-  --bg-header: #ffffff;
+  --bg-header: #fff;
   --bg-sidebar: #1f2937;
 
   /* Texto */
@@ -21,6 +21,10 @@
   /* Header */
   --header-bg: var(--bg-header);
   --header-text: var(--text-primary);
+
+  --vz-secondary-bg: #fff;
+  --vz-page-title-box-shadow: 0 3px 3px rgba(56, 65, 74, 0.1);
+  --vz-page-title-border: none;
 
   /* ========================================
      Sidebar

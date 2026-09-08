@@ -100,10 +100,8 @@ const ClientCreate: React.FC = () => {
         }
     };
 
-     
-
     return (
-        <div className="container">
+        <div>
             {loading && <Loading loading />}
 
             <CardForm titulo="Cliente" subtitulo={subtitulo}>

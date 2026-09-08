@@ -26,7 +26,7 @@ import { useFetchTypeClientsOptions } from '@/hooks/useOption';
 
 const SaleCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [subtitulo, setSubtitulo] = useState("Nuevo");
+  const [subtitulo, setSubtitulo] = useState("Nueva");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -155,7 +155,7 @@ const SaleCreate: React.FC = () => {
     dispatch(clearClient());
     dispatch(setSearchNit(""));
     reset({ address: '', date: undefined });
-    setSubtitulo("Nuevo");
+    setSubtitulo("Nueva");
 
     // Al salir se limpia para que la próxima entrada no cargue estado viejo
     return () => {
@@ -172,7 +172,7 @@ const SaleCreate: React.FC = () => {
   }, [client, setValue]);
 
   return (
-    <div className="container">
+    <div className="">
 
       {loading && <Loading loading />}
 

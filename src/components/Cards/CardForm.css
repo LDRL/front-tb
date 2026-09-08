@@ -3,14 +3,22 @@
     position: relative;
     border-bottom: 2px solid #359D9E;
     align-items: baseline;
-    margin: 1rem;
+    margin: 0 0 1rem ;
+}
+
+.page-title-card{
+    padding: 10px 1.5rem;
+    background-color: var(--vz-secondary-bg);
+    -webkit-box-shadow: var(--vz-page-title-box-shadow);
+    box-shadow: var(--vz-page-title-box-shadow);
+    border-bottom: 1px solid var(--vz-page-title-border);
 }
 
 
 .titulo {
     color: #000 !important;
-    font-weight: 400;
-    font-size: 36px;
+    font-weight: 700;
+    font-size: 15px;
     font-style: normal;
     line-height: 24px;
 }
@@ -18,7 +26,7 @@
 .subtitulo{
     color: #000 !important;
     font-weight: 400;
-    font-size: 36px;
+    font-size: 15px;
     font-style: normal;
     line-height: 24px;
 }
@@ -29,4 +37,10 @@
 
 .ml-3, .mx-3 {
     margin-left: 1rem !important
+}
+
+.card-tabla{
+    margin-bottom: 1.5rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
 }

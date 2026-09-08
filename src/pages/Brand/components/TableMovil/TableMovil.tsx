@@ -9,6 +9,7 @@ interface BrandListProps {
     handleEditBrand: (category: Brand) => void;
     handlePaginationModelChange: (newPaginationModel: { page: number; pageSize: number }) => void;
     totalPagesMobile: number;
+    canEdit: boolean;
 }
 
 const TableMovil: React.FC<BrandListProps> = ({
@@ -18,6 +19,7 @@ const TableMovil: React.FC<BrandListProps> = ({
     handleEditBrand,
     handlePaginationModelChange,
     totalPagesMobile,
+    canEdit,
 }) => {
     return (
         <>
@@ -26,13 +28,15 @@ const TableMovil: React.FC<BrandListProps> = ({
                     <CardContent>
                         <h3>{brand.name}</h3>
                         <p>Código: {brand.id}</p>
-                        <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleEditBrand(brand)}
-                        >
-                            Editar
-                        </Button>
+                        {canEdit && (
+                            <Button
+                                variant="contained"
+                                color="success"
+                                onClick={() => handleEditBrand(brand)}
+                            >
+                                Editar
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
             ))}

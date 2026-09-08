@@ -7,8 +7,12 @@ import { Role } from '../../models/role.domain.type';
 import Loading from '@/components/Loading';
 import { useRole } from '../../hooks/useRole';
 import { editRole } from '@/redux/rolSlice';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { usePermission } from '@/hooks/usePermission';
 
 const ListOfRoles: React.FC = () => {
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.ROLES.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -45,22 +49,24 @@ const ListOfRoles: React.FC = () => {
                 <div style={{ display: isMobile ? 'block' : 'inline' }}>{params.value}</div>
             ),
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditRole(params.row as Role)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: 'actions',
+                type: 'actions',
+                sortable: false,
+                headerName: 'Actions',
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditRole(params.row as Role)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
     if (isLoading) {
@@ -76,6 +82,11 @@ const ListOfRoles: React.FC = () => {
                     rows={roles}
                     rowCount={totalRole}
                     columns={columns}
+                    getRowClassName={(params) =>
+                        params.indexRelativeToCurrentPage % 2 === 0
+                        ? 'even-row'
+                        : 'odd-row'
+                    }
                     disableColumnSelector
                     disableRowSelectionOnClick
                     autoHeight

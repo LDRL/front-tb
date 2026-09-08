@@ -1,12 +1,8 @@
 .aside {
-    /* padding-left: 1.25rem; 20px */
-    /* padding-right: 1.25rem; 20px */
-    /* padding-top: 2.5rem; 40px */
-    /* padding-bottom: 2.5rem; 40px */    
-      display: none;
+  --sidebar-collapsed-width: 65px;
+  display: none;
 }
-    
-/* Medium screens and up */
+
 @media (min-width: 768px) {
   .aside {
     display: block;
@@ -20,13 +16,8 @@
     inset: 0;
     z-index: 50;
   }
-
-  .aside_mobile_open .container_sidebar {
+.aside_mobile_open .container_sidebar {
     z-index: 51;
-  }
-
-  .aside_mobile_open .span {
-    display: none;
   }
 }
 
@@ -49,7 +40,7 @@
 }
 
 .aside_close {
-  width: 65px;
+  width: var(--sidebar-collapsed-width);
 }
 
 .nav {
@@ -58,42 +49,9 @@
   flex-direction: column;
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--sidebar-border-color);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); 
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.span {
-  position: fixed;
-  top: 60px;
-  left: 42px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%; /* Bordes redondeados para hacer circular */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 2;
-
-
-  background-color: var(--sidebar-toggle-bg);
-  box-shadow: var(--sidebar-toggle-shadow);
-  /* : #fff; Blanco */
-  color: rgb(255 255 255);
-}
-
-
-.span_open {
-  /* transform: translateX(36px) rotate(180deg); */
-  transform: translateX(162px) rotate(3.142rad)
-}
-
-.span_close{
-  transform: initial;
-}
-
-
-/* Estilos base */
 .container_sidebar {
   color: var(--sidebar-text);
   background: var(--sidebar-container-bg);
@@ -101,15 +59,10 @@
   padding-top: 20px;
   z-index: 1;
   height: 100%;
-
-  transition: width 0.1s ease-in-out; /* Solo aplicar transición a la propiedad width */
+  transition: width 0.2s ease-in-out;
   overflow-y: auto;
   overflow-x: hidden;
 }
-
-/* .container:active {
-  width: 220px;
-} */
 
 .container_sidebar::-webkit-scrollbar {
   width: 6px;
@@ -117,7 +70,6 @@
 }
 
 .container_sidebar::-webkit-scrollbar-thumb {
-  /* background-color: var(--scrollbar-color); Asigna el valor de color de la barra de desplazamiento del tema */
   background-color: var(--sidebar-scrollbar);
   border-radius: 10px;
 }
@@ -127,10 +79,10 @@
 }
 
 .container_close {
-  width: 65px;
-
+  width: var(--sidebar-collapsed-width);
+  overflow: visible;
 }
-/* Estado activo */
+
 .container_open {
   width: 220px;
 }
@@ -142,33 +94,21 @@
   padding-bottom: 60px;
 }
 
-
-/* Estilos para .Logocontent */
-.Logocontent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 60px;
-}
-
-/* Estilos para .Logocontent .imgcontent */
 .Logocontent .imgcontent {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 30px;
   cursor: pointer;
-  transition: transform 0.3s ease; /* Solo aplicar transición a la transformación */
-  transform: scale(1.5) rotate(var(--logorotate)); /* Inicialmente escala de 1.5 y se rota según la variable */
+  transition: transform 0.3s ease;
+  transform: scale(1.5);
 }
 
-/* Estilos para .Logocontent .imgcontent img */
 .Logocontent .imgcontent img {
   width: 100%;
   animation: flotar 1.7s ease-in-out infinite alternate;
 }
 
-/* Mostrar u ocultar h2 dentro de .Logocontent según el valor de $isopen */
 .Logocontent_close {
   display: none;
 }
@@ -177,12 +117,9 @@
   display: block;
 }
 
-
-
-/* Definición de animación flotar */
 @keyframes flotar {
   0% {
-    transform: translateY(0px); /* Cambio de translate a translateY */
+    transform: translateY(0px);
   }
   50% {
     transform: translateY(4px);
@@ -192,116 +129,188 @@
   }
 }
 
+.sidebar_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.LinkLi {
+  list-style: none;
+  position: relative;
+}
 
 .LinkContainer {
   margin: 5px 0;
-  transition: all 0.3s ease-in-out;
   padding: 0 5%;
   position: relative;
+  transition: all 0.3s ease-in-out;
 }
 
 .LinkContainer:hover {
   background: var(--sidebar-hover-bg);
 }
 
-.LinkContainer_active{
-  padding: 0
+.LinkContainer_active {
+  padding: 0;
 }
 
-.LinkLi {
-  list-style: none;/**/
-}
-
-/* Estilos para .Links */
 .Links {
   display: flex;
   align-items: center;
   text-decoration: none;
-  padding: calc(8px - 2px) 0; /* Se asume que v.smSpacing es una variable CSS personalizada */
-  color: var(--sidebar-text); /* Asigna el valor de color del tema */
+  padding: 6px 0;
+  color: var(--sidebar-text);
   height: 60px;
-
-  
+  position: relative;
 }
 
-/* Estilos para .Links .Linkicon */
 .linkicon {
-  padding: 8px 16px; /* Se asume que v.mdSpacing es una variable CSS personalizada */
+  padding: 8px 16px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-/* Estilos para .Links .Linkicon svg */
 .linkicon svg {
   font-size: 25px;
 }
 
-/* Estilos para .Links .label_ver */
 .label_ver {
-  transition: opacity 0.3s ease-in-out;
   opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  white-space: nowrap;
 }
 
-/* Estilos para .Links .label_oculto */
 .label_oculto {
   opacity: 0;
 }
 
-/* Estilos para .Links.active */
-.Links.active {
-  color: var(--sidebar-active-color); /* Asigna el valor de color del tema */
+.Links.active,
+.Links.parent_active {
+  color: var(--sidebar-active-color);
   font-weight: 600;
 }
 
 .Links.active::before {
   content: "";
   position: absolute;
+  left: 0;
   height: 100%;
-  background: var(--sidebar-active-indicator); /* Asigna el valor de color del tema */
   width: 4px;
   border-radius: 10px;
-  left: 0;
+  background: var(--sidebar-active-indicator);
 }
 
-/* .Links_active{}
-
-.Links_active{
-
-} */
-.parrafo {
-  font-size: 1.25rem; /* 20px */
-  font-weight: 700; /* Bold */
+.SubMenu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--sidebar-submenu-bg);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
 }
 
-.link{
-  background-color: var(--sidebar-link-bg); /* Color correspondiente a bg-sky-600 */
+.SubMenu_open {
+  max-height: 200px;
+}
+
+.container_open .SubMenu {
+  position: relative;
   width: 100%;
-  padding: 0.75rem; /* 12px */
-  color: var(--sidebar-link-text);
-  text-transform: uppercase;
-  font-weight: 700; /* Bold */
-  display: block;
-  margin-top: 1.25rem; /* 20px */
-  text-align: center;
-  border-radius: 0.5rem; /* 8px */
+  max-height: 0;
+  overflow: hidden;
+  background: var(--sidebar-submenu-bg);
+  transition: max-height 0.3s ease-in-out;
 }
 
-.link:hover {
-  background-color: var(--sidebar-link-hover-bg);
+.container_open .SubMenu.SubMenu_open {
+  max-height: 200px;
 }
 
+.SubMenuItem {
+  list-style: none;
+}
 
 .LinkSub {
-  background: var(--sidebar-submenu-bg);
-  height: 60px;
-  padding-left: 3rem;
   display: flex;
   align-items: center;
+  height: 55px;
+  padding-left: 3rem;
   text-decoration: none;
   color: var(--sidebar-submenu-text);
-  font-size: 18px;
-
+  background: var(--sidebar-submenu-bg);
+  font-size: 16px;
 }
-.LinkSub:hover{
+
+.LinkSub:hover {
   background: var(--sidebar-submenu-hover-bg);
   cursor: pointer;
+}
+
+.LinkSub_active {
+  color: var(--sidebar-active-color);
+  font-weight: 600;
+  background: var(--sidebar-submenu-hover-bg);
+}
+
+.SubLinkIcon {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.container_close .SubMenu {
+  position: absolute;
+  top: 0;
+  left: var(--sidebar-collapsed-width);
+  width: 180px;
+  min-width: 180px;
+  max-height: none;
+  height: auto;
+  overflow: visible;
+  margin: 0;
+  padding: 4px 0;
+  background: var(--sidebar-submenu-bg);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.35);
+  z-index: 100;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+
+.container_close .LinkLi:hover > .SubMenu {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.container_close .LinkSub {
+  height: 50px;
+  padding-left: 1rem;
+  font-size: 16px;
+}
+
+.container_close .SubMenu.SubMenu_open {
+  position: absolute;
+  top: 0;
+  left: var(--sidebar-collapsed-width);
+  width: 180px;
+  max-height: none;
+  height: auto;
+  overflow: visible;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+
+.container_close .LinkLi:hover > .SubMenu.SubMenu_open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }

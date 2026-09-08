@@ -203,9 +203,8 @@ export const DetailCreate: React.FC<Props> = ({
     },
     {
       field: 'name',
-      headerName: 'Presentacion',
+      headerName: 'Presentación',
       flex: 1,
-      minWidth: 250,
       sortable: false,
     },
     {
@@ -264,7 +263,7 @@ export const DetailCreate: React.FC<Props> = ({
         <FormAutocompleteAsync
           name="idPresentation"
           control={control}
-          label="Presentacion"
+          label="Presentación"
           options={finalProducts}
           isLoading={isLoading}
           getOptionLabel={(o) => o.label}
@@ -307,21 +306,22 @@ export const DetailCreate: React.FC<Props> = ({
             <FormHelperText sx={{ color: 'red' }}>Es un campo requerido</FormHelperText>
           )}
         </div>
+        <div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={hasMultiPrice}
+                onChange={handleToggleMultiPrice}
+                color="primary"
+              />
+            }
+            label="Agregar más de un precio por tipo de cliente"
+          />
+        </div>
       </div>
 
       {/* ── Toggle multi-price ── */}
-      <div style={{ margin: '12px 0' }}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={hasMultiPrice}
-              onChange={handleToggleMultiPrice}
-              color="primary"
-            />
-          }
-          label="Agregar más de un precio por tipo de cliente"
-        />
-      </div>
+
 
       {/* ── Precios sub-form ── */}
       {hasMultiPrice && (
@@ -354,10 +354,11 @@ export const DetailCreate: React.FC<Props> = ({
               key={index}
               style={{
                 display: 'flex',
-                alignItems: 'center',
+
                 gap: '10px',
                 marginBottom: '8px',
               }}
+              className='container_selector'
             >
               <FormControl size="small" sx={{ minWidth: 180 }}>
                 <InputLabel>Tipo cliente</InputLabel>

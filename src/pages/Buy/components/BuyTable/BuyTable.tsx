@@ -88,6 +88,11 @@ const ListOfBuys: React.FC = () => {
             rows={buys}
             rowCount={totalBuy}
             columns={columns}
+            getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0
+                ? 'even-row'
+                : 'odd-row'
+            }
             disableColumnSelector
             disableRowSelectionOnClick
             autoHeight

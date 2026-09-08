@@ -1,35 +1,33 @@
 import HomeIcon from '@mui/icons-material/Home';
-import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
-import CategoryIcon from '@mui/icons-material/Category';
 import SummarizeIcon from '@mui/icons-material/Summarize';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
 import PersonIcon from '@mui/icons-material/Person';
-import GroupIcon from '@mui/icons-material/Group';
-import SecurityIcon from '@mui/icons-material/Security';
+import InventoryIcon  from '@mui/icons-material/Inventory';
+import ShoppingCartIcon   from '@mui/icons-material/ShoppingCart';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
-
+export interface SidebarSubLink {
+  title: string;
+  path: string;
+  icon?: React.ReactNode;
+  permission?: string | null;
+}
 
 export interface SidebarLink {
   label: string;
   icon: React.ReactNode;
   to: string;
   path?: string;
-  permission: string | null;
+  permission: string | string[] | null;
 
-  subNav?: {
-    title: string;
-    path: string;
-  }[];
+  subNav?: SidebarSubLink[];
 
   iconOpened?: React.ReactNode;
   iconClosed?: React.ReactNode;
 }
-
-
 
 export const DesplegableUser = [
   {
@@ -49,64 +47,50 @@ export const DesplegableUser = [
   },
 ];
 
+export const LinksArray: SidebarLink[] = [
 
-
-//data SIDEBAR
-export const LinksArray: SidebarLink[]= [
-  // {
-  //   label: "Home",
-  //   icon: <HomeIcon />,
-  //   to: "#",
-  //   path:"",
-  //   iconOpened:"",
-  //   iconClosed:"",
-  //   subNav: [
-  //     {
-  //         title: "Productos",
-  //         path: "/private/product",
-  //         // icon: <IoIcons.IoIosPaper />,
-  //     },
-  //     {
-  //         title: "nuevo producto",
-  //         path: "/productos/crear-producto",
-  //         // icon: <IoIcons.IoIosPaper />,
-  //     },
-  //   ],
-  // },
   {
     label: "Home",
     icon: <HomeIcon />,
     to: "/private/dashboard",
     path: "/private/dashboard",
-    permission:null
+    permission: null
   },
+
+
   {
-    label: "Producto",
-    icon: <ProductionQuantityLimitsIcon />,
-    to: "/private/product",
-    path: "/private/product",
-    permission: PERMISSIONS.PRODUCTS.READ
-  },
-  {
-    label: "Categorias",
-    icon: <CategoryIcon />,
-    to: "/private/category",
-    path: "/private/category",
-    permission: PERMISSIONS.CATEGORIES.READ
-  },
-  {
-    label: "Marcas",
-    icon: <ProductionQuantityLimitsIcon />,
-    to: "/private/brand",
-    path: "/private/brand",
-    permission: PERMISSIONS.BRANDS.READ
-  },
-  {
-    label: "Presentaciones",
-    icon: <HomeRepairServiceIcon />,
-    to: "/private/presentation",
-    path: "/private/presentation",
-    permission: PERMISSIONS.PRESENTATIONS.READ
+    label: "Inventario",
+    icon: <InventoryIcon />,
+    to: "#",
+    permission: [
+      PERMISSIONS.PRODUCTS.READ,
+      PERMISSIONS.CATEGORIES.READ,
+      PERMISSIONS.BRANDS.READ,
+      PERMISSIONS.PRESENTATIONS.READ
+    ],
+
+    subNav: [
+      {
+        title: "Producto",
+        path: "/private/product",
+        permission: PERMISSIONS.PRODUCTS.READ
+      },
+      {
+        title: "Categorias",
+        path: "/private/category",
+        permission: PERMISSIONS.CATEGORIES.READ,
+      },
+      {
+        title: "Marcas",
+        path: "/private/brand",
+        permission: PERMISSIONS.BRANDS.READ,
+      },
+      {
+        title: "Presentaciones",
+        path: "/private/presentation",
+        permission: PERMISSIONS.PRESENTATIONS.READ,
+      },
+    ],
   },
   {
     label: "Ventas",
@@ -115,54 +99,69 @@ export const LinksArray: SidebarLink[]= [
     path: "/private/sale",
     permission: PERMISSIONS.SALES.READ
   },
+
   {
     label: "Compras",
-    icon: <ShoppingBagIcon />,
+    icon: <ShoppingCartIcon />,
     to: "/private/buy",
     path: "/private/buy",
     permission: PERMISSIONS.PURCHASES.READ
   },
+
   {
-    label: "Usuarios",
+    label: "Contactos",
     icon: <PersonIcon />,
-    to: "/private/user",
-    path: "/private/user",
-    permission: PERMISSIONS.USERS.READ
+    to: "#",
+    permission: [
+      PERMISSIONS.PROVIDERS.READ,
+      PERMISSIONS.CLIENTS.READ
+    ],
+
+    subNav: [
+      {
+        title: "Proveedores",
+        path: "/private/proveedor",
+        permission: PERMISSIONS.PROVIDERS.READ,
+      },
+      {
+        title: "Clientes",
+        path: "/private/client",
+        permission: PERMISSIONS.CLIENTS.READ,
+      },
+    ],
   },
+
   {
-    label: "Proveedores",
-    icon: <PersonIcon />,
-    to: "/private/proveedor",
-    path: "/private/proveedor",
-    permission: PERMISSIONS.PROVIDERS.READ
-  },
-  {
-    label: "Clientes",
-    icon: <GroupIcon />,
-    to: "/private/client",
-    path: "/private/client",
-    permission: PERMISSIONS.CLIENTS.READ
-  },
-  {
-    label: "Roles",
-    icon: <SecurityIcon />,
-    to: "/private/rol",
-    path: "/private/rol",
-    permission: PERMISSIONS.ROLES.READ
+    label: "Administración",
+    icon: <SettingsIcon />,
+    to: "#",
+    permission: PERMISSIONS.USERS.READ,
+
+    subNav: [
+      {
+        title: "Roles",
+        path: "/private/rol",
+        permission: PERMISSIONS.ROLES.READ,
+      },
+      {
+        title: "Usuarios",
+        path: "/private/user",
+        permission: PERMISSIONS.USERS.READ,
+      },
+    ],
   },
   {
     label: "Reportes",
-    icon: <SummarizeIcon/>,
+    icon: <SummarizeIcon />,
     to: "/reportes",
-    permission:null
+    permission: null
   },
- 
 ];
+
 export const SecondarylinksArray = [
   {
     label: "Configuración",
     icon: "",
     to: "/configurar",
   },
-
 ];

@@ -6,12 +6,16 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Category } from '../../models';
 import { editCategory } from '@/redux/categorySlice';
 import { useCategory } from '../../hooks/useCategory';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { usePermission } from '@/hooks/usePermission';
 
 import Loading from '@/components/Loading';
 import { totalPagesMovile } from '@/utils';
 import TableMovil from '../TableMovil/TableMovil';
 
 const ListOfCategories: React.FC = () => {
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.CATEGORIES.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -48,22 +52,24 @@ const ListOfCategories: React.FC = () => {
                 <div style={{ display: isMobile ? 'block' : 'inline' }}>{params.value}</div>
             ),
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditCategory(params.row as Category)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: 'actions',
+                type: 'actions',
+                sortable: false,
+                headerName: 'Actions',
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditCategory(params.row as Category)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
 
@@ -82,6 +88,7 @@ const ListOfCategories: React.FC = () => {
                     handleEditCategory={handleEditCategory}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
+                    canEdit={canEdit}
                 />
                 
             ) : (
@@ -89,6 +96,11 @@ const ListOfCategories: React.FC = () => {
                     rows={categories}
                     rowCount={totalCategory}
                     columns={columns}
+                    getRowClassName={(params) =>
+                        params.indexRelativeToCurrentPage % 2 === 0
+                        ? 'even-row'
+                        : 'odd-row'
+                    }
                     disableColumnSelector
                     disableRowSelectionOnClick
                     autoHeight

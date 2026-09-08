@@ -7,8 +7,12 @@ import { Client } from "../../models";
 import Loading from "@/components/Loading";
 import { useClient } from "../../hooks/useClient";
 import { editClient } from "@/redux/clientSlice";
+import { PERMISSIONS } from "@/modules/auth/helper/permissions";
+import { usePermission } from "@/hooks/usePermission";
 
 const ClientTable: React.FC = () => {
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.CLIENTS.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -58,22 +62,24 @@ const ClientTable: React.FC = () => {
             flex: 1,
             minWidth: 120,
         },
-        {
-            field: "actions",
-            type: "actions",
-            sortable: false,
-            headerName: "Acciones",
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditClient(params.row as Client)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: "actions",
+                type: "actions",
+                sortable: false,
+                headerName: "Acciones",
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditClient(params.row as Client)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
     if (isLoading) {
@@ -86,6 +92,11 @@ const ClientTable: React.FC = () => {
                 rows={clients}
                 rowCount={totalClient}
                 columns={columns}
+                getRowClassName={(params) =>
+                    params.indexRelativeToCurrentPage % 2 === 0
+                    ? 'even-row'
+                    : 'odd-row'
+                }
                 disableColumnSelector
                 disableRowSelectionOnClick
                 autoHeight

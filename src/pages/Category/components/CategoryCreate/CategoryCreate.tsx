@@ -52,7 +52,7 @@ const CreateCategory: React.FC = () => {
       setSubtitulo("Editar")
     } else {
       reset({ id: 0, name: ''});
-      setSubtitulo("Nuevo")
+      setSubtitulo("Nueva")
     }
   }, [currentCategory, reset]);
 
@@ -81,7 +81,7 @@ const CreateCategory: React.FC = () => {
   };
 
   return (    
-    <div className='container'>
+    <div>
       {loading && (
         <Loading loading/>
       )}

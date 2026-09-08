@@ -94,6 +94,11 @@ const ListOfSales: React.FC = () => {
             rows={sales}
             rowCount={totalSale}
             columns={columns}
+            getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0
+                ? 'even-row'
+                : 'odd-row'
+            }
             disableColumnSelector
             disableRowSelectionOnClick
             autoHeight

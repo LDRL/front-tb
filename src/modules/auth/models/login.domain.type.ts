@@ -16,6 +16,7 @@ export interface AuthUser {
   username: string;
   email: string;
   branchId: number;
+  image?: string | null;
   roles: Role[];
 }
 

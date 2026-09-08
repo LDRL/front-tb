@@ -154,7 +154,7 @@ const CreateProduct: React.FC = () => {
   }
 
   return (    
-    <div>
+    <div >
       {loading && (
         <Loading loading/>
       )}
@@ -171,77 +171,105 @@ const CreateProduct: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div className="container_image">
-            {/* Columna izquierda */}
-            <div className="left">
-              <div className="section">
-                <FormInputText
-                  name="name"
-                  control={control}
-                  label="Nombre producto"
-                  rules={{ required: 'Product name is required' }}
-                />
-              </div>
+          <div style={{border: '1px solid #ccc', borderRadius: '5px'}} >
+            <div className='page-title-detail-box'>
+              <h4>Información General </h4>
+            </div>
 
-              <div className="row">
-                <FormDropdown
-                  name="idCategory"
-                  control={control}
-                  label="categoria......"
-                  rules={{ required: 'categorie name is required' }}
-                  options={options || []}
-                />
+            <div style={{padding: '15px'}}>
 
-                <FormDropdown
-                  name="idUnit"
-                  control={control} 
-                  label="Unidad"
-                  rules={{ required: 'Unidad de medida es un campo requerido' }}
-                  options={unitOptions || []}
-                />
-              
-                <FormDropdown
-                  name="idBrand"
-                  control={control}
-                  label="marca"
-                  rules={{ required: 'marca name is required' }}
-                  options={marcaOptions || []}
-                />
+              <div className="container_image">
+                {/* Columna izquierda */}
+                <div className="left">
+                  <div className="section">
+                    <FormInputText
+                      name="name"
+                      control={control}
+                      label="Nombre producto"
+                      rules={{ required: 'Product name is required' }}
+                    />
+                  </div>
 
-                <div className='section' style={{borderRadius: 5,  border: '1px solid rgb(204, 204, 204)', paddingInline: '10px'}}>
-                  <FormControlLabel
-                    label="Permite vencimiento"
-                    control={
-                      <Checkbox
-                        name='hasExpiration'
-                        checked={!!hasExpiration}
-                        onChange={(e) => setValue('hasExpiration', e.target.checked)}
+                  <div className="row">
+                    <FormDropdown
+                      name="idCategory"
+                      control={control}
+                      label="categoria......"
+                      rules={{ required: 'categorie name is required' }}
+                      options={options || []}
+                    />
+
+                    <FormDropdown
+                      name="idUnit"
+                      control={control} 
+                      label="Unidad"
+                      rules={{ required: 'Unidad de medida es un campo requerido' }}
+                      options={unitOptions || []}
+                    />
+                  
+                    <FormDropdown
+                      name="idBrand"
+                      control={control}
+                      label="marca"
+                      rules={{ required: 'marca name is required' }}
+                      options={marcaOptions || []}
+                    />
+
+                    <div className='section' style={{borderRadius: 5,  border: '1px solid rgb(204, 204, 204)', paddingInline: '10px'}}>
+                      <FormControlLabel
+                        label="Permite vencimiento"
+                        control={
+                          <Checkbox
+                            name='hasExpiration'
+                            checked={!!hasExpiration}
+                            onChange={(e) => setValue('hasExpiration', e.target.checked)}
+                          />
+                        }
                       />
-                    }
+                    </div>
+                  </div>
+                </div>
+
+                {/* Imagen a la derecha */}
+                <div className="image">
+                  <FormInputImage 
+                    name="image"
+                    label="imagen del producto"
+                    control={control}                    
                   />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Imagen a la derecha */}
-            <div className="image">
-              <FormInputImage 
-                name="image"
-                label="imagen del producto"
-                control={control}
-                
-              />
+          <div className="container_selector"></div>       
+
+          {/*Detalle */}
+
+          <div style={{border: '1px solid #ccc', borderRadius: '5px'}} >
+            <div className='page-title-detail-box'>
+              <h4>Presentación del producto</h4>              
             </div>
+            <div style={{padding: '15px'}}>
+
+            <DetailCreate
+              control={control}
+              getValues={getValues}
+              setValue={setValue}
+              addRow={addRow}
+              deleteRow={deleteRow}
+              editRow={editRow}
+              editingId={editingId}
+              setEditingId={setEditingId}
+              rows={rows}
+              errors={errors}
+              setErrors={setErrors}
+            />
+                        </div>
+
           </div>
 
-          {/* unidad, categoria, marca */}
-
-
-          {/** Opcion para agregar al detalle producto */}
-
-          <div className="container_selector">
-            
-          </div>
+          <div className="container_selector"></div>
 
           {/*Descripcion */}
 
@@ -256,26 +284,8 @@ const CreateProduct: React.FC = () => {
                   message: "Máximo 500 caracteres",
                 },
               }}
-              rows={6}
+              rows={2}
               placeholder="Escribe algo aquí..."
-            />
-          </div>
-
-          {/*Detalle */}
-
-          <div style={{border: '1px solid #ccc', borderRadius: '5px', padding: '15px'}} >
-            <DetailCreate
-              control={control}
-              getValues={getValues}
-              setValue={setValue}
-              addRow={addRow}
-              deleteRow={deleteRow}
-              editRow={editRow}
-              editingId={editingId}
-              setEditingId={setEditingId}
-              rows={rows}
-              errors={errors}
-              setErrors={setErrors}
             />
           </div>
 
@@ -301,7 +311,7 @@ const CreateProduct: React.FC = () => {
           </div>
         </Box>
       </CardForm>
-    </div>
+    </div>  
   );
 };
 

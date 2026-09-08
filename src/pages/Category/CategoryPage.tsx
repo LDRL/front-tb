@@ -1,26 +1,19 @@
 import { CategoryTable } from "./components";
-import { Header } from "./components/Header";
+import { Header } from "./index";
 
-export default function CategoryPage(){
-    //const sidebarState = useSelector((store: AppStore) => store.sidebar)
-
+export default function CategoryPage(){    
     return(
         <div>
-
             <div>
-                <h2>Listado de categorías</h2>
-                <hr />
+                <div className="page-title-box" style={{display:"flex", justifyContent:'space-between'}}>
+                    <h4>Listado de categorías</h4>
+                    <Header />
+                </div>
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
-                <Header /> 
-            </div>
-            
-            {/* 94 */}
-            <div>
+            <div className="" style={{margin:'10px'}}>
                 <CategoryTable />
-            </div>
+            </div>       
         </div>
-
     )
 }

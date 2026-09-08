@@ -9,6 +9,7 @@ interface SupplierListProps {
     handleEditSupplier: (supplier: Supplier) => void;
     handlePaginationModelChange: (newPaginationModel: { page: number; pageSize: number }) => void;
     totalPagesMobile: number;
+    canEdit: boolean;
 }
 
 const TableMovil: React.FC<SupplierListProps> = ({
@@ -18,6 +19,7 @@ const TableMovil: React.FC<SupplierListProps> = ({
     handleEditSupplier,
     handlePaginationModelChange,
     totalPagesMobile,
+    canEdit,
 }) => {
     return (
         <>
@@ -29,13 +31,15 @@ const TableMovil: React.FC<SupplierListProps> = ({
                         <p>Direccion: {supplier.address}</p>
                         <p>Telefonos: {supplier.phone}</p>
                         <p>Correo Electronico: {supplier.mail}</p>
-                        <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleEditSupplier(supplier)}
-                        >
-                            Editar
-                        </Button>
+                        {canEdit && (
+                            <Button
+                                variant="contained"
+                                color="success"
+                                onClick={() => handleEditSupplier(supplier)}
+                            >
+                                Editar
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
             ))}

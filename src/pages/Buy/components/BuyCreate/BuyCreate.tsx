@@ -29,7 +29,7 @@ const BuyCreate: React.FC = () => {
 
   useEffect(() => {
     reset({ idProvider: undefined, address: '', name:'', date:undefined});
-    setSubtitulo("Nuevo")    
+    setSubtitulo("Nueva")    
   }, []);
 
   const { rows, total, addRow, deleteRow } = useBuyDetails();

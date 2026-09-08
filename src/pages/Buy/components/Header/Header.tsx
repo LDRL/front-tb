@@ -8,12 +8,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchBuy } from '@/redux/buySlice';
 import { useForm } from 'react-hook-form';
 import debounce from 'just-debounce-it';
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
 const Header: React.FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const search = useSelector((state: any) => state.buy.search);
+
+  const { can } = usePermission();
+  const canCreate = can(PERMISSIONS.PURCHASES.CREATE);
+  
 
   const debouncedSetSearch = useCallback(debounce((search: string) => {
     dispatch(setSearchBuy(search));
@@ -45,11 +51,14 @@ const Header: React.FC = () => {
           externalOnChange={handleSearchChange} 
         />
       </div>
-      <div>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Nueva compra
-        </Button>
-      </div>
+
+      {canCreate && (
+        <div>
+          <Button variant="contained" color="primary" onClick={handleClick}>
+            Nueva compra
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

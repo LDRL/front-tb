@@ -10,8 +10,12 @@ import TableMovil from '../TableMovil/TableMovil';
 import { useUser } from '../../hooks/useUser';
 import { editUser } from '@/redux/userSlice';
 import { User } from '../../models/user.domain.type';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { usePermission } from '@/hooks/usePermission';
 
 const ListOfUsers: React.FC = () => {
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.USERS.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -72,22 +76,24 @@ const ListOfUsers: React.FC = () => {
                 <div style={{ display: isMobile ? 'block' : 'inline' }}>{params.value}</div>
             ),
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditPresentation(params.row as User)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: 'actions',
+                type: 'actions',
+                sortable: false,
+                headerName: 'Actions',
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditPresentation(params.row as User)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
 
@@ -105,6 +111,7 @@ const ListOfUsers: React.FC = () => {
                     handleEditUser={handleEditPresentation}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
+                    canEdit={canEdit}
                 />
                 
             ) : (
@@ -112,6 +119,11 @@ const ListOfUsers: React.FC = () => {
                     rows={users}
                     rowCount={totalUser}
                     columns={columns}
+                    getRowClassName={(params) =>
+                        params.indexRelativeToCurrentPage % 2 === 0
+                        ? 'even-row'
+                        : 'odd-row'
+                    }
                     disableColumnSelector
                     disableRowSelectionOnClick
                     autoHeight

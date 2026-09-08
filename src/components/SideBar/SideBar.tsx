@@ -1,56 +1,78 @@
 import { AppStore } from '@/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-
 import styles from "./sidebar.module.css";
 import classNames from 'classnames';
-
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { LinksArray } from '@/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
-import { createSidebar, updateSidebar, toggleMobileMenu } from '@/redux/sidebar';
+import { useEffect, useState } from 'react';
+import { updateSidebar, toggleMobileMenu } from '@/redux/sidebar';
 import { hasPermission } from '@/modules/auth/helper/auth.helper';
 
-export interface SidebarInterface {
-  state: boolean;
-  setState: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 const Sidebar = () => {
-
-  const sidebarState = useSelector((store: AppStore) => store.sidebar)
+  const sidebarState = useSelector((store: AppStore) => store.sidebar);
   const user = useSelector((state: AppStore) => state.auth.user);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [openSubnav, setOpenSubnav] = useState<string | null>(null);
+  const isOpen = sidebarState.state || sidebarState.mobileOpen;
 
-  //Para saber que permisos tiene el usario logueado
-  const filteredLinks = LinksArray.filter((item) => {
-    if (!item.permission) return true;
+  const hasAnyPermission = (permission: string | string[] | null): boolean => {
+    if (!permission) return true;
 
-    return hasPermission(user, item.permission);
-  });
+    const permissions = Array.isArray(permission) ? permission : [permission];
 
-  const [subnav, setSubnav] = useState(false);
-
-  const showSidebar = () => {
-    dispatch(updateSidebar({ state: !sidebarState.state }))
-    if (sidebarState.state) {
-      setSubnav(false);
-    }
+    return permissions.some((p) => hasPermission(user, p));
   };
 
-  const showSubnav = () => {
-    if (!subnav && sidebarState.state) {
-      console.log("texto - p");
-    } else {
-      dispatch(createSidebar(!sidebarState.state))
+  const filteredLinks = LinksArray.filter((item) => hasAnyPermission(item.permission));
+
+  const linksWithFilteredSubNav = filteredLinks
+    .map((item) => {
+      if (!item.subNav) return item;
+
+      const filteredSubNav = item.subNav.filter((subItem) => {
+        if (!subItem.permission) return true;
+        return hasPermission(user, subItem.permission);
+      });
+
+      return {
+        ...item,
+        subNav: filteredSubNav
+      };
+    })
+    .filter((item) => (item.subNav ? item.subNav.length > 0 : true));
+
+  useEffect(() => {
+    const activeParent = linksWithFilteredSubNav.find((item) =>
+      item.subNav?.some(
+        (subItem) =>
+          location.pathname === subItem.path ||
+          location.pathname.startsWith(`${subItem.path}/`)
+      )
+    );
+
+    if (activeParent) {
+      setOpenSubnav(activeParent.label);
     }
-    setSubnav(prevSubnav => !prevSubnav);
+  }, [location.pathname, user]);
+
+  const handleSubnavClick = (label: string) => {
+    if (!isOpen) {
+      dispatch(updateSidebar({ state: true }));
+    }
+
+    setOpenSubnav((current) => current === label ? null : label);
   };
 
-  const handleLinkClick = (hasSubNav: any) => {
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>,label: string,hasSubNav: boolean) => {
     if (hasSubNav) {
-      showSubnav();
+      event.preventDefault();
+      handleSubnavClick(label);
+      return;
     }
+
+    setOpenSubnav(null);
+
     if (sidebarState.mobileOpen) {
       dispatch(toggleMobileMenu());
     }
@@ -62,7 +84,6 @@ const Sidebar = () => {
     }
   };
 
-  const location = useLocation();
   return (
     <>
       {sidebarState.mobileOpen && (
@@ -73,25 +94,16 @@ const Sidebar = () => {
       )}
       <aside
         className={classNames(styles.aside, {
-          [styles.aside_open]: sidebarState.state,
-          [styles.aside_close]: !sidebarState.state,
+          [styles.aside_open]: isOpen,
+          [styles.aside_close]: !isOpen,
           [styles.aside_mobile_open]: sidebarState.mobileOpen
         })}
       >
         <nav className={styles.nav}>
-          <span
-            onClick={showSidebar}
-            className={classNames(styles.span, {
-              [styles.span_open]: sidebarState.state,
-              [styles.span_close]: !sidebarState.state
-            })}
-          >
-            <ArrowForwardIosIcon />
-          </span>
           <div
             className={classNames(styles.container_sidebar, {
-              [styles.container_open]: sidebarState.state,
-              [styles.container_close]: !sidebarState.state
+              [styles.container_open]: isOpen,
+              [styles.container_close]: !isOpen
             })}
           >
             <div className={styles.Logocontent}>
@@ -100,58 +112,101 @@ const Sidebar = () => {
               </div>
               <h2
                 className={classNames({
-                  [styles.Logocontent_open]: sidebarState.state,
-                  [styles.Logocontent_close]: !sidebarState.state
+                  [styles.Logocontent_open]: isOpen,
+                  [styles.Logocontent_close]: !isOpen
                 })}
               >
                 Tienda Bendición
               </h2>
             </div>
+            <ul className={styles.sidebar_list}>
+              {linksWithFilteredSubNav.map(({ icon, label, to, subNav }) => {
+                const isActive = location.pathname === to;
+                const hasSubNav = !!subNav?.length;
+                const hasActiveSubNav = subNav?.some(
+                  (item) =>
+                    location.pathname === item.path ||
+                    location.pathname.startsWith(`${item.path}/`)
+                ) ?? false;
 
-            {filteredLinks.map(({ icon, label, to, subNav }) => (
-              <li className={styles.LinkLi} key={label}>
-                <div
-                  className={classNames(styles.LinkContainer, {
-                    [styles.LinkContainer_active]: sidebarState.state
-                  })}
-                >
-                  <Link
-                    to={to}
-                    onClick={() => handleLinkClick(!!subNav)}
-                    className={classNames(styles.Links, {
-                      [styles.active]: location.pathname === to
-                    })}
+                return (
+                  <li
+                    className={styles.LinkLi}
+                    key={label}
                   >
-                    <i className={styles.linkicon}>{icon}</i>
-                    <span
-                      className={classNames({
-                        [styles.label_ver]: sidebarState.state,
-                        [styles.label_oculto]: !sidebarState.state
+                    <div
+                      className={classNames(styles.LinkContainer, {
+                        [styles.LinkContainer_active]: isOpen
                       })}
                     >
-                      {label}
-                    </span>
-                  </Link>
-                </div>
-
-                {subnav && subNav && (
-                  <ul className="sub-menu">
-                    {subNav.map((item, index) => (
                       <Link
-                        to={item.path}
-                        key={index}
-                        onClick={() => {
-                          if (sidebarState.mobileOpen) dispatch(toggleMobileMenu());
-                        }}
-                        className={classNames(styles.LinkSub)}
+                        to={to}
+                        onClick={(event) => handleLinkClick(event, label, hasSubNav)}
+                        className={classNames(styles.Links, {
+                          [styles.active]: isActive,
+                          [styles.parent_active]: hasActiveSubNav
+                        })}
                       >
-                        {item.title}
+                        <i className={styles.linkicon}>
+                          {icon}
+                        </i>
+                        <span
+                          className={classNames({
+                            [styles.label_ver]: isOpen,
+                            [styles.label_oculto]: !isOpen
+                          })}
+                        >
+                          {label}
+                        </span>
                       </Link>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
+                    </div>
+                    {hasSubNav && (
+                      <ul
+                        className={classNames(styles.SubMenu, {
+                          [styles.SubMenu_open]: openSubnav === label
+                        })}
+                      >
+                        {subNav.map((item, index) => {
+                          const isSubActive =
+                            location.pathname === item.path ||
+                            location.pathname.startsWith(`${item.path}/`);
+
+                          return (
+                            <li
+                              key={`${item.path}-${index}`}
+                              className={styles.SubMenuItem}
+                            >
+                              <Link
+                                to={item.path}
+                                className={classNames(styles.LinkSub, {
+                                  [styles.LinkSub_active]: isSubActive
+                                })}
+                                onClick={() => {
+                                  setOpenSubnav(null);
+
+                                  if (sidebarState.mobileOpen) {
+                                    dispatch(toggleMobileMenu());
+                                  }
+                                }}
+                              >
+                                {item.icon && (
+                                  <span className={styles.SubLinkIcon}>
+                                    {item.icon}
+                                  </span>
+                                )}
+                                <span>
+                                  {item.title}
+                                </span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </nav>
       </aside>

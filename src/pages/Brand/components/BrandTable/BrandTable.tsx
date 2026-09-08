@@ -7,11 +7,15 @@ import { Brand } from '../../models';
 
 import Loading from '@/components/Loading';
 import { totalPagesMovile } from '@/utils';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { usePermission } from '@/hooks/usePermission';
 import TableMovil from '../TableMovil/TableMovil';
 import { useBrand } from '../../hooks/useBrand';
 import { editBrand } from '@/redux/brandSlice';
 
 const ListOfBrands: React.FC = () => {
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.BRANDS.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -50,22 +54,24 @@ const ListOfBrands: React.FC = () => {
                 <div style={{ display: isMobile ? 'block' : 'inline' }}>{params.value}</div>
             ),
         },
-        {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditBrand(params.row as Brand)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: 'actions',
+                type: 'actions',
+                sortable: false,
+                headerName: 'Actions',
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditBrand(params.row as Brand)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
 
@@ -83,6 +89,7 @@ const ListOfBrands: React.FC = () => {
                     handleEditBrand={handleEditBrand}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
+                    canEdit={canEdit}
                 />
                 
             ) : (
@@ -90,6 +97,11 @@ const ListOfBrands: React.FC = () => {
                     rows={brands}
                     rowCount={totalBrand}
                     columns={columns}
+                    getRowClassName={(params) =>
+                        params.indexRelativeToCurrentPage % 2 === 0
+                        ? 'even-row'
+                        : 'odd-row'
+                    }
                     disableColumnSelector
                     disableRowSelectionOnClick
                     autoHeight

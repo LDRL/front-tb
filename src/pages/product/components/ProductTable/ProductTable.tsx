@@ -13,13 +13,16 @@ import Loading from '@/components/Loading';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../../models/product.domain.type';
 import { useGetProducts } from '../../hooks/useProduct';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { usePermission } from '@/hooks/usePermission';
 import { totalPagesMovile } from '@/utils';
 import TableMovil from '../TableMovil/TableMovil';
 
 const urlSinImage = "/sinImagen.png";
 
 const ListOfProducts: React.FC = () => {
-    
+    const { can } = usePermission();
+    const canEdit = can(PERMISSIONS.PRODUCTS.UPDATE);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const theme = useTheme();
@@ -96,22 +99,24 @@ const ListOfProducts: React.FC = () => {
                 );
             },
             },
-        {
-            field: 'actions',
-            type: 'actions',
-            sortable: false,
-            headerName: 'Actions',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleEditProduct(params.row as Product)}
-                >
-                    Editar
-                </Button>
-            ),
-        },
+        ...(canEdit
+            ? [{
+                field: 'actions',
+                type: 'actions',
+                sortable: false,
+                headerName: 'Actions',
+                width: 200,
+                renderCell: (params: GridRenderCellParams) => (
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleEditProduct(params.row as Product)}
+                    >
+                        Editar
+                    </Button>
+                ),
+            } as GridColDef]
+            : []),
     ];
 
 
@@ -130,6 +135,7 @@ const ListOfProducts: React.FC = () => {
                     handleEditProduct={handleEditProduct}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
+                    canEdit={canEdit}
                 />
                 
             ) : (
@@ -138,6 +144,11 @@ const ListOfProducts: React.FC = () => {
                 rows={products}
                 rowCount={totalProduct}
                 columns={columns}
+                getRowClassName={(params) =>
+                    params.indexRelativeToCurrentPage % 2 === 0
+                    ? 'even-row'
+                    : 'odd-row'
+                }
                 disableColumnSelector
                 disableRowSelectionOnClick
                 autoHeight

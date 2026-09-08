@@ -1,21 +1,19 @@
 import { ProductTable } from "./components";
 import { Header } from "./index";
 
-export default function ProductPage(){
-    //const sidebarState = useSelector((store: AppStore) => store.sidebar)
-    
+export default function ProductPage(){    
     return(
         <div>
             <div>
-                <h2>Listado de productos</h2>
-                <hr />
+                <div className="page-title-box" style={{display:"flex", justifyContent:'space-between'}}>
+                    <h4>Listado de Productos</h4>
+                    <Header />
+                </div>
             </div>
 
-            <div className="" style={{marginBottom:"10px", marginTop:"10px"}}>
-                <Header />
-            </div>
-            
-            <ProductTable />
+            <div className="" style={{margin:'10px'}}>
+                <ProductTable />
+            </div>       
         </div>
     )
 }

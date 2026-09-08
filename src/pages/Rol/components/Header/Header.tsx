@@ -7,9 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import "./Header.css"
 import { setSearchRole } from '@/redux/rolSlice';
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { can } = usePermission();
+  const canCreate = can(PERMISSIONS.ROLES.CREATE);
 
   const debouncedSearch = useCallback(debounce((search: string) => {
     dispatch(setSearchRole(search));
@@ -36,11 +41,13 @@ const Header: React.FC = () => {
         />
       </div>
 
-      <div>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Crear Rol
-        </Button>
-      </div>
+      {canCreate && (
+        <div>
+          <Button variant="contained" color="primary" onClick={handleClick}>
+            Crear Rol
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

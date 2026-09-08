@@ -9,6 +9,7 @@ interface CategoryListProps {
     handleEditCategory: (category: Category) => void;
     handlePaginationModelChange: (newPaginationModel: { page: number; pageSize: number }) => void;
     totalPagesMobile: number;
+    canEdit: boolean;
 }
 
 const TableMovil: React.FC<CategoryListProps> = ({
@@ -18,6 +19,7 @@ const TableMovil: React.FC<CategoryListProps> = ({
     handleEditCategory,
     handlePaginationModelChange,
     totalPagesMobile,
+    canEdit,
 }) => {
     return (
         <>
@@ -26,13 +28,15 @@ const TableMovil: React.FC<CategoryListProps> = ({
                     <CardContent>
                         <h3>{category.name}</h3>
                         <p>Código: {category.id}</p>
-                        <Button
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleEditCategory(category)}
-                        >
-                            Editar
-                        </Button>
+                        {canEdit && (
+                            <Button
+                                variant="contained"
+                                color="success"
+                                onClick={() => handleEditCategory(category)}
+                            >
+                                Editar
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
             ))}
