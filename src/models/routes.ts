@@ -39,5 +39,9 @@ export const PrivateRoutes = {
 
     ROL: 'rol',
     ROL_CREATE: 'rol/create',
-    ROL_EDIT: 'rol/:id/editar'
+    ROL_EDIT: 'rol/:id/editar',
+
+    REPORTE: 'reporte',
+    REPORTE_INVENTARIO: 'reporte/inventario',
+    REPORTE_LOTE_X_VENCER: 'reporte/lote',
 }

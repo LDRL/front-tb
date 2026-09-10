@@ -32,10 +32,14 @@ const Client = lazy(() => import("../Client/ClientPage"))
 const ClientCreate = lazy(() => import("../Client").then(m => ({ default: m.ClientCreate })))
 const Rol = lazy(() => import("../Rol/RolPage"))
 const RolCreate = lazy(() => import("../Rol").then(m => ({ default: m.RoleCreate })))
+const Reporte = lazy(() => import("../Reporte").then(m => ({ default: m.ReportePage })))
+const ReporteInventario = lazy(() => import("../Reporte").then(m => ({ default: m.InventarioPage })))
 
 export const publicRoutes: RouteConfig[] = [
   { path: PrivateRoutes.DASHBOARD, Component: Dashboard },
   { path: PrivateRoutes.HOME, Component: Home },
+  { path: PrivateRoutes.REPORTE, Component: Reporte },
+  { path: PrivateRoutes.REPORTE_INVENTARIO, Component: ReporteInventario },
 ];
 
 export const protectedRoutes: RouteConfig[] = [

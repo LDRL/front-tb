@@ -153,8 +153,21 @@ export const LinksArray: SidebarLink[] = [
   {
     label: "Reportes",
     icon: <SummarizeIcon />,
-    to: "/reportes",
-    permission: null
+    to: "#",
+    permission: null,
+
+    subNav: [
+      {
+        title: "Inventario",
+        path: "/private/reporte/inventario",
+        permission: null
+      },
+      {
+        title: "Lotes",
+        path: "/private/reporte/lote",
+        permission: null
+      },
+    ],
   },
 ];
 
