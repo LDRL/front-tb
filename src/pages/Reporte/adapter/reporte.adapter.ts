@@ -14,7 +14,8 @@ export const InventarioAdapter = (api: ApiInventario): Inventario => ({
         nombre: p.nombre,
         cantidadBase: p.cantidad_base,
         precio: p.precio,
-    })),
+    }))
+    .sort((a,b) => b.cantidadBase - a.cantidadBase), //ordenar de mayor a menor referencia cantidadBase
     stock: api.stock,
     stockBase: api.stock_base,
     stockDesglose: api.stock_desglose.map((d) => ({
@@ -22,7 +23,8 @@ export const InventarioAdapter = (api: ApiInventario): Inventario => ({
         presentacion: d.presentacion,
         cantidadBase: d.cantidad_base,
         cantidad: d.cantidad,
-    })),
+    }))
+    .sort((a,b) => b.cantidadBase - a.cantidadBase), //ordenar de mayor a menor referencia cantidadBase,
     stockMinimo: api.stock_minimo,
     estado: api.estado,
 });

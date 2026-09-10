@@ -81,28 +81,46 @@ const InventarioTable: React.FC = () => {
         },*/
         {
             field: 'stockDesglose',
-            headerName: 'Desglose',
+            headerName: 'Stock Actual',
             flex: 1.5,
             minWidth: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Box sx={{ width: '100%' }}>
-                    {params.value.map(
+            renderCell: (params: GridRenderCellParams) => {
+                let restante = params.row.stock;
+                return (
+                    <Box sx={{ width: '100%' }}>
+                        { params.value.map(
                         (
                             d: { presentacion: string; cantidad: number; cantidadBase: number; },
                             index: number
                         ) => {
+                            const cantidad = Math.floor(
+                                restante / d.cantidadBase
+                            );
+
+                            restante = restante % d.cantidadBase;
+                            const unidad = cantidad * d.cantidadBase;
                             return (
                                 <Box key={index}>
                                     <Box sx={{ py: 0.5 }}>
-                                        <strong>{params.row.stock}</strong>{' '}
-                                        {params.row.stockBase}
+                                        <strong>{unidad}</strong>{' '} 
+
+                                        {d.cantidadBase == 1 && (
+                                            <>
+                                                {d.presentacion} 
+                                                {cantidad > 1 ? 's' : ''}
+                                            </>
+                                        )}
 
                                         {d.cantidadBase > 1 && (
                                             <>
+                                                {params.row.stockBase}
+                                                {cantidad > 1 ? 's' : ''}
                                                 {' '}
                                                 (
-                                                <strong>{d.cantidad}</strong>{' '}
-                                                {d.presentacion})
+                                                    <strong>{cantidad}</strong>{' '}
+                                                    {d.presentacion}
+                                                    {cantidad > 1 ? 's' : ''}
+                                                )
                                             </>
                                         )}
                                     </Box>
@@ -117,9 +135,10 @@ const InventarioTable: React.FC = () => {
                                 </Box>
                             )
                         } 
-                    )}
-                </Box>
-            ),
+                        )}
+                    </Box>
+                )   
+            },
         },
         {
             field: 'stockMinimo',
