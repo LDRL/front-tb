@@ -36,6 +36,7 @@ const productSlice = createSlice({
           price: action.payload.price ?? 0,
           barCode: action.payload.barCode ?? '',
           baseQuantity: action.payload.baseQuantity ?? 0,
+          stockMinimum: action.payload.stockMinimum ?? 0
         };
       } else {
         state.currentProduct = null;

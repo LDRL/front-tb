@@ -79,11 +79,11 @@
 
 .page-title-detail-box {
   padding: 10px 1.5rem;
-  background-color: var(--vz-secondary-bg);
+  background-color: var(--color-primary);
   -webkit-box-shadow: var(--vz-page-title-box-shadow);
   box-shadow: var(--vz-page-title-box-shadow);
   border-bottom: 1px solid #ccc;
-
+  color: var(--text-white);
 }
 
 .page-title-detail-box h4{

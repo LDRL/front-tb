@@ -57,6 +57,7 @@ export interface ApiProduct {
   Categoria: ApiCategory;
   Unidad: ApiUnidad;
   Presentaciones?: ApiProductPresentacionResponse[];
+  stock_minimo: number;
 }
 
 //Todo cuando se trabaje la vista de unidad
@@ -76,6 +77,7 @@ export interface ApiCreateProduct {
   descripcion: string;
   controla_vencimiento: boolean;
   presentaciones: ApiProductPresentacion[];
+  stock_minimo: number;
 }
 
 interface ApiPrecioClienteCreate {

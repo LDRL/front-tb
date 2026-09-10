@@ -19,6 +19,7 @@ export interface Product {
   barCode?: string;
   baseQuantity?: number;
   presentacions?: Detail[];
+  stockMinimum: number;
 }
 
 export interface Brand {
@@ -86,6 +87,7 @@ export interface ProductForm {
   price: number;
   barCode: string;
   baseQuantity: number;
+  stockMinimum: number;
 }
 
 

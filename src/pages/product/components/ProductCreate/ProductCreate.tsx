@@ -2,7 +2,7 @@ import React, {useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import { Box, Button, Checkbox, FormControlLabel} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormDropdown,  FormInputImage,  FormInputText, FormTextArea } from '@/components';
+import { FormDropdown,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea } from '@/components';
 import { useForm } from 'react-hook-form';
 import CardForm from '../../../../components/Cards/CardForm'
 import LoadMask from '@/components/LoadMask/LoadMask';
@@ -115,8 +115,6 @@ const CreateProduct: React.FC = () => {
       presentacions: rows
     }
 
-    console.log(newProduct);
-
     setLoading(true);  
     try {
       if (currentProduct) {
@@ -190,6 +188,8 @@ const CreateProduct: React.FC = () => {
                     />
                   </div>
 
+                  
+
                   <div className="row">
                     <FormDropdown
                       name="idCategory"
@@ -211,9 +211,17 @@ const CreateProduct: React.FC = () => {
                       name="idBrand"
                       control={control}
                       label="marca"
-                      rules={{ required: 'marca name is required' }}
+                      rules={{ required: 'Marca es un campo requerido' }}
                       options={marcaOptions || []}
                     />
+
+                    <FormInputNumber
+                      name="stockMinimum"
+                      label="Stock Minimo"
+                      control={control}
+                      rules={{ required: 'stock minimo es un campo requerido' }}
+                    />
+
 
                     <div className='section' style={{borderRadius: 5,  border: '1px solid rgb(204, 204, 204)', paddingInline: '10px'}}>
                       <FormControlLabel
