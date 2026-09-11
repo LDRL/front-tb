@@ -67,7 +67,7 @@ export function generateQuotePdf(adaptedData: HeaderSale, paymentTypeName: strin
                 paddingBottom: () => 6,
             }
         },
-        { text: `Tipo de pago: ${paymentTypeName ? paymentTypeName : '-'}`, fontSize: 10, margin: [0, 10, 0, 0] },
+        /*{ text: `Forma de pago: ${paymentTypeName ? paymentTypeName : '-'}`, fontSize: 10, margin: [0, 10, 0, 0] },*/
         { text: 'Gracias por su confianza', alignment: 'center', fontSize: 11, margin: [0, 18, 0, 0] },
     ];
 

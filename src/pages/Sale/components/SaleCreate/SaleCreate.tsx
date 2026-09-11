@@ -275,7 +275,7 @@ const SaleCreate: React.FC = () => {
               <FormDropdown
                 name="idTypePay"
                 control={control}
-                label="Tipo de pago"
+                label="Forma de pago"
                 options={paymentTypeOptions}
               />
 

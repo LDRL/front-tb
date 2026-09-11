@@ -184,25 +184,23 @@ const CreateProduct: React.FC = () => {
                       name="name"
                       control={control}
                       label="Nombre producto"
-                      rules={{ required: 'Product name is required' }}
+                      rules={{ required: 'Producto es un campo requerido' }}
                     />
                   </div>
-
-                  
 
                   <div className="row">
                     <FormDropdown
                       name="idCategory"
                       control={control}
-                      label="categoria......"
-                      rules={{ required: 'categorie name is required' }}
+                      label="Categoria"
+                      rules={{ required: 'Categoria es un campo requerido' }}
                       options={options || []}
                     />
 
                     <FormDropdown
                       name="idUnit"
                       control={control} 
-                      label="Unidad"
+                      label="Unidad de medida"
                       rules={{ required: 'Unidad de medida es un campo requerido' }}
                       options={unitOptions || []}
                     />
@@ -210,7 +208,7 @@ const CreateProduct: React.FC = () => {
                     <FormDropdown
                       name="idBrand"
                       control={control}
-                      label="marca"
+                      label="Marca"
                       rules={{ required: 'Marca es un campo requerido' }}
                       options={marcaOptions || []}
                     />
@@ -259,22 +257,20 @@ const CreateProduct: React.FC = () => {
               <h4>Presentación del producto</h4>              
             </div>
             <div style={{padding: '15px'}}>
-
-            <DetailCreate
-              control={control}
-              getValues={getValues}
-              setValue={setValue}
-              addRow={addRow}
-              deleteRow={deleteRow}
-              editRow={editRow}
-              editingId={editingId}
-              setEditingId={setEditingId}
-              rows={rows}
-              errors={errors}
-              setErrors={setErrors}
-            />
-                        </div>
-
+              <DetailCreate
+                control={control}
+                getValues={getValues}
+                setValue={setValue}
+                addRow={addRow}
+                deleteRow={deleteRow}
+                editRow={editRow}
+                editingId={editingId}
+                setEditingId={setEditingId}
+                rows={rows}
+                errors={errors}
+                setErrors={setErrors}
+              />
+            </div>
           </div>
 
           <div className="container_selector"></div>

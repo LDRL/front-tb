@@ -56,8 +56,8 @@ const ConfirmSale: React.FC<Props> = ({ id }) => {
                         <FormDropdown
                             name="idTypePay"
                             control={control}
-                            label="Tipo de pago"
-                            rules={{ required: 'Tipo de pago es requerido' }}
+                            label="Forma de pago"
+                            rules={{ required: 'Forma de pago es requerido' }}
                             options={paymentTypeOptions}
                         />
                     </div>

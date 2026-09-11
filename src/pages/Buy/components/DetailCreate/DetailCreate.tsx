@@ -116,13 +116,13 @@ export const DetailCreate: React.FC<Props> = ({
     },
     {
       field: 'amount',
-      headerName: 'Cantidad',
+      headerName: 'Cantidad compra',
       flex:1,
       sortable: false
     },
     {
       field: 'cost',
-      headerName: 'Precio',
+      headerName: 'Precio compra',
       flex:1,
       type: 'number',
       sortable: false
@@ -168,10 +168,10 @@ export const DetailCreate: React.FC<Props> = ({
           <FormInputNumber
             name="amount"
             control={control}
-            label="cantidad"
+            label="cantidad compra"
           />
           {errors.amount && (
-            <FormHelperText sx={{color: 'red'}}>Cantidad es un campo requerido</FormHelperText>
+            <FormHelperText sx={{color: 'red'}}>Cantidad compra es un campo requerido</FormHelperText>
           )}
         </div>
         
@@ -179,10 +179,10 @@ export const DetailCreate: React.FC<Props> = ({
         <FormInputNumber
           name="cost"
           control={control}
-          label="Precio"
+          label="Precio compra"
         />
         {errors.cost && (
-          <FormHelperText sx={{color: 'red'}}>Precio es un campo requerido</FormHelperText>
+          <FormHelperText sx={{color: 'red'}}>Precio compra es un campo requerido</FormHelperText>
         )}
         </div>
 
