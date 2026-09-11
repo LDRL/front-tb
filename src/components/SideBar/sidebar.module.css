@@ -214,7 +214,7 @@
 }
 
 .SubMenu_open {
-  max-height: 200px;
+  max-height: none;
 }
 
 .container_open .SubMenu {
@@ -227,7 +227,7 @@
 }
 
 .container_open .SubMenu.SubMenu_open {
-  max-height: 200px;
+  max-height: none;
 }
 
 .SubMenuItem {

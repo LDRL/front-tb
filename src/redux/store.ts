@@ -7,6 +7,7 @@ import sidebarSlice  from './sidebar';
 import categorySlice from './categorySlice';
 import brandSlice from './brandSlice';
 import presentationSlice from './presentationSlice';
+import unitSlice from './unitSlice';
 import saleSlice from './saleSlice';
 import clientSlice from './clientSlice';
 import userSlice from './userSlice';
@@ -17,6 +18,7 @@ import buySlice from './buySlice';
 import { CategoryState } from '@/pages/Category';
 import { BrandState } from '@/pages/Brand';
 import { PresentationState } from '@/pages/Presentation';
+import { UnitState } from '@/pages/Unit';
 import { Client } from '@/pages/Client/models/client.domain.type';
 import { SaleState } from '@/pages/Sale/models/sale.domain.type';
 import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
@@ -51,6 +53,7 @@ export interface AppStore {
   category: CategoryState
   brand: BrandState
   presentation: PresentationState
+  unit: UnitState
   product: ProductState
   sale: SaleState
   client:ClientState
@@ -67,6 +70,7 @@ export const store = configureStore<AppStore>({
     category: categorySlice,
     brand: brandSlice,
     presentation: presentationSlice,
+    unit: unitSlice,
     product: productSliceReducer,
     sale: saleSlice,
     client: clientSlice,
