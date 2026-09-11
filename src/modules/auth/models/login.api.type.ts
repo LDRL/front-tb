@@ -9,6 +9,13 @@ export interface ApiRole {
   Permisos: ApiPermission[];
 }
 
+interface ApiSucursal {
+  idsucursal: number;
+  nombre: string;
+  direccion: string;
+  telefono: number;
+}
+
 export interface ApiAuthUser {
   _id: number;
   nombre: string;
@@ -17,6 +24,7 @@ export interface ApiAuthUser {
   email: string;
   idsucursal: number;
   Roles: ApiRole[];
+  Sucursal: ApiSucursal;
 }
 
 export interface LoginApiResponse {

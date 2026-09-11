@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import Loading from '@/components/Loading';
-import {useSale } from '../../hooks/useSale';
+import {useSale, useShowSale, useFetchPaymentTypes } from '../../hooks/useSale';
 import moment from 'moment';
-import { Box, Button } from '@mui/material';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import DownloadIcon from '@mui/icons-material/Download';
 import { Sale } from '../../models/sale.domain.type';
+import { HeaderSaleAdapter } from '../../adapter';
+import { generateTicket } from '../SaleShow/saleTicket';
+import { generateQuotePdf } from '../SaleShow/saleQuotePdf';
+import { Company } from '@/modules/auth/models/login.domain.type';
+import { RootState } from '@/redux/store';
 
 const ListOfSales: React.FC = () => {
     const navigate = useNavigate();
@@ -19,10 +26,44 @@ const ListOfSales: React.FC = () => {
         handlePaginationModelChange,
     } = useSale();
 
+    const company: Company = useSelector((state: RootState) => state.auth.user.company);
+
+    const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
+
+    const [ticketSaleId, setTicketSaleId] = useState<string | null>(null);
+    const [ticketIsQuote, setTicketIsQuote] = useState(false);
+
+    const { data: showSaleData } = useShowSale(ticketSaleId ?? '', ticketSaleId !== null);
+
+    useEffect(() => {
+        if (!ticketSaleId || !showSaleData) return;
+
+        const adaptedData = HeaderSaleAdapter(showSaleData.data);
+        const paymentTypeName = paymentTypeOptions.find(p => p.value === adaptedData.pay.idPaymentType)?.label ?? '';
+
+        if (ticketIsQuote) {
+            generateQuotePdf(adaptedData, paymentTypeName, company);
+        } else {
+            generateTicket(adaptedData, paymentTypeName, company);
+        }
+
+        setTicketSaleId(null);
+    }, [ticketSaleId, showSaleData, paymentTypeOptions, ticketIsQuote, company]);
+
     const handleShowBuy = (sale: Sale) => {
             // dispatch(editCategory(category));
             navigate(`${sale.id}/show`)
         };
+
+    const handlePrint = (sale: Sale) => {
+        if (!sale.id) return;
+    
+
+        const isCoti = sale.typeOfSale?.name === 'Cotizacion';
+        //setTicketIsQuote(sale.isQuote);
+        setTicketIsQuote(isCoti);
+        setTicketSaleId(String(sale.id));
+    };
 
 
     const columns: GridColDef[] = [
@@ -67,17 +108,31 @@ const ListOfSales: React.FC = () => {
             field: 'actions',
             type: 'actions',
             sortable: false,
-            headerName: '',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="info"
-                    onClick={() => handleShowBuy(params.row as Sale)}
-                >
-                    Detalle
-                </Button>
-            ),
+            headerName: 'Acciones',
+            width: 260,
+            renderCell: (params: GridRenderCellParams) => {
+                const sale = params.row as Sale;
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Button
+                            variant="contained"
+                            color="info"
+                            onClick={() => handleShowBuy(sale)}
+                        >
+                            Detalle
+                        </Button>
+                        <Tooltip title={sale.typeOfSale.name === "Cotizacion" ? 'Generar ticket' : 'Generar PDF'}>
+                            <IconButton
+                                color="success"
+                                size="small"
+                                onClick={() => handlePrint(sale)}
+                            >
+                                <DownloadIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                );
+            },
         },
     ];
 
@@ -112,7 +167,7 @@ const ListOfSales: React.FC = () => {
             }}
             onPaginationModelChange={handlePaginationModelChange}
             pageSizeOptions={[paginationModel.pageSize]}
-            getRowId={(row: any) => row.id}
+            //getRowId={(row: Sale) => row.id}
             paginationMode="server"
         />
                 </Box>

@@ -3,7 +3,8 @@ import { useShowSale, useFetchPaymentTypes } from "../../hooks/useSale";
 import { CSSProperties, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import LoadMask from "@/components/LoadMask/LoadMask";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
 import CardForm from "@/components/Cards/CardForm";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { CustomDialog, FormDate, FormInputText } from "@/components";
@@ -16,6 +17,10 @@ import dayjs from "dayjs";
 import { HeaderS } from "../../models/sale.view.type";
 import { HeaderSaleAdapter } from "../../adapter";
 import { pageSize } from "@/utils";
+import { generateTicket } from "./saleTicket";
+import { generateQuotePdf } from "./saleQuotePdf";
+import { useSelector } from "react-redux";
+import { Company } from "@/modules/auth/models/login.domain.type";
 
 const override: CSSProperties = {
   display: "block",
@@ -34,6 +39,8 @@ function BuyShow() {
   });
 
   const idState = adaptedData?.header.idState ?? 0;
+
+  const company: Company = useSelector((state: any) => state.auth.user.company);
 
   const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
 
@@ -117,6 +124,23 @@ function BuyShow() {
       <CardForm
         titulo={idState === 1 ? 'Cotización' : 'Venta'}
         subtitulo='Detalle'
+        action={
+          adaptedData && (
+            <Tooltip title={idState === 1 ? 'Generar PDF' : 'Generar ticket'}>
+              <Button
+                variant="contained"
+                type="button"
+                size="small"
+                color='success'
+                onClick={() => idState === 1
+                  ? generateQuotePdf(adaptedData, paymentTypeName, company)
+                  : generateTicket(adaptedData, paymentTypeName, company)}
+              >
+                <DownloadIcon />
+              </Button>
+            </Tooltip>
+          )
+        }
       >
         <LoadMask/>
         <Box sx={{ width: '100%' }}>

@@ -9,6 +9,13 @@ export interface Role {
   permissions: Permission[];
 }
 
+export interface Company{
+  id: number;
+  name: string;
+  address: string;
+  phone: number;
+}
+
 export interface AuthUser {
   id: number;
   firstName: string;
@@ -18,10 +25,8 @@ export interface AuthUser {
   branchId: number;
   image?: string | null;
   roles: Role[];
+  company: Company;
 }
-
-
-
 
 
 export interface AuthState {
@@ -39,6 +44,12 @@ export const EmptyAuthState: AuthState = {
     username: "",
     email: "",
     branchId: 0,
-    roles: []
+    roles: [],
+    company: {
+      id:0,
+      name: "",
+      address: "",
+      phone: 0
+    }
   }
 };

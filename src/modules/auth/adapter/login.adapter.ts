@@ -18,7 +18,13 @@ export const userAdapter = (apiUser: ApiAuthUser): AuthUser => {
         id: permission._id,
         name: permission.nombre
       }))
-    }))
+    })),
+    company: {
+      id: apiUser.Sucursal?.idsucursal,
+      name: apiUser.Sucursal.nombre,
+      address: apiUser.Sucursal.direccion,
+      phone: apiUser.Sucursal.telefono
+    }
   };
 };
 

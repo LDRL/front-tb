@@ -168,13 +168,14 @@ export const useCreateSale = () => {
     });
 };
 
-export const useShowSale = (id:string) => {
+export const useShowSale = (id:string, enabled: boolean = true) => {
     return useQuery<ApiResponseHeader, AxiosError>({
         queryKey: ['showSale',id],
         queryFn: async () => {
             const response = await axiosClient.get<ApiResponseHeader>(`${apiUrl}ventas/${id}/`);
             return response.data;   
-        }
+        },
+        enabled,
     });
 };
 
