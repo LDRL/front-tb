@@ -17,7 +17,7 @@ function money(value: number | string): string {
   return `Q ${Number(value).toFixed(2)}`;
 }
 
-export function generateQuotePdf(adaptedData: HeaderSale, paymentTypeName: string, company: Company): void {
+export function generateQuotePdf(adaptedData: HeaderSale, _paymentTypeName: string, company: Company): void {
     const { header, details } = adaptedData;
 
     const body: Content[][] = details.map((d) => [

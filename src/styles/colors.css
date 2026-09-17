@@ -65,4 +65,18 @@
   --sidebar-link-bg: #0284c7;
   --sidebar-link-text: var(--text-white);
   --sidebar-link-hover-bg: #0369a1; 
+
+  /* para los IconButton*/
+
+  /* Success */
+  --color-success: #16a34a;
+  --color-success-hover: #15803d;
+  --color-success-subtle-bg: rgb(22 163 74 / 0.15);
+  --color-success-subtle-hover-bg: rgb(22 163 74 / 0.30);
+
+  /* Error */
+  --color-error: #dc2626;
+  --color-error-hover: #b91c1c;
+  --color-error-subtle-bg: rgb(220 38 38 / 0.15);
+  --color-error-subtle-hover-bg: rgb(220 38 38 / 0.30);
 }

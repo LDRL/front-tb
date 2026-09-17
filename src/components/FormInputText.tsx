@@ -1,7 +1,7 @@
 // src/form-component/FormInputText.tsx
 import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import {Box, FormHelperText, IconButton, InputAdornment } from "@mui/material";
+import {Box, FormHelperText, IconButton, InputAdornment, Typography } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { useState } from "react";
 
@@ -30,6 +30,7 @@ interface FormInputProps<T extends FieldValues> {
   type?: string;
   max?: number;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  labelOutside?: boolean;
 }
 
 export const FormInputText = <T extends FieldValues>({
@@ -42,11 +43,12 @@ export const FormInputText = <T extends FieldValues>({
   type = "text",
   max,
   onKeyDown,
+  labelOutside = false,
 }: FormInputProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const isPassword = type === "password";
-  
+
   return (
     <Controller
       name={name}
@@ -54,38 +56,71 @@ export const FormInputText = <T extends FieldValues>({
       rules={{
         ...rules,
         maxLength: max
-          ? { value: max, message: `Máximo ${max} caracteres` }
+          ? {
+              value: max,
+              message: `Máximo ${max} caracteres`,
+            }
           : undefined,
       }}
       render={({ field, fieldState: { error } }) => (
-        <TextField
-          type={isPassword ? (showPassword ? "text" : "password") : type}
-          helperText={error?.message}
-          size="small"
-          error={!!error}
-          value={field.value ?? ""}
-          onChange={(e) => {
-            field.onChange(e.target.value);
-            externalOnChange?.(e.target.value);
-          }}
-          onKeyDown={onKeyDown}
-          fullWidth
-          label={label}
-          disabled={disabled}
-          inputProps={{ maxLength: max }}
-          InputProps={{
-            endAdornment: isPassword ? (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword(!showPassword)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ) : undefined,
-          }}
-        />
+        <Box>
+          {/* Label externo */}
+          {labelOutside && (
+            <Typography
+              component="label"
+              sx={{
+                display: "block",
+                mb: 0.5,
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "var(--text-primary)",
+              }}
+            >
+              {label}
+            </Typography>
+          )}
+
+          <TextField
+            type={
+              isPassword
+                ? showPassword
+                  ? "text"
+                  : "password"
+                : type
+            }
+            helperText={error?.message}
+            size="small"
+            error={!!error}
+            value={field.value ?? ""}
+            onChange={(e) => {
+              field.onChange(e.target.value);
+              externalOnChange?.(e.target.value);
+            }}
+            onKeyDown={onKeyDown}
+            fullWidth
+            label={!labelOutside ? label : undefined}
+            disabled={disabled}
+            inputProps={{
+              maxLength: max,
+            }}
+            InputProps={{
+              endAdornment: isPassword ? (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ) : undefined,
+            }}
+          />
+        </Box>
       )}
     />
   );

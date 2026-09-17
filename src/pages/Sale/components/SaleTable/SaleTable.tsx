@@ -4,16 +4,19 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import Loading from '@/components/Loading';
 import {useSale, useShowSale, useFetchPaymentTypes } from '../../hooks/useSale';
 import moment from 'moment';
-import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import DownloadIcon from '@mui/icons-material/Download';
+
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { Sale } from '../../models/sale.domain.type';
 import { HeaderSaleAdapter } from '../../adapter';
 import { generateTicket } from '../SaleShow/saleTicket';
 import { generateQuotePdf } from '../SaleShow/saleQuotePdf';
 import { Company } from '@/modules/auth/models/login.domain.type';
 import { RootState } from '@/redux/store';
+import { AppIconButton } from '@/components';
 
 const ListOfSales: React.FC = () => {
     const navigate = useNavigate();
@@ -108,34 +111,35 @@ const ListOfSales: React.FC = () => {
             field: 'actions',
             type: 'actions',
             sortable: false,
-            headerName: 'Acciones',
+            headerName: 'Opciones',
             width: 260,
             renderCell: (params: GridRenderCellParams) => {
                 const sale = params.row as Sale;
                 return (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Button
-                            variant="contained"
-                            color="info"
-                            onClick={() => handleShowBuy(sale)}
-                        >
-                            Detalle
-                        </Button>
-                        <Tooltip title={sale.typeOfSale.name === "Cotizacion" ? 'Generar ticket' : 'Generar PDF'}>
-                            <IconButton
+                        <Tooltip title="Detalle">
+                            <AppIconButton
+                                color="info"
+                                onClick={() => handleShowBuy(sale)}
+                            >
+                                <AssignmentIcon />
+                            </AppIconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Descargar">
+                            <AppIconButton
                                 color="success"
-                                size="small"
                                 onClick={() => handlePrint(sale)}
                             >
                                 <DownloadIcon />
-                            </IconButton>
+                            </AppIconButton>
                         </Tooltip>
+
                     </Box>
                 );
             },
         },
     ];
-
     
     if (isLoading) {
         return <Loading loading={isLoading}/>;
@@ -143,7 +147,6 @@ const ListOfSales: React.FC = () => {
 
     return (
         <Box sx={{ width: '100%' }}>
-
 
         <DataGrid
             rows={sales}

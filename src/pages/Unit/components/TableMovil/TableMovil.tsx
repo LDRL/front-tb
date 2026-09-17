@@ -33,7 +33,7 @@ const TableMovil: React.FC<UnitListProps> = ({
                         <h3>{unit.name}</h3>
                         <p>Abreviatura: {unit.abbreviation}</p>
                         <p>Código: {unit.id}</p>
-                        {(canEdit || canDelete) && (
+                        {(canEdit || canDelete) && unit.status && (
                             <>
                                 {canEdit && (
                                     <Button

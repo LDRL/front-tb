@@ -16,6 +16,38 @@
   margin-bottom: 15px;
 }
 
+.detail_cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail_card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail_card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.detail_card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.detail_card-row label {
+  font-weight: 700;
+}
+
 .container_buy {
   border:1px solid #ccc;
   border-radius:5px;
@@ -34,16 +66,6 @@
   border-left: none;
   border-top: 1px solid #ccc;
   padding-top: 15px;
-}
-
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.row > * {
-  width: 100%;
 }
 
 .resumen_header {
@@ -70,7 +92,7 @@
 }
 
 /* ==========================
-   Tablet (600px - 899px)
+   Tablet (600px - 1023px)
 ========================== */
 
 @media (min-width: 600px) {
@@ -84,18 +106,6 @@
     flex: 1;
   }
 
-  .row {
-    flex-direction: row;
-  }
-
-  .row > * {
-    flex: 1;
-  }
-
-  .container_buy {
-    grid-template-columns: 1fr;
-  }
-
   .buy_right {
     border-top: 1px solid #ccc;
     border-left: none;
@@ -103,12 +113,10 @@
 }
 
 /* ==========================
-   Desktop (900px en adelante)
+   Desktop (1024px en adelante)
 ========================== */
 
-@media (min-width: 1024px) {
-
-
+@media (min-width: 1280px) {
 
   .buy_right {
     border-top: none;
@@ -128,12 +136,9 @@
 
 
   .container_buy {
-
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 360px);
     gap: 15px;
-
-    grid-template-columns: 1fr 360px;
     align-items: stretch;
     min-height: 85vh;
   }

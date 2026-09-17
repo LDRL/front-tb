@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Unit } from '../../models';
 
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Loading from '@/components/Loading';
+import { AppIconButton } from '@/components';
 import { totalPagesMovile } from '@/utils';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import { usePermission } from '@/hooks/usePermission';
 import TableMovil from '../TableMovil/TableMovil';
 import { useUnit, useDeleteUnit } from '../../hooks/useUnit';
-import { editUnit } from '@/redux/unitSlice';
 import { toast } from 'react-toastify';
 
-const ListOfUnits: React.FC = () => {
+type UnitTableProps = {
+  onEditUnit: (unit: Unit) => void;
+};
+
+const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
     const { can } = usePermission();
     const canEdit = can(PERMISSIONS.UNITS.UPDATE);
     const canDelete = can(PERMISSIONS.UNITS.DELETE);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -34,11 +36,6 @@ const ListOfUnits: React.FC = () => {
         paginationModel,
         handlePaginationModelChange,
     } = useUnit();
-
-    const handleEditUnit = (unit: Unit) => {
-        dispatch(editUnit(unit));
-        navigate(`${unit.id}/editar`)
-    };
 
     const handleConfirmDelete = async () => {
         if (!unitToDelete) return;
@@ -93,31 +90,35 @@ const ListOfUnits: React.FC = () => {
                 field: 'actions',
                 type: 'actions' as const,
                 sortable: false,
-                headerName: 'Actions',
-                width: 200,
-                renderCell: (params: GridRenderCellParams) => (
-                    <>
-                        {canEdit && (
-                            <Button
-                                variant="contained"
-                                color="success"
-                                onClick={() => handleEditUnit(params.row as Unit)}
-                                sx={{ mr: 1 }}
-                            >
-                                Editar
-                            </Button>
-                        )}
-                        {canDelete && (
-                            <Button
-                                variant="contained"
-                                color="error"
-                                onClick={() => setUnitToDelete(params.row as Unit)}
-                            >
-                                Eliminar
-                            </Button>
-                        )}
-                    </>
-                ),
+                headerName: 'Opciones',
+                width: 130,
+                renderCell: (params: GridRenderCellParams) => {
+                    const unit = params.row as Unit;
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            {canEdit && unit.status && (
+                                <Tooltip title="Editar">
+                                    <AppIconButton
+                                        color="success"
+                                        onClick={() => onEditUnit(unit)}
+                                    >
+                                        <EditIcon />
+                                    </AppIconButton>
+                                </Tooltip>
+                            )}
+                            {canDelete && unit.status && (
+                                <Tooltip title="Eliminar">
+                                    <AppIconButton
+                                        color="error"
+                                        onClick={() => setUnitToDelete(unit)}
+                                    >
+                                        <DeleteIcon />
+                                    </AppIconButton>
+                                </Tooltip>
+                            )}
+                        </Box>
+                    );
+                },
             } as GridColDef]
             : []),
     ];
@@ -133,7 +134,7 @@ const ListOfUnits: React.FC = () => {
                     units={units}
                     totalUnit={totalUnit}
                     paginationModel={paginationModel}
-                    handleEditUnit={handleEditUnit}
+                    handleEditUnit={onEditUnit}
                     handleDeleteUnit={setUnitToDelete}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}

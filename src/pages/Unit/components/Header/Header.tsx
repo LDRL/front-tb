@@ -3,16 +3,18 @@ import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { setSearchUnit } from '@/redux/unitSlice';
 import debounce from 'just-debounce-it';
 import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import "./Header.css"
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  onCreate: () => void;
+};
+
+const Header: React.FC<HeaderProps> = ({ onCreate }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const search = useSelector((state: any) => state.unit.search);
   const { can } = usePermission();
 
@@ -23,7 +25,7 @@ const Header: React.FC = () => {
   }, 300), [])
 
   const handleClick = () => {
-    navigate("create")
+    onCreate()
   };
 
   const { control, reset } = useForm({

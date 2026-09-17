@@ -1,6 +1,6 @@
 import React, {useMemo, useState } from 'react';
 import { FormAutocompleteAsync, FormDate, FormInputNumber } from '@/components';
-import { Box, Button, FormHelperText} from '@mui/material';
+import { Box, Button, FormHelperText, useMediaQuery} from '@mui/material';
 import {Option, useFetchProductOptions } from '@/hooks/useOption';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import "../BuyCreate/BuyCreate.css"
@@ -33,6 +33,8 @@ export const DetailCreate: React.FC<Props> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Option | null>(null);
+
+  const isMobile = useMediaQuery('(max-width: 599px)');
 
   const { data: productOptions = [], isLoading } = useFetchProductOptions(search);
 
@@ -111,7 +113,7 @@ export const DetailCreate: React.FC<Props> = ({
       field: 'name',
       headerName: 'Producto',
       flex:1,
-      minWidth: 400,
+      minWidth: 180,
       sortable: false,
     },
     {
@@ -217,27 +219,68 @@ export const DetailCreate: React.FC<Props> = ({
         {errors.detailProduct && (
           <FormHelperText sx={{color: 'red'}}>Debe agregar un producto para continuar</FormHelperText>
         )}
-        <Box sx={{width: '100%'}}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: pageSize,
-              },
-            },
-          }}
-          pageSizeOptions={[pageSize]}
-          // checkboxSelection
-          disableColumnSelector
-          disableRowSelectionOnClick
-          disableColumnFilter
-          autoHeight
-          getRowId={(row:any) => row.id}
-        />
 
-        </Box>
+        {isMobile ? (
+          <div className="detail_cards">
+            {rows.length === 0 && (
+              <FormHelperText sx={{ color: 'text.secondary' }}>
+                Sin productos agregados
+              </FormHelperText>
+            )}
+            {rows.map((row) => (
+              <div key={row.id} className="detail_card">
+                <div className="detail_card-header">
+                  <strong>{row.name}</strong>
+                  <Button
+                    variant='contained'
+                    color='error'
+                    size='small'
+                    onClick={() => deleteRow(row.id!)}
+                  >
+                    X
+                  </Button>
+                </div>
+                <div className="detail_card-row">
+                  <label>Vencimiento:</label>
+                  <span>{row.expirationDate ?? '-'}</span>
+                </div>
+                <div className="detail_card-row">
+                  <label>Cantidad:</label>
+                  <span>{row.amount}</span>
+                </div>
+                <div className="detail_card-row">
+                  <label>Precio compra:</label>
+                  <span>Q {row.cost.toFixed(2)}</span>
+                </div>
+                <div className="detail_card-row">
+                  <label>Subtotal:</label>
+                  <span>Q {(row.subtotal ?? 0).toFixed(2)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Box sx={{width: '100%'}}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: pageSize,
+                  },
+                },
+              }}
+              pageSizeOptions={[pageSize]}
+              // checkboxSelection
+              disableColumnSelector
+              disableRowSelectionOnClick
+              disableColumnFilter
+              autoHeight
+              getRowId={(row:any) => row.id}
+            />
+          </Box>
+        )}
       </div>
     </>
   );

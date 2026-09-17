@@ -19,7 +19,6 @@ const BrandCreate = lazy(() => import("../Brand").then(m => ({ default: m.BrandC
 const Presentation = lazy(() => import("../Presentation/PresentationPage"))
 const PresentationCreate = lazy(() => import("../Presentation").then(m => ({ default: m.PresentationCreate })))
 const Unit = lazy(() => import("../Unit/UnitPage"))
-const UnitCreate = lazy(() => import("../Unit").then(m => ({ default: m.UnitCreate })))
 const Buy = lazy(() => import("../Buy/BuyPage"))
 const BuyCreate = lazy(() => import("../Buy").then(m => ({ default: m.BuyCreate })))
 const BuyShow = lazy(() => import("../Buy").then(m => ({ default: m.BuyShow })))
@@ -64,8 +63,6 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.PRESENTATION_EDIT, Component: PresentationCreate, permission: PERMISSIONS.PRESENTATIONS.UPDATE },
 
   { path: PrivateRoutes.UNIT, Component: Unit, permission: PERMISSIONS.UNITS.READ },
-  { path: PrivateRoutes.UNIT_CREATE, Component: UnitCreate, permission: PERMISSIONS.UNITS.CREATE },
-  { path: PrivateRoutes.UNIT_EDIT, Component: UnitCreate, permission: PERMISSIONS.UNITS.UPDATE },
 
   { path: PrivateRoutes.BUY, Component: Buy, permission: PERMISSIONS.PURCHASES.READ },
   { path: PrivateRoutes.BUY_CREATE, Component: BuyCreate, permission: PERMISSIONS.PURCHASES.CREATE },
