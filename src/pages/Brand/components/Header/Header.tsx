@@ -3,16 +3,18 @@ import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { setSearchBrand } from '@/redux/brandSlice';
 import debounce from 'just-debounce-it';
 import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import "./Header.css"
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  onCreate: () => void;
+};
+
+const Header: React.FC<HeaderProps> = ({ onCreate }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const search = useSelector((state: any) => state.brand.search);
   const { can } = usePermission();
 
@@ -23,7 +25,7 @@ const Header: React.FC = () => {
   },300 ),[])
 
   const handleClick = () => {
-    navigate("create")
+    onCreate()
   };
 
   const { control, reset } = useForm({
@@ -52,8 +54,8 @@ const Header: React.FC = () => {
 
       {canCreateBrand && (
         <div>
-          <Button variant="contained" color="primary" onClick={handleClick}>
-            Crear Marca
+          <Button variant="contained" color="primary" onClick={handleClick} sx={{borderRadius: 5, display: 'flex', justifyContent: 'space-between', gap:1}}>
+            <span>+</span> Nueva Marca
           </Button>
         </div>
       )}

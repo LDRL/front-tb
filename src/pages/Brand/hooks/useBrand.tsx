@@ -136,3 +136,56 @@ export const useUpdateBrand = () => {
         },
     });
 };
+
+// Hook para activar (reactivar) una marca inactiva
+export const useActivateBrand = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<Brand, unknown, Brand>({
+        mutationFn: async (brand) => {
+            const brandToActivate = {
+                nombre: brand.name,
+                estado: true,
+            };
+
+            const response = await axiosClient.put<CreateOrUpdateBrandResponse>(`${apiUrl}marcas/${brand.id}/`, brandToActivate);
+
+            if (response.status !== 200) {
+                throw new Error('Error al activar la marca');
+            }
+
+            return BrandAdapter(response.data.data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['brands'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
+
+// Hook para eliminar una marca
+export const useDeleteBrand = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<BrandList, unknown, number>({
+        mutationFn: async (brandId) => {
+            const response = await axiosClient.delete<CreateOrUpdateBrandResponse>(`${apiUrl}marcas/${brandId}/`);
+
+            if (response.status !== 200) {
+                throw new Error('Error al eliminar la marca');
+            }
+
+            return BrandListAdapter([]);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['brands'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+}

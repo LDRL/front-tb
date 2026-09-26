@@ -1,0 +1,1 @@
+export { default as BrandFormModal } from './BrandFormModal';

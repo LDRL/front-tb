@@ -2,6 +2,7 @@
 export interface ApiBrand {
     _id: number;
     nombre:string;
+    estado: boolean;
 }
 
 export interface ApiResponseBrand {
@@ -20,11 +21,13 @@ export interface ApiResponseBrand {
 export interface Brand {
     id:number;
     name: string;
+    status: boolean;
 }
 
 export const BrandEmptyState: Brand = {
     id: 0,
     name: '',
+    status: true,
 }
 
 export type BrandList = Array<Brand>
