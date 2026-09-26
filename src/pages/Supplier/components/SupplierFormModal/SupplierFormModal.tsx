@@ -130,9 +130,7 @@ const SupplierFormModal: React.FC<Props> = ({ open, onClose, supplier }) => {
           <DialogActions
             sx={{
               px: 2.5,
-              pb: 2,
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: 1,
+              pb: 2
             }}
           >
             <Button
@@ -144,8 +142,7 @@ const SupplierFormModal: React.FC<Props> = ({ open, onClose, supplier }) => {
                 borderRadius: 5,
                 fontSize: isMobile ? '0.7rem' : '0.875rem',
                 minHeight: isMobile ? '12px' : 'auto',
-                py: isMobile ? 0.8 : 1,
-                width: isMobile ? '100%' : 'auto',
+                py: isMobile ? 0.8 : 1
               }}
             >
               Cancelar
@@ -158,11 +155,10 @@ const SupplierFormModal: React.FC<Props> = ({ open, onClose, supplier }) => {
                 borderRadius: 5,
                 fontSize: isMobile ? '0.7rem' : '0.875rem',
                 minHeight: isMobile ? '12px' : 'auto',
-                py: isMobile ? 0.8 : 1,
-                width: isMobile ? '100%' : 'auto',
+                py: isMobile ? 0.8 : 1
               }}
             >
-              {supplier ? 'Actualizar Proveedor' : 'Guardar'}
+              {supplier ? 'Actualizar' : 'Guardar'}
             </Button>
           </DialogActions>
         </Box>

@@ -78,9 +78,7 @@ const BrandFormModal: React.FC<Props> = ({ open, onClose, brand }) => {
           <DialogActions
             sx={{
               px: 2.5,
-              pb: 2,
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: 1,
+              pb: 2
             }}
           >
             <Button
@@ -92,8 +90,7 @@ const BrandFormModal: React.FC<Props> = ({ open, onClose, brand }) => {
                 borderRadius: 5,
                 fontSize: isMobile ? '0.7rem' : '0.875rem',
                 minHeight: isMobile ? '12px' : 'auto',
-                py: isMobile ? 0.8 : 1,
-                width: isMobile ? '100%' : 'auto',
+                py: isMobile ? 0.8 : 1
               }}
             >
               Cancelar
@@ -106,11 +103,10 @@ const BrandFormModal: React.FC<Props> = ({ open, onClose, brand }) => {
                 borderRadius: 5,
                 fontSize: isMobile ? '0.7rem' : '0.875rem',
                 minHeight: isMobile ? '12px' : 'auto',
-                py: isMobile ? 0.8 : 1,
-                width: isMobile ? '100%' : 'auto',
+                py: isMobile ? 0.8 : 1
               }}
             >
-              {brand ? 'Actualizar Marca' : 'Guardar'}
+              {brand ? 'Actualizar' : 'Guardar'}
             </Button>
           </DialogActions>
         </Box>
