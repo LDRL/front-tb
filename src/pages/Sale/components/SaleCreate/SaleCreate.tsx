@@ -198,9 +198,7 @@ const SaleCreate: React.FC = () => {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-
                   const nit = getValues("nit")?.trim();
-
                   if (nit) {
                     searchClient();
                   }
@@ -208,11 +206,11 @@ const SaleCreate: React.FC = () => {
               }}
             />
 
-            <Button onClick={searchClient} variant="contained">
+            <Button onClick={searchClient} variant="contained" sx={{borderRadius: 2}}>
               Buscar
             </Button>
 
-            <Button onClick={showModal} variant="contained" color="success">
+            <Button onClick={showModal} variant="contained" color="success" sx={{borderRadius: 2}}>
               Agregar
             </Button>
           </div>
@@ -301,8 +299,8 @@ const SaleCreate: React.FC = () => {
             />
           </div>
 
-          <div className="container_button">
-            <Button type="submit" variant="contained">
+          <div className="container_button" style={{marginTop: '10px'}}>
+            <Button type="submit" variant="contained" sx={{borderRadius:2}}>
               Guardar
             </Button>
 
@@ -310,6 +308,7 @@ const SaleCreate: React.FC = () => {
               onClick={() => navigate('/private/sale')}
               variant="contained"
               color="error"
+              sx={{borderRadius: 2}}
             >
               Cancelar
             </Button>

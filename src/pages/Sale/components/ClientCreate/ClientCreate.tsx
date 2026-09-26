@@ -27,10 +27,7 @@ const ClientCreate: React.FC = () => {
         },
     });
 
-
     const {data: typeCliOptions} =   useFetchTypeClientsOptions();
-    
-
     const mutation = useMutation({
         mutationFn: (data: ClientForm) => createClient(data),
         onError: (error: any) => {
@@ -47,31 +44,23 @@ const ClientCreate: React.FC = () => {
     };
 
     const onSubmit = async (data: ClientForm) => {
-
-
         mutation.mutate(data, {
             onSuccess: (response) => {
-
                 const createdClient = response;
-
                 toast.success("Cliente creado exitosamente");
-
-                // 🔥 SOLO UN DISPATCH
                 dispatch(editClient(createdClient));
-
                 dialogCloseSubject$.setSubject = false;
             }
         });
     };
 
     return (
-        <div className="container" style={{marginTop: '1.5rem'}}>
+        <div className="" style={{marginTop: '1.5rem'}}>
             <CardForm titulo="Cliente" subtitulo="Nuevo">
                 <Loading loading={mutation.isPending} />
                 <Box
                     component="form"
                     onSubmit={handleSubmit(onSubmit)}
-                    sx={{ marginLeft: 3 }}
                     autoComplete="off"
                 >
                     <div className='section'>
@@ -115,6 +104,7 @@ const ClientCreate: React.FC = () => {
                             name="email"
                             control={control}
                             label="Correo electrónico"
+                            rules={{ required: 'Correo electrónico es requerido' }}
                         />
                     </div>
 
@@ -140,7 +130,7 @@ const ClientCreate: React.FC = () => {
                         <Button
                             variant="contained"
                             type="submit"
-                            sx={{ mt: 2 }}
+                            sx={{ mt: 2, borderRadius: 5 }}
                             disabled={mutation.isPending}
                         >
                             Guardar
@@ -149,7 +139,7 @@ const ClientCreate: React.FC = () => {
                         <Button
                             variant="contained"
                             type="button"
-                            sx={{ mt: 2 }}
+                            sx={{ mt: 2, borderRadius: 5 }}
                             color='error'
                             onClick={handleExit}
                         >

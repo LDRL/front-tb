@@ -215,7 +215,7 @@ export const DetailSaleCreate: React.FC<Props> = ({
       <div style={{display:'flex', justifyContent:'flex-end', gap: '5px'}}>
         <Button
           variant="contained"
-          sx={{ mt: 2, mb:2}}
+          sx={{ mt: 2, mb:2, borderRadius: 2}}
           color='info'
           onClick={handleAdd}
         >
