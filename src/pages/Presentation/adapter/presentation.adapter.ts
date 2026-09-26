@@ -4,6 +4,7 @@ export const PresentationAdapter = (presentation: ApiPresentation): Presentation
     return{
         id: presentation._id,
         name: presentation.nombre,
+        status: presentation.estado,
     }
 }
 

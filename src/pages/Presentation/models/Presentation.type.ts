@@ -2,6 +2,7 @@
 export interface ApiPresentation {
     _id: number;
     nombre:string;
+    estado: boolean;
 }
 
 export interface ApiResponsePresentation {
@@ -21,11 +22,13 @@ export interface ApiResponsePresentation {
 export interface Presentation {
     id:number;
     name: string;
+    status: boolean;
 }
 
 export const PresentationEmptyState: Presentation = {
     id: 0,
     name: '',
+    status: true,
 }
 
 export type PresentationList = Array<Presentation>

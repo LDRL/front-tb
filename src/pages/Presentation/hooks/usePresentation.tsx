@@ -124,7 +124,60 @@ export const useUpdatePresentation = () => {
             return PresentationAdapter(response.data.data); // Se adpata Presentation y se retorna actualizado
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['presetentions'] });
+            queryClient.invalidateQueries({ queryKey: ['presentations'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
+
+// Hook para activar (reactivar) una presentación inactiva
+export const useActivatePresentation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<Presentation, Error, Presentation>({
+        mutationFn: async (presentation) => {
+            const presentationToActivate = {
+                nombre: presentation.name,
+                estado: true,
+            };
+
+            const response = await axiosClient.put<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/${presentation.id}/`, presentationToActivate);
+
+            if (response.status !== 200) {
+                throw new Error('Error al activar la presentación');
+            }
+
+            return PresentationAdapter(response.data.data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['presentations'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
+
+// Hook para eliminar una presentación
+export const useDeletePresentation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<PresentationList, Error, number>({
+        mutationFn: async (presentationId) => {
+            const response = await axiosClient.delete<CreateOrUpdatePresentationResponse>(`${apiUrl}presentaciones/${presentationId}/`);
+
+            if (response.status !== 200) {
+                throw new Error('Error al eliminar la presentación');
+            }
+
+            return PresentationListAdapter([]);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['presentations'] });
         },
         onError: (error) => {
             const message = getErrorMessage(error);
