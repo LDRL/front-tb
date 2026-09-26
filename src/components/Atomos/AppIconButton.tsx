@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { IconButton, IconButtonProps, SxProps, Theme } from '@mui/material';
 
 type AppIconButtonProps = Omit<IconButtonProps, 'color'> & {
@@ -47,24 +47,32 @@ const baseSx: SxProps<Theme> = {
   borderRadius: '6px',
 };
 
-const AppIconButton: React.FC<AppIconButtonProps> = ({
-  color = 'primary',
-  size = 'small',
-  sx,
-  children,
-  ...rest
-}) => (
-  <IconButton
-    size={size}
-    sx={(theme) => ({
-      ...baseSx,
-      ...themes[color],
-      ...(typeof sx === 'function' ? sx(theme) : sx),
-    })}
-    {...rest}
-  >
-    {children}
-  </IconButton>
+const AppIconButton = forwardRef<HTMLButtonElement, AppIconButtonProps>(
+  (
+    {
+      color = 'primary',
+      size = 'small',
+      sx,
+      children,
+      ...rest
+    },
+    ref
+  ) => (
+    <IconButton
+      ref={ref}
+      size={size}
+      sx={(theme) => ({
+        ...baseSx,
+        ...themes[color],
+        ...(typeof sx === 'function' ? sx(theme) : sx),
+      })}
+      {...rest}
+    >
+      {children}
+    </IconButton>
+  )
 );
+
+AppIconButton.displayName = 'AppIconButton';
 
 export default AppIconButton;
