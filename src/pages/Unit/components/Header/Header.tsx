@@ -53,8 +53,8 @@ const Header: React.FC<HeaderProps> = ({ onCreate }) => {
 
       {canCreateUnit && (
         <div>
-          <Button variant="contained" color="primary" onClick={handleClick}>
-            Crear Unidad de Medida
+          <Button variant="contained" color="primary" onClick={handleClick} sx={{borderRadius: 5, display: 'flex', justifyContent: 'space-between', gap:1}}>
+            <span>+</span> Nueva Unidad
           </Button>
         </div>
       )}

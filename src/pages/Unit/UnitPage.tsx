@@ -23,7 +23,7 @@ export default function UnitPage() {
     return (
         <div>
             <div>
-                <div className="page-title-box" style={{ display: "flex", justifyContent: 'space-between' }}>
+                <div className="page-title-box" >
                     <h4>Listado de unidades de medida</h4>
                     <Header onCreate={openCreate} />
                 </div>

@@ -5,14 +5,16 @@ import { Unit } from '../../models';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Loading from '@/components/Loading';
 import { AppIconButton } from '@/components';
 import { totalPagesMovile } from '@/utils';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import { usePermission } from '@/hooks/usePermission';
 import TableMovil from '../TableMovil/TableMovil';
-import { useUnit, useDeleteUnit } from '../../hooks/useUnit';
+import { useActivateUnit, useDeleteUnit, useUnit } from '../../hooks/useUnit';
 import { toast } from 'react-toastify';
+import { getErrorMessage } from '@/utils/axiosClient';
 
 type UnitTableProps = {
   onEditUnit: (unit: Unit) => void;
@@ -22,12 +24,15 @@ const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
     const { can } = usePermission();
     const canEdit = can(PERMISSIONS.UNITS.UPDATE);
     const canDelete = can(PERMISSIONS.UNITS.DELETE);
+    const canActivate = can(PERMISSIONS.UNITS.UPDATE);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [unitToDelete, setUnitToDelete] = useState<Unit | null>(null);
+    const [unitToActivate, setUnitToActivate] = useState<Unit | null>(null);
 
     const deleteUnitMutation = useDeleteUnit();
+    const activateUnitMutation = useActivateUnit();
 
     const {
         units,
@@ -46,6 +51,18 @@ const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
             setUnitToDelete(null);
         } catch (error: any) {
             toast.error(error.message || "Error desconocido");
+        }
+    };
+
+    const handleActivate = async () => {
+        if (!unitToActivate) return;
+
+        try {
+            await activateUnitMutation.mutateAsync(unitToActivate);
+            toast.success("Unidad de medida activada exitosamente");
+            setUnitToActivate(null);
+        } catch (error) {
+            toast.error(getErrorMessage(error));
         }
     };
 
@@ -116,6 +133,16 @@ const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
                                     </AppIconButton>
                                 </Tooltip>
                             )}
+                            {canActivate && !unit.status && (
+                                <Tooltip title="Activar">
+                                    <AppIconButton
+                                        color="info"
+                                        onClick={() => setUnitToActivate(unit)}
+                                    >
+                                        <LockOpenIcon />
+                                    </AppIconButton>
+                                </Tooltip>
+                            )}
                         </Box>
                     );
                 },
@@ -128,7 +155,7 @@ const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
     }
 
     return (
-        <div style={{ paddingRight: isMobile ? "40px" : "" }}>
+        <div>
             {isMobile ? (
                 <TableMovil
                     units={units}
@@ -136,10 +163,12 @@ const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
                     paginationModel={paginationModel}
                     handleEditUnit={onEditUnit}
                     handleDeleteUnit={setUnitToDelete}
+                    handleActivateUnit={setUnitToActivate}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
                     canEdit={canEdit}
                     canDelete={canDelete}
+                    canActivate={canActivate}
                 />
             ) : (
                 <DataGrid
@@ -187,8 +216,32 @@ const ListOfUnits: React.FC<UnitTableProps> = ({ onEditUnit }) => {
                     <Button onClick={() => setUnitToDelete(null)} color="primary">
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmDelete} color="error" variant="contained" autoFocus>
+                    <Button sx={{borderRadius: 5}} onClick={handleConfirmDelete} color="error" variant="contained" autoFocus>
                         Eliminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={!!unitToActivate}
+                onClose={() => setUnitToActivate(null)}
+                aria-labelledby="activate-unit-dialog-title"
+                aria-describedby="activate-unit-dialog-description"
+            >
+                <DialogTitle id="activate-unit-dialog-title">
+                    {"Activar unidad de medida"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="activate-unit-dialog-description">
+                        {`¿Estás seguro de que deseas activar la unidad de medida "${unitToActivate?.name}"?`}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setUnitToActivate(null)} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button sx={{borderRadius: 5}} onClick={handleActivate} color="primary" variant="contained" autoFocus>
+                        Activar
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -134,6 +134,36 @@ export const useUpdateUnit = () => {
     });
 };
 
+// Hook para activar (reactivar) una unidad de medida inactiva
+export const useActivateUnit = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<Unit, unknown, Unit>({
+        mutationFn: async (unit) => {
+            const unitToActivate = {
+                nombre: unit.name,
+                abreviatura: unit.abbreviation,
+                estado: true,
+            };
+
+            const response = await axiosClient.put<CreateOrUpdateUnitResponse>(`${apiUrl}unidades/${unit.id}`, unitToActivate);
+
+            if (response.status !== 200) {
+                throw new Error('Error al activar la unidad de medida');
+            }
+
+            return UnitAdapter(response.data.data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['units'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+}
+
 // Hook para eliminar una unidad
 export const useDeleteUnit = () => {
     const queryClient = useQueryClient();

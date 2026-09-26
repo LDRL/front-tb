@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery, useTheme } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { FormInputText } from '@/components';
 import Loading from '@/components/Loading';
@@ -16,6 +16,8 @@ type Props = {
 
 const UnitFormModal: React.FC<Props> = ({ open, onClose, unit }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { control, handleSubmit, reset } = useForm<Unit>({
     defaultValues: { id: 0, name: '', abbreviation: '', status: true },
@@ -69,7 +71,6 @@ const UnitFormModal: React.FC<Props> = ({ open, onClose, unit }) => {
               name="name"
               control={control}
               label="Nombre"
-              labelOutside
               rules={{ required: 'El nombre es requerido' }}
             />
 
@@ -77,17 +78,42 @@ const UnitFormModal: React.FC<Props> = ({ open, onClose, unit }) => {
               name="abbreviation"
               control={control}
               label="Abreviatura"
-              labelOutside
               rules={{ required: 'La abreviatura es requerida' }}
               />
           </DialogContent>
 
-          <DialogActions sx={{ px: 3 }}>
-            <Button variant="contained" color="error" type="button" onClick={onClose}>
-              Cerrar
+          <DialogActions
+            sx={{
+              px: 2.5,
+              pb: 2
+            }}
+          >
+            <Button
+              variant="contained"
+              color="error"
+              type="button"
+              onClick={onClose}
+              sx={{
+                borderRadius: 5,
+                fontSize: isMobile ? '0.7rem' : '0.875rem',
+                minHeight: isMobile ? '12px' : 'auto',
+                py: isMobile ? 0.8 : 1,
+              }}
+            >
+              Cancelar
             </Button>
-            <Button variant="contained" type="submit">
-              Actualizar Unidad
+
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                borderRadius: 5,
+                fontSize: isMobile ? '0.7rem' : '0.875rem',
+                minHeight: isMobile ? '12px' : 'auto',
+                py: isMobile ? 0.8 : 1,
+              }}
+            >
+              {unit ? 'Actualizar' : 'Crear'}
             </Button>
           </DialogActions>
         </Box>
