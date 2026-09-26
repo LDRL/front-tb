@@ -191,6 +191,7 @@ export interface FormAutocompleteAsyncProps<T extends FieldValues, TOption> {
 
   options: TOption[];
   isLoading?: boolean;
+  rules?: any;
 
   getOptionLabel: (option: TOption) => string;
   getOptionValue: (option: TOption) => string | number;
@@ -208,6 +209,7 @@ export const FormAutocompleteAsync = <
   label,
   options,            // ✅ AQUÍ FALTABA
   isLoading,
+  rules,
   getOptionLabel,
   getOptionValue,
   onInputChange,
@@ -217,6 +219,7 @@ export const FormAutocompleteAsync = <
     <Controller
       name={name}
       control={control}
+      rules={rules}
       render={({ field, fieldState: { error } }) => {
         return (
           <div>
@@ -229,6 +232,8 @@ export const FormAutocompleteAsync = <
               isLoading={isLoading}
               isClearable
               options={options}
+              menuPortalTarget={document.body}
+              menuPosition="fixed"
 
               value={
                 options.find(opt => opt.value === field.value) ?? null
@@ -249,9 +254,9 @@ export const FormAutocompleteAsync = <
             />
 
             {error && (
-              <div style={{ color: "red", fontSize: 12 }}>
+              <FormHelperText error sx={{ ml: 1.75, mt: 0.5 }}>
                 {error.message}
-              </div>
+              </FormHelperText>
             )}
           </div>
         );
@@ -432,6 +437,11 @@ const customStyles = {
     zIndex: 9999,
     borderRadius: 8,
     boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+  }),
+
+  menuPortal: (base: any) => ({
+    ...base,
+    zIndex: 9999,
   }),
 
   menuList: (base: any) => ({
