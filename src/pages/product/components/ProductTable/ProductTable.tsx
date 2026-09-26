@@ -5,10 +5,12 @@ export interface ProductTableInterface {
 
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { openModal } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
+import { AppIconButton } from '@/components';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../../models/product.domain.type';
@@ -102,19 +104,25 @@ const ListOfProducts: React.FC = () => {
         ...(canEdit
             ? [{
                 field: 'actions',
-                type: 'actions',
+                type: 'actions' as const,
                 sortable: false,
-                headerName: 'Actions',
-                width: 200,
-                renderCell: (params: GridRenderCellParams) => (
-                    <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleEditProduct(params.row as Product)}
-                    >
-                        Editar
-                    </Button>
-                ),
+                headerName: 'Opciones',
+                width: 130,
+                renderCell: (params: GridRenderCellParams) => {
+                    const product = params.row as Product;
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="Editar">
+                                <AppIconButton
+                                    color="success"
+                                    onClick={() => handleEditProduct(product)}
+                                >
+                                    <EditIcon />
+                                </AppIconButton>
+                            </Tooltip>
+                        </Box>
+                    );
+                },
             } as GridColDef]
             : []),
     ];

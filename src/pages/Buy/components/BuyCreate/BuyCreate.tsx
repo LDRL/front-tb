@@ -248,7 +248,7 @@ const BuyCreate: React.FC = () => {
                     sx={{ mt: 2 }}
                     disabled={createBrandMutation.isPending}
                   >
-                    Crear compra
+                    Nueva compra
                   </Button>
                 </div>
                 <div className='container_button'>

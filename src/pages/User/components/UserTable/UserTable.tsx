@@ -1,15 +1,17 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, useMediaQuery,useTheme} from '@mui/material';
+import { Box, Tooltip, useMediaQuery,useTheme} from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import Loading from '@/components/Loading';
+import { AppIconButton } from '@/components';
 import { totalPagesMovile } from '@/utils';
 import TableMovil from '../TableMovil/TableMovil';
 import { useUser } from '../../hooks/useUser';
 import { editUser } from '@/redux/userSlice';
 import { User } from '../../models/user.domain.type';
+import EditIcon from '@mui/icons-material/Edit';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import { usePermission } from '@/hooks/usePermission';
 
@@ -29,7 +31,7 @@ const ListOfUsers: React.FC = () => {
         handlePaginationModelChange,
     } = useUser();
 
-    const handleEditPresentation = (user: User) => {
+    const handleEditUser = (user: User) => {
         dispatch(editUser(user));
         navigate(`${user._id}/editar`)
     };
@@ -79,19 +81,25 @@ const ListOfUsers: React.FC = () => {
         ...(canEdit
             ? [{
                 field: 'actions',
-                type: 'actions',
+                type: 'actions' as const,
                 sortable: false,
-                headerName: 'Actions',
-                width: 200,
-                renderCell: (params: GridRenderCellParams) => (
-                    <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleEditPresentation(params.row as User)}
-                    >
-                        Editar
-                    </Button>
-                ),
+                headerName: 'Opciones',
+                width: 130,
+                renderCell: (params: GridRenderCellParams) => {
+                    const user = params.row as User;
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="Editar">
+                                <AppIconButton
+                                    color="success"
+                                    onClick={() => handleEditUser(user)}
+                                >
+                                    <EditIcon />
+                                </AppIconButton>
+                            </Tooltip>
+                        </Box>
+                    );
+                },
             } as GridColDef]
             : []),
     ];
@@ -102,13 +110,13 @@ const ListOfUsers: React.FC = () => {
     }
 
     return (
-        <div style={{paddingRight: isMobile ? "40px": "" }}>
+        <div>
             {isMobile ? (
                 <TableMovil
                     users={users}
                     totalUser={totalUser}
                     paginationModel={paginationModel}
-                    handleEditUser={handleEditPresentation}
+                    handleEditUser={handleEditUser}
                     handlePaginationModelChange={handlePaginationModelChange}
                     totalPagesMobile={totalPagesMovile}
                     canEdit={canEdit}

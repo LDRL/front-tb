@@ -1,12 +1,16 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Role } from '../../models/role.domain.type';
+import EditIcon from '@mui/icons-material/Edit';
 import Loading from '@/components/Loading';
+import { AppIconButton } from '@/components';
 import { useRole } from '../../hooks/useRole';
 import { editRole } from '@/redux/rolSlice';
+import { totalPagesMovile } from '@/utils';
+import TableMovil from '../TableMovil/TableMovil';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import { usePermission } from '@/hooks/usePermission';
 
@@ -52,19 +56,25 @@ const ListOfRoles: React.FC = () => {
         ...(canEdit
             ? [{
                 field: 'actions',
-                type: 'actions',
+                type: 'actions' as const,
                 sortable: false,
-                headerName: 'Actions',
-                width: 200,
-                renderCell: (params: GridRenderCellParams) => (
-                    <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleEditRole(params.row as Role)}
-                    >
-                        Editar
-                    </Button>
-                ),
+                headerName: 'Opciones',
+                width: 130,
+                renderCell: (params: GridRenderCellParams) => {
+                    const role = params.row as Role;
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="Editar">
+                                <AppIconButton
+                                    color="success"
+                                    onClick={() => handleEditRole(role)}
+                                >
+                                    <EditIcon />
+                                </AppIconButton>
+                            </Tooltip>
+                        </Box>
+                    );
+                },
             } as GridColDef]
             : []),
     ];
@@ -74,9 +84,17 @@ const ListOfRoles: React.FC = () => {
     }
 
     return (
-        <div style={{ paddingRight: isMobile ? '40px' : '' }}>
+        <div>
             {isMobile ? (
-                <div>Mobile view not implemented for roles</div>
+                <TableMovil
+                    roles={roles}
+                    totalRole={totalRole}
+                    paginationModel={paginationModel}
+                    handleEditRole={handleEditRole}
+                    handlePaginationModelChange={handlePaginationModelChange}
+                    totalPagesMobile={totalPagesMovile}
+                    canEdit={canEdit}
+                />
             ) : (
                 <DataGrid
                     rows={roles}

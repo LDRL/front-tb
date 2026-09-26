@@ -5,7 +5,7 @@ export default function SalePage(){
     return(
         <div>
             <div>
-                <div className="page-title-box" style={{display:"flex", justifyContent:'space-between'}}>
+                <div className="page-title-box">
                     <h4>Listado de ventas</h4>
                     <Header />
                 </div>

@@ -56,7 +56,7 @@ const Header: React.FC = () => {
       {canCreate && (
         <div>
           <Button variant="contained" color="primary" onClick={handleClick}>
-            Crear Usuario
+            Nuevo Usuario
           </Button>
         </div>
       )}

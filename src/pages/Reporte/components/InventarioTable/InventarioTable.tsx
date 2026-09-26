@@ -164,7 +164,7 @@ const InventarioTable: React.FC = () => {
     }
 
     return (
-        <div style={{ paddingRight: isMobile ? '40px' : '' }}>
+        <div>
             {isMobile ? (
                 <TableMovil
                     inventario={inventario}

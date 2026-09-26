@@ -1,38 +1,36 @@
 import React from 'react';
 import { Box, Card, CardContent, Pagination, Tooltip } from '@mui/material';
-import { User } from '../../models/user.domain.type';
+import { Role } from '../../models/role.domain.type';
 import { AppIconButton } from '@/components';
 import EditIcon from '@mui/icons-material/Edit';
 
-interface BrandListProps {
-    users: User[];
-    totalUser: number;
+interface RoleListProps {
+    roles: Role[];
+    totalRole: number;
     paginationModel: { page: number; pageSize: number };
-    handleEditUser: (user: User) => void;
+    handleEditRole: (role: Role) => void;
     handlePaginationModelChange: (newPaginationModel: { page: number; pageSize: number }) => void;
     totalPagesMobile: number;
     canEdit: boolean;
 }
 
-const TableMovil: React.FC<BrandListProps> = ({
-    users,
-    totalUser,
+const TableMovil: React.FC<RoleListProps> = ({
+    roles,
+    totalRole,
     paginationModel,
-    handleEditUser,
+    handleEditRole,
     handlePaginationModelChange,
     totalPagesMobile,
     canEdit,
 }) => {
     return (
         <>
-            {users.map((user) => (
-                <Card key={user._id} style={{ marginBottom: '16px' }}>
-                    <CardContent style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {roles.map((role) => (
+                <Card key={role._id} style={{ marginBottom: '16px' }}>
+                    <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <h3>{user.nombre} {user.apellido}</h3>
-                            <p>Código: {user._id}</p>
-                            <p>Usuario: {user.username}</p>
-                            <p>Correo: {user.email}</p>
+                            <h3>{role.nombrerol}</h3>
+                            <p>Código: {role._id}</p>
                         </div>
                         <div>
                             {canEdit && (
@@ -40,7 +38,7 @@ const TableMovil: React.FC<BrandListProps> = ({
                                     <Tooltip title="Editar">
                                         <AppIconButton
                                             color="success"
-                                            onClick={() => handleEditUser(user)}
+                                            onClick={() => handleEditRole(role)}
                                         >
                                             <EditIcon />
                                         </AppIconButton>
@@ -52,7 +50,7 @@ const TableMovil: React.FC<BrandListProps> = ({
                 </Card>
             ))}
             <Pagination
-                count={Math.ceil(totalUser / totalPagesMobile)}
+                count={Math.ceil(totalRole / totalPagesMobile)}
                 page={paginationModel.page + 1}
                 onChange={(_, value) =>
                     handlePaginationModelChange({ page: value - 1, pageSize: paginationModel.pageSize })

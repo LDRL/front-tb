@@ -50,8 +50,8 @@ const Header: React.FC = () => {
 
       {canCreate && (
         <div>
-          <Button variant="contained" color="primary" onClick={handleClick}>
-            Crear Producto
+          <Button variant="contained" color="primary" onClick={handleClick} sx={{borderRadius: 5, display: 'flex', justifyContent: 'space-between', gap:1}}>
+            <span>+</span> Nuevo Producto
           </Button>
         </div>
       )}

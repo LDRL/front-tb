@@ -103,7 +103,7 @@ const LoteTable: React.FC = () => {
     }
 
     return (
-        <div style={{ paddingRight: isMobile ? '40px' : '' }}>
+        <div>
             {isMobile ? (
                 <TableMovil
                     lotes={lotes}

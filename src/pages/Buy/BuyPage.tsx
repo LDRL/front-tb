@@ -5,7 +5,7 @@ export default function BuyPage(){
     return(
         <div>
             <div>
-                <div className="page-title-box" style={{display:"flex", justifyContent:'space-between'}}>
+                <div className="page-title-box">
                     <h4>Listado de compras</h4>
                     <Header />
                 </div>
