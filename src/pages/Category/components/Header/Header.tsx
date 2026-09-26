@@ -3,7 +3,6 @@ import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormInputText } from '@/components';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import { setSearchCategory } from '@/redux/categorySlice';
 
 import debounce from 'just-debounce-it';
@@ -12,9 +11,12 @@ import "./Header.css"
 import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
-const CreateProduct: React.FC = () => {
+type HeaderProps = {
+  onCreate: () => void;
+};
+
+const CreateProduct: React.FC<HeaderProps> = ({ onCreate }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const search = useSelector((state: any) => state.category.search);
   const { can } = usePermission();
   const canCreate = can(PERMISSIONS.CATEGORIES.CREATE);
@@ -24,7 +26,7 @@ const CreateProduct: React.FC = () => {
   },300 ),[])
 
   const handleClick = () => {
-    navigate("create")
+    onCreate()
   };
 
   const { control, reset } = useForm({
@@ -52,8 +54,8 @@ const CreateProduct: React.FC = () => {
 
       {canCreate && (
         <div>
-          <Button variant="contained" color="primary" onClick={handleClick}>
-            Crear Categoría
+          <Button variant="contained" color="primary" onClick={handleClick} sx={{borderRadius: 5, display: 'flex', justifyContent: 'space-between', gap:1}}>
+            <span>+</span> Nueva Categoría
           </Button>
         </div>
       )}

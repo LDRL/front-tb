@@ -4,6 +4,7 @@ export const CategoryAdapter = (category: ApiCategory): Category => {
     return{
         id: category._id,
         name: category.nombre,
+        status: category.estado,
     }
 }
 

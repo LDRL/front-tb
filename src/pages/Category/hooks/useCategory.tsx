@@ -138,3 +138,56 @@ export const useUpdateCategory = () => {
         },
     });
 };
+
+// Hook para activar (reactivar) una categoría inactiva
+export const useActivateCategory = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<Category, Error, Category>({
+        mutationFn: async (category) => {
+            const categoryToActivate = {
+                nombre: category.name,
+                estado: true,
+            };
+
+            const response = await axiosClient.put<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/${category.id}/`, categoryToActivate);
+
+            if (response.status !== 200) {
+                throw new Error('Error al activar la categoria');
+            }
+
+            return CategoryAdapter(response.data.data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
+
+// Hook para eliminar una categoría
+export const useDeleteCategory = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<CategoryList, Error, number>({
+        mutationFn: async (categoryId) => {
+            const response = await axiosClient.delete<{ message: string, data: ApiCategory }>(`${apiUrl}categorias/${categoryId}/`);
+
+            if (response.status !== 200) {
+                throw new Error('Error al eliminar la categoria');
+            }
+
+            return CategoryListAdapter([]);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};

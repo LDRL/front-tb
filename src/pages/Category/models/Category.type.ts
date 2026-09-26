@@ -2,6 +2,7 @@
 export interface ApiCategory {
     _id: number;
     nombre:string;
+    estado: boolean;
 }
 
 export interface ApiResponseCategory {
@@ -21,11 +22,13 @@ export interface ApiResponseCategory {
 export interface Category {
     id:number;
     name: string;
+    status: boolean;
 }
 
 export const CategoryEmptyState: Category = {
     id: 0,
     name: '',
+    status: true
 }
 
 export type CategoryList = Array<Category>
