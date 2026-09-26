@@ -14,4 +14,5 @@ export interface ApiCreateSupplier {
   telefono: number;
   email: string;
   nit: string;
+  estado?: boolean;
 }

@@ -31,3 +31,16 @@ export const fetchSupplierUpdate = async (url: string,  payload: ApiCreateSuppli
         return [new Error("Error de red"), undefined, undefined];
     }
 };
+
+//////DELETE
+export const fetchSupplierDelete = async (url: string): Promise<[Error?, any?]> => {
+    try {
+        const response = await axiosClient.delete(url);
+        return [undefined, response?.data?.data ?? response?.data];
+    } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+            return [error, undefined];
+        }
+        return [new Error("Error de red"), undefined];
+    }
+};

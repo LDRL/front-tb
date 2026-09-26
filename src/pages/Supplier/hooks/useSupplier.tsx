@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axiosClient, { getErrorMessage } from '@/utils/axiosClient';
-import { ApiSupplier } from '../models/supplier.api.type';
+import { ApiCreateSupplier, ApiSupplier } from '../models/supplier.api.type';
 import { ApiResponseSupplierList } from '../models/supplier.response.type';
 import { Supplier, SupplierList } from '../models/supplier.domain.type';
 import { mapApiToSupplier, mapSupplierToApi, SupplierListAdapter } from '../adapter/supplier.adapter';
 import { SupplierForm } from '../models/supplier.view.type';
-import { fetchSupplierCreate, fetchSupplierUpdate } from '../service/supplier';
+import { fetchSupplierCreate, fetchSupplierUpdate, fetchSupplierDelete } from '../service/supplier';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -135,6 +135,66 @@ export const useUpdateSupplier = () => {
         },
         onError: (error) => {
             console.error(`Error : ${error}`);
+        },
+    });
+};
+
+// Hook para activar (reactivar) un proveedor inactivo
+export const useActivateSupplier = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (supplier: Supplier) => {
+            if (supplier.code == null) {
+                throw new Error('No se puede activar un proveedor sin código');
+            }
+
+            const payload: ApiCreateSupplier = {
+                nombre: supplier.name,
+                direccion: supplier.address,
+                telefono: supplier.phone,
+                email: supplier.mail,
+                nit: supplier.nit,
+                estado: true,
+            };
+
+            const [error] = await fetchSupplierUpdate(
+                `${apiUrl}proveedor/${supplier.code}`,
+                payload
+            );
+
+            if (error) throw error;
+
+            return supplier;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['providers'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
+
+// Hook para eliminar un proveedor
+export const useDeleteSupplier = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (code: number) => {
+            const [error] = await fetchSupplierDelete(`${apiUrl}proveedor/${code}/`);
+
+            if (error) throw error;
+
+            return code;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['providers'] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
         },
     });
 };

@@ -1,25 +1,38 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Button, useMediaQuery, useTheme } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 
 import Loading from "@/components/Loading";
+import { AppIconButton } from "@/components";
 import { totalPagesMovile } from "@/utils";
 import TableMovil from "../TableMovil/TableMovil";
-import { useSupplier } from "../../hooks/useSupplier";
-import { editSupplier } from "@/redux/supplierSlice";
+import { useActivateSupplier, useSupplier, useDeleteSupplier } from "../../hooks/useSupplier";
 import { Supplier } from "../../models/supplier.domain.type";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { PERMISSIONS } from "@/modules/auth/helper/permissions";
 import { usePermission } from "@/hooks/usePermission";
+import { toast } from "react-toastify";
+import { getErrorMessage } from "@/utils/axiosClient";
 
-const ListOfSuppliers: React.FC = () => {
+type SupplierTableProps = {
+  onEditSupplier: (supplier: Supplier) => void;
+};
+
+const ListOfSuppliers: React.FC<SupplierTableProps> = ({ onEditSupplier }) => {
   const { can } = usePermission();
   const canEdit = can(PERMISSIONS.PROVIDERS.UPDATE);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const canDelete = can(PERMISSIONS.PROVIDERS.DELETE);
+  const canActivate = can(PERMISSIONS.PROVIDERS.UPDATE);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null);
+  const [supplierToActivate, setSupplierToActivate] = useState<Supplier | null>(null);
+
+  const deleteSupplierMutation = useDeleteSupplier();
+  const activateSupplierMutation = useActivateSupplier();
 
   const {
     providers,
@@ -29,9 +42,28 @@ const ListOfSuppliers: React.FC = () => {
     handlePaginationModelChange,
   } = useSupplier();
 
-  const handleEditPresentation = (supplier: Supplier) => {
-    dispatch(editSupplier(supplier));
-    navigate(`${supplier.code}/editar`);
+  const handleConfirmDelete = async () => {
+    if (!supplierToDelete || supplierToDelete.code == null) return;
+
+    try {
+      await deleteSupplierMutation.mutateAsync(supplierToDelete.code);
+      toast.success("Proveedor eliminado exitosamente");
+      setSupplierToDelete(null);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
+  };
+
+  const handleActivate = async () => {
+    if (!supplierToActivate) return;
+
+    try {
+      await activateSupplierMutation.mutateAsync(supplierToActivate);
+      toast.success("Proveedor activado exitosamente");
+      setSupplierToActivate(null);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   };
 
   const columns: GridColDef[] = [
@@ -96,23 +128,61 @@ const ListOfSuppliers: React.FC = () => {
         </div>
       ),
     },
-    ...(canEdit
+    {
+      field: "state",
+      headerName: "Estado",
+      flex: 1,
+      renderCell: (params: GridRenderCellParams) => (
+        <div style={{ display: isMobile ? "block" : "inline" }}>
+          {params.value ? "Activo" : "Inactivo"}
+        </div>
+      ),
+    },
+    ...(canEdit || canDelete
       ? [
           {
             field: "actions",
-            type: "actions",
+            type: "actions" as const,
             sortable: false,
-            headerName: "Actions",
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-              <Button
-                variant="contained"
-                color="success"
-                onClick={() => handleEditPresentation(params.row as Supplier)}
-              >
-                Editar
-              </Button>
-            ),
+            headerName: "Opciones",
+            width: 130,
+            renderCell: (params: GridRenderCellParams) => {
+              const supplier = params.row as Supplier;
+              return (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  {canEdit && supplier.state && (
+                    <Tooltip title="Editar">
+                      <AppIconButton
+                        color="success"
+                        onClick={() => onEditSupplier(supplier)}
+                      >
+                        <EditIcon />
+                      </AppIconButton>
+                    </Tooltip>
+                  )}
+                  {canDelete && supplier.state && (
+                    <Tooltip title="Eliminar">
+                      <AppIconButton
+                        color="error"
+                        onClick={() => setSupplierToDelete(supplier)}
+                      >
+                        <DeleteIcon />
+                      </AppIconButton>
+                    </Tooltip>
+                  )}
+                  {canActivate && !supplier.state && (
+                    <Tooltip title="Activar">
+                      <AppIconButton
+                        color="info"
+                        onClick={() => setSupplierToActivate(supplier)}
+                      >
+                        <LockOpenIcon />
+                      </AppIconButton>
+                    </Tooltip>
+                  )}
+                </Box>
+              );
+            },
           } as GridColDef,
         ]
       : []),
@@ -123,17 +193,21 @@ const ListOfSuppliers: React.FC = () => {
   }
 
   return (
-    <div style={{ paddingRight: isMobile ? "40px" : "" }}>
+    <div>
       {isMobile ? (
         <TableMovil
           suppliers={providers}
           totalSupplier={totalProvieder}
           paginationModel={paginationModel}
-handleEditSupplier={handleEditPresentation}
-        handlePaginationModelChange={handlePaginationModelChange}
-        totalPagesMobile={totalPagesMovile}
-        canEdit={canEdit}
-      />
+          handleEditSupplier={onEditSupplier}
+          handleDeleteSupplier={setSupplierToDelete}
+          handleActivateSupplier={setSupplierToActivate}
+          handlePaginationModelChange={handlePaginationModelChange}
+          totalPagesMobile={totalPagesMovile}
+          canEdit={canEdit}
+          canDelete={canDelete}
+          canActivate={canActivate}
+        />
       ) : (
         <DataGrid
           rows={providers}
@@ -161,6 +235,54 @@ handleEditSupplier={handleEditPresentation}
           paginationMode="server"
         />
       )}
+
+      <Dialog
+        open={!!supplierToDelete}
+        onClose={() => setSupplierToDelete(null)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Eliminar proveedor"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {`¿Estás seguro de que deseas eliminar "${supplierToDelete?.name}"? Esta acción no se puede deshacer.`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSupplierToDelete(null)} color="primary">
+            Cancelar
+          </Button>
+          <Button sx={{borderRadius: 5}} onClick={handleConfirmDelete} color="error" variant="contained" autoFocus>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={!!supplierToActivate}
+        onClose={() => setSupplierToActivate(null)}
+        aria-labelledby="activate-supplier-dialog-title"
+        aria-describedby="activate-supplier-dialog-description"
+      >
+        <DialogTitle id="activate-supplier-dialog-title">
+          {"Activar proveedor"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="activate-supplier-dialog-description">
+            {`¿Estás seguro de que deseas activar el proveedor "${supplierToActivate?.name}"?`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSupplierToActivate(null)} color="primary">
+            Cancelar
+          </Button>
+          <Button sx={{borderRadius: 5}} onClick={handleActivate} color="primary" variant="contained" autoFocus>
+            Activar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
