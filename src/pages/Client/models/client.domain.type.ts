@@ -7,6 +7,7 @@ export interface Client {
     email: string;
     telefono: string;
     estado: number;
+    status: boolean;
     fullName?: string;
     idTypeCli: number;
 }
@@ -22,6 +23,7 @@ export const ClientEmptyState: Client = {
     email: "",
     telefono: "",
     estado: 1,
+    status: true,
     idTypeCli: 0
 };
 

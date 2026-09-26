@@ -10,6 +10,7 @@ export const ClientAdapter = (api: ApiClient): Client => ({
     email: api.email,
     telefono: api.telefono,
     estado: api.estado,
+    status: Boolean(api.estado),
     fullName: `${api.nombres} ${api.apellidos}`,
     idTypeCli: api.idtipoCli
 });

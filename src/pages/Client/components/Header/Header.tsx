@@ -3,15 +3,17 @@ import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { FormInputText } from "@/components";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import debounce from "just-debounce-it";
 import { setSearchClient } from "@/redux/clientSlice";
 import { usePermission } from "@/hooks/usePermission";
 import { PERMISSIONS } from "@/modules/auth/helper/permissions";
 
-const Header: React.FC = () => {
+type HeaderProps = {
+    onCreate: () => void;
+};
+
+const Header: React.FC<HeaderProps> = ({ onCreate }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const search = useSelector((state: any) => state.client.search);
     const { can } = usePermission();
     const canCreate = can(PERMISSIONS.CLIENTS.CREATE);
@@ -24,7 +26,7 @@ const Header: React.FC = () => {
     );
 
     const handleClick = () => {
-        navigate("create");
+        onCreate();
     };
 
     const { control, reset } = useForm({
@@ -52,8 +54,13 @@ const Header: React.FC = () => {
 
             {canCreate && (
                 <div>
-                    <Button variant="contained" color="primary" onClick={handleClick}>
-                        Crear Cliente
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleClick}
+                        sx={{ borderRadius: 5, display: "flex", justifyContent: "space-between", gap: 1 }}
+                    >
+                        <span>+</span> Nuevo Cliente
                     </Button>
                 </div>
             )}

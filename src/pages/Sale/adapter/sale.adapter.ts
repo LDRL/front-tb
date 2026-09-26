@@ -14,6 +14,7 @@ const defaultClient = (): Client => ({
     email: "",
     telefono: "",
     estado: 1,
+    status: true,
     idTypeCli: 0
 });
 

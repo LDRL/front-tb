@@ -146,3 +146,65 @@ export const useUpdateClient = () => {
         },
     });
 };
+
+export const useActivateClient = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<Client, unknown, Client>({
+        mutationFn: async (client) => {
+            // El endpoint de clientes espera `estado` booleano, a diferencia de User/Rol que lo manejan como 1/0.
+            const payload = {
+                nit: client.nit,
+                nombres: client.name,
+                apellidos: client.lastName,
+                direccion: client.direccion,
+                email: client.email,
+                telefono: client.telefono,
+                idtipoCli: client.idTypeCli,
+                estado: true,
+            };
+
+            const response = await axiosClient.put<
+                { ok: boolean; message: string; data: ApiClient }
+            >(`${apiUrl}clientes/${client.id}/`, payload);
+
+            if (response.status !== 200) {
+                throw new Error("Error al activar el cliente");
+            }
+
+            return ClientAdapter(response.data.data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["clients"] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
+
+export const useDeleteClient = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<ClientList, unknown, number>({
+        mutationFn: async (clientId) => {
+            const response = await axiosClient.delete<{ ok: boolean; message: string }>(
+                `${apiUrl}clientes/${clientId}/`
+            );
+
+            if (response.status !== 200) {
+                throw new Error("Error al eliminar el cliente");
+            }
+
+            return ClientListAdapter([]);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["clients"] });
+        },
+        onError: (error) => {
+            const message = getErrorMessage(error);
+            throw new Error(message);
+        },
+    });
+};
