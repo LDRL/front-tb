@@ -1,8 +1,11 @@
 import React, {useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
-import { Box, Button, Checkbox, FormControlLabel} from '@mui/material';
+import {
+  Box, Button, Tab, Tabs, Tooltip
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormDropdown,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea } from '@/components';
+import { AppIconButton, FormDropdown,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea, IosSwitch } from '@/components';
 import { useForm } from 'react-hook-form';
 import CardForm from '../../../../components/Cards/CardForm'
 import LoadMask from '@/components/LoadMask/LoadMask';
@@ -17,19 +20,21 @@ import { toast } from 'react-toastify';
 import { Detail } from '../../models/product.domain.type';
 import { ProductForm } from '../../models/product.domain.type';
 import { useCreateProduct, useProductDetails, useUpdateProduct } from '../../hooks/useProduct';
-import { DetailCreate } from '../ProductDetail/ProductDetail';
+import { PresentationsTab, RowErrors } from '../PresentationsTab/PresentationsTab';
+import { ProductPricesTab } from '../ProductPricesTab/ProductPricesTab';
 
 const CreateProduct: React.FC = () => {
 
   const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<number>(0);
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
   const dispatch = useDispatch();
   const { currentProduct } = useSelector((state: RootState) => state.product);
 
-  const { control, handleSubmit, reset, getValues, setValue, watch} = useForm<ProductForm>({
+  const { control, handleSubmit, reset, setValue, watch} = useForm<ProductForm>({
     defaultValues: { name: '', hasExpiration: false },
   });
 
@@ -41,15 +46,9 @@ const CreateProduct: React.FC = () => {
 
   const {data: unitOptions} =   useFetchUnitOptions();
 
-  const { rows, addRow, deleteRow, editRow, editingId, setEditingId, setRows } = useProductDetails();
+  const { rows, addEmptyRow, updateRow, deleteRow, setRows, updateRowPrecios } = useProductDetails();
 
-  const [errors, setErrors] = useState({
-      idPresentation: false,
-      price: false,
-      barCode: false,
-      baseQuantity: false,
-      detailProduct: false
-  });
+  const [rowErrors, setRowErrors] = useState<Record<string, RowErrors>>({});
 
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
@@ -65,8 +64,12 @@ const CreateProduct: React.FC = () => {
         idCategory: undefined,
         idBrand: undefined,
         idPresentation: undefined,
+        hasExpiration: false,
       });
 
+      setRows([]);
+      setRowErrors({});
+      setActiveTab(0);
       setSubtitulo("Nuevo");
       return;
     }
@@ -78,13 +81,13 @@ const CreateProduct: React.FC = () => {
         if (!err && responseData) {
           dispatch(openModal(responseData));
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.log(error);
       }
     };
 
     fetchProductData();
-  }, [id, dispatch, reset]);
+  }, [id, dispatch, reset, setRows, setRowErrors, setActiveTab]);
 
   useEffect(() => {
     if (currentProduct && id) {
@@ -94,25 +97,67 @@ const CreateProduct: React.FC = () => {
         (currentProduct.presentacions || []).map((p: Detail) => ({ ...p, id: crypto.randomUUID() }))
       );
     }
-  }, [currentProduct, id, reset]);
+  }, [currentProduct, id, reset, setRows]);
 
   const onSubmit = async (data: ProductForm) => {
-    setErrors({
-      idPresentation: false,
-      price: false,
-      barCode: false,
-      baseQuantity: false,
-      detailProduct: false
-    });
+    setRowErrors({});
 
     if (rows.length === 0) {
-      setErrors(prev => ({ ...prev, detailProduct: true }));
+      toast.error("Debe agregar al menos una presentación");
+      setActiveTab(1);
       return;
     }
 
+    const nextErrors: Record<string, RowErrors> = {};
+    const seenPresentations = new Set<number>();
+
+    rows.forEach((row) => {
+      const err: RowErrors = {};
+
+      if (!row.idPresentation) {
+        err.idPresentation = true;
+      } else if (seenPresentations.has(row.idPresentation)) {
+        err.idPresentation = true;
+      } else {
+        seenPresentations.add(row.idPresentation);
+      }
+
+      if (!row.price || row.price <= 0) {
+        err.price = true;
+      }
+
+      if (!row.baseQuantity || row.baseQuantity <= 0) {
+        err.baseQuantity = true;
+      }
+
+      if (Object.keys(err).length > 0) {
+        nextErrors[row.id!] = err;
+      }
+    });
+
+    if (Object.keys(nextErrors).length > 0) {
+      setRowErrors(nextErrors);
+      setActiveTab(1);
+
+      const duplicated = Object.values(nextErrors).some(e => e.idPresentation);
+      toast.error(
+        duplicated
+          ? "Revisá las presentaciones: no pueden estar vacías ni repetidas"
+          : "Completá precio y cantidad base de todas las presentaciones"
+      );
+      return;
+    }
+
+    const presentacions = rows.map((row) => {
+      const validPrecios = (row.precios ?? []).filter(p => p.idtipoCli > 0 && p.precio > 0);
+
+      return { ...row, precios: validPrecios.length > 0 ? validPrecios : undefined };
+    });
+
     const newProduct = {
       ...data,
-      presentacions: rows
+      idPresentation: presentacions[0].idPresentation,
+      presentacions
     }
 
     setLoading(true);  
@@ -160,6 +205,16 @@ const CreateProduct: React.FC = () => {
       <CardForm
         titulo='Producto'
         subtitulo={subtitulo}
+        leadingAction={
+          <Tooltip title="Volver al listado">
+            <AppIconButton
+              color="primary"
+              onClick={() => navigate(`/private/${PrivateRoutes.PRODUCT}`)}
+            >
+              <ArrowBackIcon />
+            </AppIconButton>
+          </Tooltip>
+        }
       >
         <LoadMask
         />
@@ -169,13 +224,22 @@ const CreateProduct: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-          <div style={{border: '1px solid #ccc', borderRadius: '5px'}} >
-            <div className='page-title-detail-box'>
-              <h4>Información General </h4>
-            </div>
+          <Tabs
+            value={activeTab}
+            onChange={(_e, value: number) => setActiveTab(value)}
+            variant="scrollable"
+            scrollButtons
+            allowScrollButtonsMobile
+            sx={{ mb: 2 }}
+          >
+            <Tab label="Información general" />
+            <Tab label="Presentaciones" />
+            <Tab label="Precios" />
+          </Tabs>
 
-            <div style={{padding: '15px'}}>
-
+          {/* ── Tab: Información general ── */}
+          {activeTab === 0 && (
+            <div>
               <div className="container_image">
                 {/* Columna izquierda */}
                 <div className="left">
@@ -199,12 +263,12 @@ const CreateProduct: React.FC = () => {
 
                     <FormDropdown
                       name="idUnit"
-                      control={control} 
+                      control={control}
                       label="Unidad de medida"
                       rules={{ required: 'Unidad de medida es un campo requerido' }}
                       options={unitOptions || []}
                     />
-                  
+
                     <FormDropdown
                       name="idBrand"
                       control={control}
@@ -221,77 +285,74 @@ const CreateProduct: React.FC = () => {
                     />
 
 
-                    <div className='section' style={{borderRadius: 5,  border: '1px solid rgb(204, 204, 204)', paddingInline: '10px'}}>
-                      <FormControlLabel
-                        label="Permite vencimiento"
-                        control={
-                          <Checkbox
-                            name='hasExpiration'
-                            checked={!!hasExpiration}
-                            onChange={(e) => setValue('hasExpiration', e.target.checked)}
-                          />
-                        }
-                      />
-                    </div>
+                    
                   </div>
                 </div>
 
                 {/* Imagen a la derecha */}
                 <div className="image">
-                  <FormInputImage 
+                  <FormInputImage
                     name="image"
                     label="imagen del producto"
-                    control={control}                    
+                    control={control}
                   />
                 </div>
               </div>
+
+                <div className="container_selector"></div>
+
+                <div className='section' >
+                      <IosSwitch
+                        name="hasExpiration"
+                        size="small"
+                        checked={!!hasExpiration}
+                        onChange={(value) => setValue('hasExpiration', value)}
+                        color="var(--color-primary)"
+                        label="Controla vencimiento (requiere fecha de vencimiento en cada compra)"
+                      />
+                </div>
+              
+
+              <div className="container_selector"></div>
+
+              {/*Descripcion */}
+
+              <div className='section'>
+                <FormTextArea
+                  name="description"
+                  control={control}
+                  label="Descripción"
+                  rules={{required: 'Descripción es un campo requerido',
+                    maxLength: {
+                      value: 500,
+                      message: "Máximo 500 caracteres",
+                    },
+                  }}
+                  rows={2}
+                  placeholder="Escribe algo aquí..."
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="container_selector"></div>       
-
-          {/*Detalle */}
-
-          <div style={{border: '1px solid #ccc', borderRadius: '5px'}} >
-            <div className='page-title-detail-box'>
-              <h4>Presentación del producto</h4>              
-            </div>
-            <div style={{padding: '15px'}}>
-              <DetailCreate
-                control={control}
-                getValues={getValues}
-                setValue={setValue}
-                addRow={addRow}
-                deleteRow={deleteRow}
-                editRow={editRow}
-                editingId={editingId}
-                setEditingId={setEditingId}
-                rows={rows}
-                errors={errors}
-                setErrors={setErrors}
-              />
-            </div>
-          </div>
-
-          <div className="container_selector"></div>
-
-          {/*Descripcion */}
-
-          <div className='section'>
-            <FormTextArea
-              name="description"
-              control={control}
-              label="Descripción"
-              rules={{required: 'Descripción es un campo requerido', 
-                maxLength: {
-                  value: 500,
-                  message: "Máximo 500 caracteres",
-                },
-              }}
-              rows={2}
-              placeholder="Escribe algo aquí..."
+          {/* ── Tab: Presentaciones ── */}
+          {activeTab === 1 && (
+            <PresentationsTab
+              rows={rows}
+              rowErrors={rowErrors}
+              addEmptyRow={addEmptyRow}
+              updateRow={updateRow}
+              deleteRow={deleteRow}
             />
-          </div>
+          )}
+
+          {/* ── Tab: Precios ── */}
+          {activeTab === 2 && (
+            <ProductPricesTab
+              rows={rows}
+              updateRowPrecios={updateRowPrecios}
+            />
+          )}
 
           {/**Botones */}
 
