@@ -35,7 +35,15 @@ const TableMovil: React.FC<SupplierListProps> = ({
 }) => {
     return (
         <>
-            {suppliers.map((supplier) => (
+            {suppliers.map((supplier) => {
+                // Kept as real booleans on purpose: a truthy/falsy value like 0
+                // would be rendered as text by React instead of hiding the button.
+                const isActive = Boolean(supplier.state);
+                const showEdit = canEdit && isActive;
+                const showDelete = canDelete && isActive;
+                const showActivate = canActivate && !isActive;
+
+                return (
                 <Card key={supplier.code} style={{ marginBottom: '16px' }}>
                     <CardContent style={{ display: 'flex', justifyContent: 'space-between'}}>
                         <div>
@@ -44,12 +52,12 @@ const TableMovil: React.FC<SupplierListProps> = ({
                             <p>Direccion: {supplier.address}</p>
                             <p>Telefonos: {supplier.phone}</p>
                             <p>Correo Electronico: {supplier.mail}</p>
-                            <p>Estado: {supplier.state ? 'Activo' : 'Inactivo'}</p>
+                            <p>Estado: {isActive ? 'Activo' : 'Inactivo'}</p>
                         </div>
                         <div>
-                            {((canEdit && supplier.state) || (canDelete && supplier.state) || (canActivate && !supplier.state)) && (
+                            {(showEdit || showDelete || showActivate) && (
                                 <Box sx={{ display: 'flex', gap: 1 }}>
-                                    {canEdit && supplier.state && (
+                                    {showEdit && (
                                         <Tooltip title="Editar">
                                             <AppIconButton
                                                 color="success"
@@ -59,7 +67,7 @@ const TableMovil: React.FC<SupplierListProps> = ({
                                             </AppIconButton>
                                         </Tooltip>
                                     )}
-                                    {canDelete && supplier.state && (
+                                    {showDelete && (
                                         <Tooltip title="Eliminar">
                                             <AppIconButton
                                                 color="error"
@@ -69,7 +77,7 @@ const TableMovil: React.FC<SupplierListProps> = ({
                                             </AppIconButton>
                                         </Tooltip>
                                     )}
-                                    {canActivate && !supplier.state && (
+                                    {showActivate && (
                                         <Tooltip title="Activar">
                                             <AppIconButton
                                                 color="info"
@@ -84,7 +92,8 @@ const TableMovil: React.FC<SupplierListProps> = ({
                         </div>
                     </CardContent>
                 </Card>
-            ))}
+                );
+            })}
             <Pagination
                 count={Math.ceil(totalSupplier / totalPagesMobile)}
                 page={paginationModel.page + 1}

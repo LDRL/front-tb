@@ -8,8 +8,11 @@ export const mapApiToSupplier = (p: ApiSupplier): Supplier => ({
   address: p.direccion,
   phone: p.telefono,
   mail: p.email,
-  state: p.estado,
-  nit: p.nit  
+  // The API sends 0/1 for estado, not a real boolean. Coerced here so the
+  // domain type stops lying and no consumer has to remember this. Same as
+  // client.adapter.ts.
+  state: Boolean(p.estado),
+  nit: p.nit
 });
 
 export function SupplierListAdapter(apiList: ApiSupplier[]): Supplier[] {

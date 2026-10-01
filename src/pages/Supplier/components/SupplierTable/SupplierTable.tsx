@@ -148,9 +148,16 @@ const ListOfSuppliers: React.FC<SupplierTableProps> = ({ onEditSupplier }) => {
             width: 130,
             renderCell: (params: GridRenderCellParams) => {
               const supplier = params.row as Supplier;
+              // Real booleans on purpose: a truthy/falsy value like 0 would be
+              // rendered as text by React instead of hiding the button.
+              const isActive = Boolean(supplier.state);
+              const showEdit = canEdit && isActive;
+              const showDelete = canDelete && isActive;
+              const showActivate = canActivate && !isActive;
+
               return (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  {canEdit && supplier.state && (
+                  {showEdit && (
                     <Tooltip title="Editar">
                       <AppIconButton
                         color="success"
@@ -160,7 +167,7 @@ const ListOfSuppliers: React.FC<SupplierTableProps> = ({ onEditSupplier }) => {
                       </AppIconButton>
                     </Tooltip>
                   )}
-                  {canDelete && supplier.state && (
+                  {showDelete && (
                     <Tooltip title="Eliminar">
                       <AppIconButton
                         color="error"
@@ -170,7 +177,7 @@ const ListOfSuppliers: React.FC<SupplierTableProps> = ({ onEditSupplier }) => {
                       </AppIconButton>
                     </Tooltip>
                   )}
-                  {canActivate && !supplier.state && (
+                  {showActivate && (
                     <Tooltip title="Activar">
                       <AppIconButton
                         color="info"
