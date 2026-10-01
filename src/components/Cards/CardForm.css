@@ -31,6 +31,19 @@
     line-height: 24px;
 }
 
+/* When a leading action (back arrow) is present, the icon box is taller than the
+   title's line-height. Switch the row from baseline to flex-center so the icon
+   and the text share the same optical center instead of the icon dropping. */
+.page-title-card--leading{
+    align-items: center;
+}
+
+.leading-action{
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+}
+
 .mr-2{
     margin-right: .5rem;
 }

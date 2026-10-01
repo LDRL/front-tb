@@ -8,13 +8,21 @@ interface CardFormProps {
     noPaddingXContent?: boolean;
     noPaddingYContent?: boolean;
     action?: React.ReactNode;
+    leadingAction?: React.ReactNode;
     children?: React.ReactNode;
 }
 
-function CardForm({titulo, subtitulo, action, children }: CardFormProps) {
+function CardForm({titulo, subtitulo, action, leadingAction, children }: CardFormProps) {
+    const hasLeading = !!leadingAction;
+
     return (
         <Fragment>
-            <div className='card page-title-card'>
+            <div className={`card page-title-card${hasLeading ? ' page-title-card--leading' : ''}`}>
+                {leadingAction && (
+                    <div className="leading-action">
+                        {leadingAction}
+                    </div>
+                )}
                 <h4 className="titulo">{subtitulo} {titulo}</h4>
                 {action && (
                     <div style={{ marginLeft: 'auto' }}>
