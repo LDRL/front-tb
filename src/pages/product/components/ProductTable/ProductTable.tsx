@@ -67,7 +67,7 @@ const ListOfProducts: React.FC = () => {
         },
         {
             field: 'presentacions',
-            headerName: 'Presentacion',
+            headerName: 'Presentación',
             flex: 1,
             minWidth: 160,
             sortable: false,
@@ -75,7 +75,7 @@ const ListOfProducts: React.FC = () => {
                 const detalles = params.value as Detail[] | undefined;
 
                 if (!detalles?.length) {
-                    return <Typography variant="body2">Sin Presentacion</Typography>;
+                    return <Typography variant="body2">Sin Presentación</Typography>;
                 }
 
                 return (

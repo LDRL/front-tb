@@ -51,7 +51,7 @@ const TableMovil: React.FC<ProductListProps> = ({
                                 <p>Código: {product.productCode}</p>
                                 <p>Marca: {product.brand?.name || 'Sin marca'}</p>
                                 <p>Categoría: {product.category?.name || 'Sin categoría'}</p>
-                                <p style={{ marginBottom: 0 }}>Presentaciones:</p>
+                                <p style={{ marginBottom: 0 }}>Presentación:</p>
                                 {presentaciones.length === 0 ? (
                                     <p style={{ marginTop: 0 }}>Sin presentación</p>
                                 ) : (
