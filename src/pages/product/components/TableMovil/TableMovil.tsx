@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Card, CardContent, Pagination, Tooltip } from '@mui/material';
 import { Product } from '../../models/product.domain.type';
+import { usePresentationName } from '../../hooks/usePresentationName';
 import { AppIconButton } from '@/components';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -35,17 +36,34 @@ const TableMovil: React.FC<ProductListProps> = ({
     totalPagesMobile,
     canEdit,
 }) => {
+    const resolvePresentationName = usePresentationName();
+
     return (
         <>
             {products.map((product) => {
+                const presentaciones = product.presentacions ?? [];
+
                 return (
                     <Card key={product.productCode} style={{ marginBottom: '16px' }}>
                         <CardContent style={{ display: 'flex', justifyContent: 'space-between'}}>
                             <div>
                                 <h3>{product.name}</h3>
                                 <p>Código: {product.productCode}</p>
-                                <p>Marca: {product.brand.name}</p>
-                                <p>Categoría: {product.category.name}</p>
+                                <p>Marca: {product.brand?.name || 'Sin marca'}</p>
+                                <p>Categoría: {product.category?.name || 'Sin categoría'}</p>
+                                <p style={{ marginBottom: 0 }}>Presentaciones:</p>
+                                {presentaciones.length === 0 ? (
+                                    <p style={{ marginTop: 0 }}>Sin presentación</p>
+                                ) : (
+                                    presentaciones.map((detalle, index) => (
+                                        <p
+                                            key={`${detalle.idPresentation}-${index}`}
+                                            style={{ margin: 0 }}
+                                        >
+                                            {resolvePresentationName(detalle)}
+                                        </p>
+                                    ))
+                                )}
 
                                 <img
                                     src={getImageUrl(product.image)}

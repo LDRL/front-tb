@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -12,7 +12,7 @@ import { Detail, Product } from '../../models/product.domain.type';
 import { useGetProducts } from '../../hooks/useProduct';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import { usePermission } from '@/hooks/usePermission';
-import { useFetchPresentacionOptions } from '@/hooks/useOption';
+import { usePresentationName } from '../../hooks/usePresentationName';
 import { totalPagesMovile } from '@/utils';
 import TableMovil from '../TableMovil/TableMovil';
 
@@ -37,15 +37,7 @@ const ListOfProducts: React.FC = () => {
 
     // The product list does not always carry the presentation name, so the
     // catalog is used to resolve it from the id. Cached 5 min by react-query.
-    const { data: presentacionOptions = [] } = useFetchPresentacionOptions('');
-
-    const presentacionNameById = useMemo(
-        () => new Map(presentacionOptions.map(o => [o.value, o.label])),
-        [presentacionOptions]
-    );
-
-    const resolvePresentationName = (detalle: Detail) =>
-        detalle.name || presentacionNameById.get(detalle.idPresentation) || `#${detalle.idPresentation}`;
+    const resolvePresentationName = usePresentationName();
 
     const handleEditProduct = (product: Product) => {
         dispatch(openModal(product));
