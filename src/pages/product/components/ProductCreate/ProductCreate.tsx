@@ -17,7 +17,7 @@ import { openModal, clearProduct } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
 import "./ProductCreate.css"
 import { toast } from 'react-toastify';
-import { Detail, ProductForm, RowErrors } from '../../models/product.domain.type';
+import { ProductForm, RowErrors } from '../../models/product.domain.type';
 import { useCreateProduct, useProductDetails, useUpdateProduct } from '../../hooks/useProduct';
 import {
   buildPresentacionesPayload,
@@ -49,7 +49,9 @@ const CreateProduct: React.FC = () => {
 
   const {data: unitOptions} =   useFetchUnitOptions();
 
-  const { rows, addEmptyRow, updateRow, deleteRow, setRows, updateRowPrecios } = useProductDetails();
+  const {
+    rows, addEmptyRow, updateRow, deleteRow, updateRowPrecios, hydrateRows, clearRows
+  } = useProductDetails();
 
   const [rowErrors, setRowErrors] = useState<Record<string, RowErrors>>({});
 
@@ -70,7 +72,7 @@ const CreateProduct: React.FC = () => {
         hasExpiration: false,
       });
 
-      setRows([]);
+      clearRows();
       setRowErrors({});
       setActiveTab(0);
       setSubtitulo("Nuevo");
@@ -90,17 +92,15 @@ const CreateProduct: React.FC = () => {
     };
 
     fetchProductData();
-  }, [id, dispatch, reset, setRows, setRowErrors, setActiveTab]);
+  }, [id, dispatch, reset, clearRows, setRowErrors, setActiveTab]);
 
   useEffect(() => {
     if (currentProduct && id) {
       reset(currentProduct);
       setSubtitulo("Editar");
-      setRows(
-        (currentProduct.presentacions || []).map((p: Detail) => ({ ...p, id: crypto.randomUUID() }))
-      );
+      hydrateRows(currentProduct.presentacions || []);
     }
-  }, [currentProduct, id, reset, setRows]);
+  }, [currentProduct, id, reset, hydrateRows]);
 
   const onSubmit = async (data: ProductForm) => {
     setRowErrors({});

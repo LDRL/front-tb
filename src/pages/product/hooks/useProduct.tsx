@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useReducer, useCallback} from 'react';
 import { PaginationModel, pageSize } from '@/utils';
 import { ProductListAdapter } from '@/pages/product';
 import { useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { mapApiToProduct, mapProductToApi } from '../adapter';
 import axiosClient from '@/utils/axiosClient';
 
-import { v4 as uuidv4 } from 'uuid';
+import { presentationsReducer } from './presentationsReducer';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const productUrl = `${apiUrl}productos`;
@@ -188,34 +188,28 @@ export const useUpdateProduct = () => {
 };
 
 
-export const emptyDetail = (): Detail => ({
-  idPresentation: 0,
-  price: 0,
-  barCode: '',
-  baseQuantity: 0,
-  name: '',
-});
-
 export const useProductDetails = () => {
-  const [rows, setRows] = useState<Detail[]>([]);
+  const [rows, dispatch] = useReducer(presentationsReducer, []);
 
-  const addEmptyRow = () => {
-    setRows(prev => [...prev, { ...emptyDetail(), id: uuidv4() }]);
+  const addEmptyRow = useCallback(() => dispatch({ type: 'add' }), []);
+  const updateRow = useCallback((id: string, patch: Partial<Detail>) =>
+    dispatch({ type: 'update', id, patch }), []);
+  const deleteRow = useCallback((id: string) => dispatch({ type: 'remove', id }), []);
+  const updateRowPrecios = useCallback((id: string, precios: PrecioCliente[]) =>
+    dispatch({ type: 'updatePrecios', id, precios }), []);
+  const hydrateRows = useCallback((presentacions: Detail[]) =>
+    dispatch({ type: 'hydrate', presentacions }), []);
+  const clearRows = useCallback(() => dispatch({ type: 'clear' }), []);
+
+  return {
+    rows,
+    addEmptyRow,
+    updateRow,
+    deleteRow,
+    updateRowPrecios,
+    hydrateRows,
+    clearRows,
   };
-
-  const updateRow = (id: string, patch: Partial<Detail>) => {
-    setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)));
-  };
-
-  const deleteRow = (id: string) => {
-    setRows(prev => prev.filter(r => r.id !== id));
-  };
-
-  const updateRowPrecios = (id: string, precios: PrecioCliente[]) => {
-    setRows(prev => prev.map(r => (r.id === id ? { ...r, precios } : r)));
-  };
-
-  return { rows, addEmptyRow, updateRow, deleteRow, updateRowPrecios, setRows };
 };
 
 
