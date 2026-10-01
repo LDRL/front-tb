@@ -18,7 +18,9 @@ import Loading from '@/components/Loading';
 import "./ProductCreate.css"
 import { toast } from 'react-toastify';
 import { ProductForm, RowErrors } from '../../models/product.domain.type';
-import { useCreateProduct, useProductDetails, useUpdateProduct } from '../../hooks/useProduct';
+import { useProductDetails } from '../../hooks/useProduct';
+import { useSaveProduct } from '../../hooks/useSaveProduct';
+import { getErrorMessage } from '@/utils/axiosClient';
 import {
   buildPresentacionesPayload,
   validatePresentaciones,
@@ -28,7 +30,6 @@ import { ProductPricesTab } from '../ProductPricesTab/ProductPricesTab';
 
 const CreateProduct: React.FC = () => {
 
-  const [loading , setLoading] = useState<boolean>(false);
   const [subtitulo, setSubtitulo] = useState<string>("");
   const [activeTab, setActiveTab] = useState<number>(0);
   const navigate = useNavigate();
@@ -53,11 +54,10 @@ const CreateProduct: React.FC = () => {
     rows, addEmptyRow, updateRow, deleteRow, updateRowPrecios, hydrateRows, clearRows
   } = useProductDetails();
 
+  const { saveProduct, isSaving } = useSaveProduct();
+
   const [rowErrors, setRowErrors] = useState<Record<string, RowErrors>>({});
 
-  const createProductMutation = useCreateProduct();
-  const updateProductMutation = useUpdateProduct();
-  
   useEffect(() => {
     if (!id) {
       dispatch(clearProduct());
@@ -122,25 +122,18 @@ const CreateProduct: React.FC = () => {
       presentacions
     }
 
-    setLoading(true);  
     try {
-      if (currentProduct) {
-        await updateProductMutation.mutateAsync({
-        productCode: currentProduct.productCode,
-        data: newProduct,
-      });
+      const outcome = await saveProduct({ form: newProduct, product: currentProduct });
 
-        toast.success("Producto actualizado exitosamente");
-      } else {
-        await createProductMutation.mutateAsync (newProduct);
-        toast.success("Producto creado exitosamente");
-      }
+      toast.success(
+        outcome === 'updated'
+          ? "Producto actualizado exitosamente"
+          : "Producto creado exitosamente"
+      );
 
       navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
-    } catch (error: any) {
-      toast.error(error?.message || "Error desconocido");
-    } finally {
-      setLoading(false);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     }
   };
 
@@ -160,7 +153,7 @@ const CreateProduct: React.FC = () => {
 
   return (    
     <div >
-      {loading && (
+      {isSaving && (
         <Loading loading/>
       )}
 
