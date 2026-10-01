@@ -98,3 +98,17 @@ export interface ProductForm {
 
 
 export type ProductList = Array<Product>
+
+
+/// Slice
+export interface ProductState {
+  open: boolean;
+  currentProduct: ProductForm | null;
+  search: string;
+}
+
+export const EmptyProductState: ProductState = {
+  open: false,
+  currentProduct: null,
+  search: ''
+}

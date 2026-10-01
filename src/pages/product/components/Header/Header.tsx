@@ -8,12 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { RootState } from '@/redux/store';
 
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
-  const search = useSelector((state: any) => state.product.search);
+  const search = useSelector((state: RootState) => state.product.search);
   const { can } = usePermission();
   const canCreate = can(PERMISSIONS.PRODUCTS.CREATE);
 

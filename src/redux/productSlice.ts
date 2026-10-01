@@ -1,18 +1,6 @@
 // redux/productSlice.ts
-import { Product, ProductForm } from '@/pages/product/models/product.domain.type';
+import { EmptyProductState, Product } from '@/pages/product';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface ProductState {
-  open: boolean;
-  currentProduct: ProductForm | null;
-  search: string;
-}
-
-const EmptyProductState: ProductState = {
-  open: false,
-  currentProduct: null,
-  search: ''
-};
 
 const productSlice = createSlice({
   name: 'product',

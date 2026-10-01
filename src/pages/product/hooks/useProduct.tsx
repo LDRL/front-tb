@@ -10,6 +10,7 @@ import { fetchProductCreate, fetchProductUpdate } from '../services/product';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { mapApiToProduct, mapProductToApi } from '../adapter';
 import axiosClient from '@/utils/axiosClient';
+import { RootState } from '@/redux/store';
 
 import { presentationsReducer } from './presentationsReducer';
 
@@ -17,7 +18,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const productUrl = `${apiUrl}productos`;
 
 export const useGetProducts = (initialPage: number = 1) => {
-    const search = useSelector((state:any) => state.product.search);
+    const search = useSelector((state: RootState) => state.product.search);
 
     const [products, setProducts] = useState<ProductList>([]);
     const [totalProduct, setTotal] = useState<number>(0);

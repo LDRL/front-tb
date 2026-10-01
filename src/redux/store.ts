@@ -24,7 +24,7 @@ import { SaleState } from '@/pages/Sale/models/sale.domain.type';
 import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
 import { RoleState } from '@/pages/Rol/models/role.domain.type';
 import { AuthState } from '@/modules/auth/models/login.domain.type';
-import { ProductForm } from '@/pages/product/models/product.domain.type';
+import { ProductState } from '@/pages/product';
 import { UserState } from '@/pages/User/models/user.domain.type';
 import { BuyState } from '@/pages/Buy/models/buy.domain.type';
 
@@ -32,12 +32,6 @@ import { BuyState } from '@/pages/Buy/models/buy.domain.type';
 interface sidebarInfo {
   state: boolean;
   mobileOpen: boolean;
-}
-
-interface ProductState {
-  open: boolean;
-  currentProduct: ProductForm | null;
-  search: string;
 }
 
 // Todo mover en un futruo
