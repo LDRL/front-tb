@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { userKey } from '@/redux/authSlice';
-import { clearLocalStorage } from './localStorage.utility';
+import { notifySessionExpired } from '@/modules/auth/lib/sessionExpiry';
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -34,8 +34,7 @@ axiosClient.interceptors.response.use(
     const isSessionExpiration = error.response?.status === 401 && !config?.skipAuthRedirect;
 
     if (isSessionExpiration) {
-      clearLocalStorage(userKey);
-      window.location.href = '/login';
+      notifySessionExpired();
     }
 
     return Promise.reject(error);
