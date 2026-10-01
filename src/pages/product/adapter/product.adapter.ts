@@ -2,6 +2,18 @@ import { ApiCreateProduct, ApiProduct } from "../models/product.api.type";
 import { Product } from "../models/product.domain.type";
 import { ProductForm } from "../models/product.domain.type";
 
+/**
+ * The API returns these numerics as strings, and sends null for the ones a
+ * presentation has no value for. Number(null) is 0 but Number(undefined) is
+ * NaN, and NaN silently survives every `<= 0` guard, so a NaN price would
+ * reach the backend. Coerce once, here, where the external shape ends.
+ */
+const toNumber = (value: string | null | undefined): number => {
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 export const mapApiToProduct = (p: ApiProduct): Product => ({
   productCode: p.codigoprod,
   name: p.nombre,
@@ -43,14 +55,14 @@ export const mapApiToProduct = (p: ApiProduct): Product => ({
   presentacions: p.Presentaciones?.map(pres => ({
     idprodPresenta: pres.idprodPresenta,
     idPresentation: pres.idpresentacion,
-    baseQuantity: Number(pres.cantidad_base),
-    price: Number(pres.precio_venta),
-    barCode: pres.codigo_barras,
+    baseQuantity: toNumber(pres.cantidad_base),
+    price: toNumber(pres.precio_venta),
+    barCode: pres.codigo_barras ?? '',
     name: pres.Presentacion?.nombre || '',
     precios: (pres.Precios || []).map(precio => ({
       idprecios: precio.idprecios,
       idtipoCli: precio.idtipoCli,
-      precio: Number(precio.precio),
+      precio: toNumber(precio.precio),
       tipoprecio: precio.tipoprecio,
     })),
   })) || [],

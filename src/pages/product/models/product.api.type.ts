@@ -25,9 +25,9 @@ export interface ApiProductPresentacionResponse {
   idprodPresenta: number;
   codigoprod: number;
   idpresentacion: number;
-  cantidad_base: string;
-  precio_venta: string;
-  codigo_barras: string;
+  cantidad_base: string | null;
+  precio_venta: string | null;
+  codigo_barras: string | null;
   estado: number;
   Presentacion: {
     _id: number;

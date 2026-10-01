@@ -148,7 +148,7 @@ const PresentationBlock: React.FC<BlockProps> = ({
             label="Codigo producto"
             size="small"
             fullWidth
-            value={detail.barCode}
+            value={detail.barCode ?? ''}
             onChange={(e) => onChange(detail.id!, { barCode: e.target.value })}
           />
         </Box>
