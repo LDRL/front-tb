@@ -17,10 +17,13 @@ import { openModal, clearProduct } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
 import "./ProductCreate.css"
 import { toast } from 'react-toastify';
-import { Detail } from '../../models/product.domain.type';
-import { ProductForm } from '../../models/product.domain.type';
+import { Detail, ProductForm, RowErrors } from '../../models/product.domain.type';
 import { useCreateProduct, useProductDetails, useUpdateProduct } from '../../hooks/useProduct';
-import { PresentationsTab, RowErrors } from '../PresentationsTab/PresentationsTab';
+import {
+  buildPresentacionesPayload,
+  validatePresentaciones,
+} from '../../schema/presentationRules';
+import { PresentationsTab } from '../PresentationsTab/PresentationsTab';
 import { ProductPricesTab } from '../ProductPricesTab/ProductPricesTab';
 
 const CreateProduct: React.FC = () => {
@@ -102,57 +105,16 @@ const CreateProduct: React.FC = () => {
   const onSubmit = async (data: ProductForm) => {
     setRowErrors({});
 
-    if (rows.length === 0) {
-      toast.error("Debe agregar al menos una presentación");
+    const result = validatePresentaciones(rows);
+
+    if (!result.ok) {
+      setRowErrors(result.errors);
       setActiveTab(1);
+      toast.error(result.message);
       return;
     }
 
-    const nextErrors: Record<string, RowErrors> = {};
-    const seenPresentations = new Set<number>();
-
-    rows.forEach((row) => {
-      const err: RowErrors = {};
-
-      if (!row.idPresentation) {
-        err.idPresentation = true;
-      } else if (seenPresentations.has(row.idPresentation)) {
-        err.idPresentation = true;
-      } else {
-        seenPresentations.add(row.idPresentation);
-      }
-
-      if (!row.price || row.price <= 0) {
-        err.price = true;
-      }
-
-      if (!row.baseQuantity || row.baseQuantity <= 0) {
-        err.baseQuantity = true;
-      }
-
-      if (Object.keys(err).length > 0) {
-        nextErrors[row.id!] = err;
-      }
-    });
-
-    if (Object.keys(nextErrors).length > 0) {
-      setRowErrors(nextErrors);
-      setActiveTab(1);
-
-      const duplicated = Object.values(nextErrors).some(e => e.idPresentation);
-      toast.error(
-        duplicated
-          ? "Revisá las presentaciones: no pueden estar vacías ni repetidas"
-          : "Completá precio y cantidad base de todas las presentaciones"
-      );
-      return;
-    }
-
-    const presentacions = rows.map((row) => {
-      const validPrecios = (row.precios ?? []).filter(p => p.idtipoCli > 0 && p.precio > 0);
-
-      return { ...row, precios: validPrecios.length > 0 ? validPrecios : undefined };
-    });
+    const presentacions = buildPresentacionesPayload(rows);
 
     const newProduct = {
       ...data,

@@ -64,6 +64,12 @@ export interface Detail {
   precios?: PrecioCliente[];
 }
 
+export interface RowErrors {
+  idPresentation?: boolean;
+  price?: boolean;
+  baseQuantity?: boolean;
+}
+
 
 export interface ProductForm {
   productCode: number;

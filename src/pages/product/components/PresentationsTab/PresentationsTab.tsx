@@ -8,13 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import debounce from 'just-debounce-it';
 import { AppIconButton } from '@/components';
 import { Option, useFetchPresentacionOptions } from '@/hooks/useOption';
-import { Detail } from '../../models/product.domain.type';
-
-export interface RowErrors {
-  idPresentation?: boolean;
-  price?: boolean;
-  baseQuantity?: boolean;
-}
+import { Detail, RowErrors } from '../../models/product.domain.type';
 
 type BlockProps = {
   detail: Detail;
