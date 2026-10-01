@@ -1,0 +1,80 @@
+.ios-switch-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ios-switch {
+  /* Geometry is driven by these custom properties so a size variant only has to
+     override them — the thumb travel is derived, never hardcoded. */
+  --ios-switch-w: 51px;
+  --ios-switch-h: 31px;
+  --ios-switch-thumb: 27px;
+  --ios-switch-inset: 2px;
+  --ios-switch-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+
+  position: relative;
+  flex-shrink: 0;
+  width: var(--ios-switch-w);
+  height: var(--ios-switch-h);
+  padding: 0;
+  border: none;
+  border-radius: calc(var(--ios-switch-h) / 2);
+  background-color: #e3e3e6;
+  cursor: pointer;
+  appearance: none;
+  transition: background-color 0.25s ease;
+}
+
+.ios-switch--small {
+  --ios-switch-w: 38px;
+  --ios-switch-h: 22px;
+  --ios-switch-thumb: 18px;
+  --ios-switch-shadow: 0 2px 5px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+}
+
+.ios-switch--on {
+  background-color: var(--ios-switch-color, var(--color-success));
+}
+
+.ios-switch:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ios-switch:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.ios-switch__thumb {
+  position: absolute;
+  top: var(--ios-switch-inset);
+  left: var(--ios-switch-inset);
+  width: var(--ios-switch-thumb);
+  height: var(--ios-switch-thumb);
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: var(--ios-switch-shadow);
+  transform: translateX(0);
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Travel = track width - thumb - inset on both sides. Derived so any size
+   variant animates correctly without restating the pixel value. */
+.ios-switch--on .ios-switch__thumb {
+  transform: translateX(
+    calc(var(--ios-switch-w) - var(--ios-switch-thumb) - (2 * var(--ios-switch-inset)))
+  );
+}
+
+.ios-switch__label {
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+.ios-switch--small + .ios-switch__label {
+  font-size: 0.8125rem;
+}
