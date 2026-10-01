@@ -2,6 +2,12 @@ import axios, { AxiosError } from 'axios';
 import { userKey } from '@/redux/authSlice';
 import { clearLocalStorage } from './localStorage.utility';
 
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    skipAuthRedirect?: boolean;
+  }
+}
+
 const axiosClient = axios.create({
   baseURL: '/api', // tu base URL del backend
   headers: {
@@ -24,10 +30,14 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    const config = error.config;
+    const isSessionExpiration = error.response?.status === 401 && !config?.skipAuthRedirect;
+
+    if (isSessionExpiration) {
       clearLocalStorage(userKey);
       window.location.href = '/login';
     }
+
     return Promise.reject(error);
   }
 );

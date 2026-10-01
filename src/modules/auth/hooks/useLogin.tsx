@@ -14,7 +14,8 @@ export const useLoginMutation = () => {
       const response =
         await axiosClient.post<LoginApiResponse>(
           `${apiUrl}auth/login`,
-          data
+          data,
+          { skipAuthRedirect: true }
         );
 
       return loginAdapter(
