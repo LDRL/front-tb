@@ -3,7 +3,7 @@ import { PaginationModel, pageSize } from '@/utils';
 import { ProductListAdapter } from '@/pages/product';
 import { useSelector } from 'react-redux';
 import { ApiProduct } from '../models/product.api.type';
-import { ProductList, Product, Detail } from '@/pages/product/models/product.domain.type';
+import { ProductList, Product, Detail, PrecioCliente } from '@/pages/product/models/product.domain.type';
 import { ApiResponseProductList } from '../models/product.response.type';
 import { ProductForm } from '../models/product.domain.type';
 import { fetchProductCreate, fetchProductUpdate } from '../services/product';
@@ -12,7 +12,6 @@ import { mapApiToProduct, mapProductToApi } from '../adapter';
 import axiosClient from '@/utils/axiosClient';
 
 import { v4 as uuidv4 } from 'uuid';
-import { toast } from 'react-toastify';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const productUrl = `${apiUrl}productos`;
@@ -189,41 +188,34 @@ export const useUpdateProduct = () => {
 };
 
 
+export const emptyDetail = (): Detail => ({
+  idPresentation: 0,
+  price: 0,
+  barCode: '',
+  baseQuantity: 0,
+  name: '',
+});
+
 export const useProductDetails = () => {
   const [rows, setRows] = useState<Detail[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const addRow = (detail: Detail) => {
-    if (!editingId) {
-      const existing = rows.find(r => r.idPresentation === detail.idPresentation);
-      if (existing) {
-        toast.error("No puedes asignar la misma presentación más de una vez");
-        return;
-      }
-    }
+  const addEmptyRow = () => {
+    setRows(prev => [...prev, { ...emptyDetail(), id: uuidv4() }]);
+  };
 
-    setRows(prev => {
-      if (editingId) {
-        const updated = prev.map(r =>
-          r.id === editingId ? { ...r, ...detail, id: r.id } : r
-        );
-        setEditingId(null);
-        return updated;
-      }
-
-      return [...prev, { ...detail, id: uuidv4() }];
-    });
+  const updateRow = (id: string, patch: Partial<Detail>) => {
+    setRows(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)));
   };
 
   const deleteRow = (id: string) => {
     setRows(prev => prev.filter(r => r.id !== id));
   };
 
-  const editRow = (row: Detail) => {
-    setEditingId(row.id!);
+  const updateRowPrecios = (id: string, precios: PrecioCliente[]) => {
+    setRows(prev => prev.map(r => (r.id === id ? { ...r, precios } : r)));
   };
 
-  return { rows, addRow, deleteRow, editRow, editingId, setEditingId, setRows };
+  return { rows, addEmptyRow, updateRow, deleteRow, updateRowPrecios, setRows };
 };
 
 
