@@ -5,7 +5,7 @@ import { PERMISSIONS } from "@/modules/auth/helper/permissions";
 export interface RouteConfig {
   path: string;
   Component: React.LazyExoticComponent<React.ComponentType<any>>;
-  permission?: string;
+  permission?: string | string[];
 }
 
 const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
@@ -25,6 +25,7 @@ const BuyShow = lazy(() => import("../Buy").then(m => ({ default: m.BuyShow })))
 const Sale = lazy(() => import("../Sale/SalePage"))
 const SaleCreate = lazy(() => import("../Sale").then(m => ({ default: m.SaleCreate })))
 const SaleShow = lazy(() => import("../Sale").then(m => ({ default: m.SaleShow })))
+const Pos = lazy(() => import("../Pos/PosPage"))
 const User = lazy(() => import("../User/UserPage"))
 const UserCreate = lazy(() => import("../User").then(m => ({ default: m.UserCreate })))
 const Supplier = lazy(() => import("../Supplier/SupplierPage"))
@@ -71,6 +72,7 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.SALE, Component: Sale, permission: PERMISSIONS.SALES.READ },
   { path: PrivateRoutes.SALE_CREATE, Component: SaleCreate, permission: PERMISSIONS.SALES.CREATE },
   { path: PrivateRoutes.SALE_SHOW, Component: SaleShow, permission: PERMISSIONS.SALES.READ },
+  { path: PrivateRoutes.POS, Component: Pos, permission: [PERMISSIONS.SALES.READ, PERMISSIONS.SALES.CREATE] },
 
   { path: PrivateRoutes.USER, Component: User, permission: PERMISSIONS.USERS.READ },
   { path: PrivateRoutes.USER_CREATE, Component: UserCreate, permission: PERMISSIONS.USERS.CREATE },

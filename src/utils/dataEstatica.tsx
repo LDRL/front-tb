@@ -105,6 +105,13 @@ export const LinksArray: SidebarLink[] = [
     path: "/private/sale",
     permission: PERMISSIONS.SALES.READ
   },
+  {
+    label: "POS",
+    icon: <PointOfSaleIcon />,
+    to: "/private/pos",
+    path: "/private/pos",
+    permission: PERMISSIONS.SALES.READ
+  },
 
   {
     label: "Compras",

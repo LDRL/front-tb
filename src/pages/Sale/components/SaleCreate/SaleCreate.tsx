@@ -58,15 +58,14 @@ const SaleCreate: React.FC = () => {
   const currentClient = useSelector((state: any) => state.client.currentClient);
 
   useEffect(() => {
-
     if (!currentClient) return;
 
     setValue('nit', currentClient.nit ?? '');
-    setValue('name',`${currentClient.name ?? ''} ${currentClient.lastName ?? ''}`.trim() );
+    setValue('name', `${currentClient.name ?? ''} ${currentClient.lastName ?? ''}`.trim());
     setValue('address', currentClient.direccion ?? '');
-    //
-    setValue('idTypeCli', currentClient.idTypeCli ?? 0);
-
+    if (currentClient.idTypeCli) {
+      setValue('idTypeCli', currentClient.idTypeCli);
+    }
   }, [currentClient, setValue]);
 
   const onSubmit = async (data: SaleForm) => {
@@ -151,29 +150,27 @@ const SaleCreate: React.FC = () => {
   };
 
   useEffect(() => {
-    // Nueva venta: arranca sin cliente previo (redux sobrevive a la navegación)
     dispatch(clearClient());
-    dispatch(setSearchNit(""));
-    reset({ address: '', date: undefined });
-    setSubtitulo("Nueva");
+    dispatch(setSearchNit(''));
+    reset({ address: '', date: undefined, nit: '', name: '', idTypeCli: 1, isQuote: false, idTypePay: 1 });
+    setSubtitulo('Nueva');
 
-    // Al salir se limpia para que la próxima entrada no cargue estado viejo
     return () => {
       dispatch(clearClient());
-      dispatch(setSearchNit(""));
+      dispatch(setSearchNit(''));
     };
   }, [reset, dispatch]);
   useEffect(() => {
     if (!client) return;
 
     setValue('nit', client.nit ?? '');
-    setValue('name',`${currentClient.name ?? ''} ${currentClient.lastName ?? ''}`.trim() );
+    setValue('name', `${client.name ?? ''} ${client.lastName ?? ''}`.trim());
     setValue('address', client.direccion ?? '');
+    setValue('idTypeCli', client.idTypeCli ?? 0);
   }, [client, setValue]);
 
   return (
     <div className="">
-
       {loading && <Loading loading />}
 
       <CustomDialog>
@@ -182,13 +179,11 @@ const SaleCreate: React.FC = () => {
 
       <CardForm titulo="Venta" subtitulo={subtitulo}>
         <LoadMask />
-
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           autoComplete="off"
         >
-
           <div className="container_selector">
             <FormInputText
               name="nit"
@@ -269,14 +264,12 @@ const SaleCreate: React.FC = () => {
 
           {!isQuote && (
             <div className='section'>
-
               <FormDropdown
                 name="idTypePay"
                 control={control}
                 label="Forma de pago"
                 options={paymentTypeOptions}
               />
-
             </div>
           )}
 
@@ -313,10 +306,8 @@ const SaleCreate: React.FC = () => {
               Cancelar
             </Button>
           </div>
-
         </Box>
       </CardForm>
-
     </div>
   );
 };

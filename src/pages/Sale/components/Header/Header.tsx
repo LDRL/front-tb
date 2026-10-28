@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import debounce from 'just-debounce-it';
 import "./Header.css"
 import { setSearchSale } from '@/redux/saleSlice';
+import { clearClient, setSearchNit } from '@/redux/clientSlice';
 import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 
@@ -27,7 +28,9 @@ const Header: React.FC = () => {
   },300 ),[])
 
   const handleClick = () => {
-    navigate("create")
+    dispatch(clearClient());
+    dispatch(setSearchNit(''));
+    navigate("create");
   };
 
   const { control, reset } = useForm({

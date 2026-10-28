@@ -29,7 +29,7 @@ function Private() {
             key={path}
             path={path}
             element={
-              <PermissionGuard permission={permission!}>
+              <PermissionGuard permission={permission}>
                 <Suspense fallback={<Loading loading />}>
                   <Component />
                 </Suspense>

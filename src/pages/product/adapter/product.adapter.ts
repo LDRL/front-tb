@@ -14,62 +14,66 @@ const toNumber = (value: string | null | undefined): number => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-export const mapApiToProduct = (p: ApiProduct): Product => ({
-  productCode: p.codigoprod,
-  name: p.nombre,
-  description: p.descripcion,
-  //price: Number(p.precio),
 
-  brand: {
-    id: p.Marca._id,
-    name: p.Marca.nombre,
-  },
 
-  /*presentation: {
-    id: p.Presentacion._id,
-    name: p.Presentacion.nombre,
-  },*/
+export const mapApiToProduct = (p: ApiProduct): Product => {
+  return {
+    productCode: p.codigoprod,
+    name: p.nombre,
+    description: p.descripcion,
+    //price: Number(p.precio),
 
-  category: {
-    id: p.Categoria._id,
-    name: p.Categoria.nombre,
-  },
+    brand: {
+      id: p.Marca._id,
+      name: p.Marca.nombre,
+    },
 
-  unit: {
-    id: p.Unidad._id,
-    name: p.Unidad.nombre,
-    abbreviation: p.Unidad.abreviatura,
-  },
+    /*presentation: {
+      id: p.Presentacion._id,
+      name: p.Presentacion.nombre,
+    },*/
 
-  idBrand: p.idmarca,
-  idPresentation: p.idpresentacion,
-  idCategory: p.idcategoria,
-  idUnit: p.idunidad,
+    category: {
+      id: p.Categoria._id,
+      name: p.Categoria.nombre,
+    },
 
-  imageUrl: p.imagen,
-  image: p.imageUrl,
+    unit: {
+      id: p.Unidad._id,
+      name: p.Unidad.nombre,
+      abbreviation: p.Unidad.abreviatura,
+    },
 
-  hasExpiration: p.controla_vencimiento,
-  stockMinimum: p.stock_minimo,
+    idBrand: p.idmarca,
+    idPresentation: p.idpresentacion,
+    idCategory: p.idcategoria,
+    idUnit: p.idunidad,
+
+    imageUrl: p.imageUrl,
+    image: p.imageUrl,
+
+    hasExpiration: p.controla_vencimiento,
+    stockMinimum: p.stock_minimo,
 
   presentacions: p.Presentaciones?.map(pres => ({
-    idprodPresenta: pres.idprodPresenta,
-    idPresentation: pres.idpresentacion,
-    baseQuantity: toNumber(pres.cantidad_base),
-    price: toNumber(pres.precio_venta),
-    barCode: pres.codigo_barras ?? '',
-    name: pres.Presentacion?.nombre || '',
-    precios: (pres.Precios || []).map(precio => ({
-      idprecios: precio.idprecios,
-      idtipoCli: precio.idtipoCli,
-      precio: toNumber(precio.precio),
-      tipoprecio: precio.tipoprecio,
-    })),
-  })) || [],
-});
+      idprodPresenta: pres.idprodPresenta,
+      idPresentation: pres.idpresentacion,
+      baseQuantity: toNumber(pres.cantidad_base),
+      price: toNumber(pres.precio_venta),
+      barCode: pres.codigo_barras ?? '',
+      name: pres.Presentacion?.nombre || '',
+      precios: (pres.Precios || []).map(precio => ({
+        idprecios: precio.idprecios,
+        idtipoCli: precio.idtipoCli,
+        precio: toNumber(precio.precio),
+        tipoprecio: precio.tipoprecio,
+      })),
+    })) || [],
+  };
+};
 
 export function ProductListAdapter(apiProductList: ApiProduct[]): Product[] {
-    return apiProductList.map(mapApiToProduct);
+    return apiProductList.map((item) => mapApiToProduct(item as ApiProduct));
 }
 
 //No se agrega la imagen porque no es seguro si se manda en el payload por lo que es mejor agregarlo en la UI
