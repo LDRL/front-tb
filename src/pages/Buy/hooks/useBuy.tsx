@@ -151,10 +151,14 @@ export const useBuyDetails = () => {
 
   const addRow = (detail: Detail) => {
     setRows(prev => {
-      const existing = prev.find(r => r.codProductPresentation === detail.codProductPresentation);
+      const sameLine = (r: Detail) =>
+        r.codProductPresentation === detail.codProductPresentation &&
+        (r.idvariante ?? null) === (detail.idvariante ?? null);
+
+      const existing = prev.find(sameLine);
       if (existing) {
         const updated = prev.map(r =>
-          r.codProductPresentation === detail.codProductPresentation
+          sameLine(r)
             ? {
                 ...r,
                 amount: r.amount + detail.amount,

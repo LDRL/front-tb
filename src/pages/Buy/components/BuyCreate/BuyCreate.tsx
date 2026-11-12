@@ -38,6 +38,7 @@ const BuyCreate: React.FC = () => {
     amount: false,
     cost: false,
     idProduct: false,
+    idvariante: false,
     detailProduct: false,
     expirationDate: false,
   });
@@ -72,6 +73,7 @@ const BuyCreate: React.FC = () => {
     amount: false,
     cost: false,
     idProduct: false,
+    idvariante: false,
     detailProduct: false,
     expirationDate: false,
   });

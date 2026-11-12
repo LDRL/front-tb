@@ -14,6 +14,7 @@ export interface HeaderDetail {
   amount: number;
   cost: number;
   product: string;
+  variant?: string;
 }
 
 export interface HeaderBuy {

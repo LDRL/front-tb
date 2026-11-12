@@ -2,6 +2,8 @@ export interface Detail {
   amount: number;
   cost: number;
   codProductPresentation: number;
+  idvariante?: number | null;
+  variantLabel?: string;
   name?: string;
   subtotal?: number;
   id?: string;

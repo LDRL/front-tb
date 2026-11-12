@@ -28,6 +28,7 @@ export const BuyAdapter = (buy: ApiBuy): Buy => {
             amount: d.cantidad,
             cost: d.costo,
             codProductPresentation: d.codigoprod,
+            idvariante: d.idvariante ?? null,
             subtotal: d.cantidad * d.costo,
         })),
     }
@@ -36,6 +37,20 @@ export const BuyAdapter = (buy: ApiBuy): Buy => {
 export function BuyListAdapter(apiBuyList: ApiBuy[]): Buy[] {
     return apiBuyList.map(BuyAdapter);
 }
+
+const variantLabelFromHeaderDetail = (d: any): string | undefined => {
+  const v = d?.Variante;
+  if (v) {
+    const parts: string[] = [];
+    if (v.Color?.nombre) parts.push(v.Color.nombre);
+    if (v.Talla?.nombre) parts.push(v.Talla.tipo ? `${v.Talla.nombre} (${v.Talla.tipo})` : v.Talla.nombre);
+    if (v.sku) parts.push(`SKU: ${v.sku}`);
+    if (parts.length) return parts.join(' - ');
+    if (v.idvariante != null) return `Variante #${v.idvariante}`;
+  }
+  if (d?.idvariante != null) return `Variante #${d.idvariante}`;
+  return undefined;
+};
 
 export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
     return {
@@ -52,8 +67,8 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
             id: d._id,
             amount: d.cantidad,
             cost: d.costo,
-            product: `${d.ProductoPresentacion.Producto.nombre} - ${d.ProductoPresentacion.Presentacion.nombre}` 
-            
+            product: `${d.ProductoPresentacion.Producto.nombre} - ${d.ProductoPresentacion.Presentacion.nombre}`,
+            variant: variantLabelFromHeaderDetail(d),
         })),
     };
 };
@@ -73,6 +88,7 @@ export const mapBuyToCreatePayload = (buy: Buy,idusuario: number, idsucursal: nu
 
   detalles: buy.details.map(d => ({
     idprodPresenta: d.codProductPresentation,
+    idvariante: d.idvariante ?? null,
     cantidad: d.amount,
     costo: d.cost,
     ...(d.expirationDate ? { fecha_vencimiento: d.expirationDate } : {}),

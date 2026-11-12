@@ -36,8 +36,15 @@ function BuyShow() {
         field: 'product',
         headerName: 'Producto',
         flex: 1,
-        minWidth: 400,
+        minWidth: 320,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+    },
+    {
+        field: 'variant',
+        headerName: 'Variante',
+        flex: 1,
+        minWidth: 200,
+        renderCell: (params: GridRenderCellParams) => <>{params.value || '-'}</>,
     },
     {
         field: 'amount',

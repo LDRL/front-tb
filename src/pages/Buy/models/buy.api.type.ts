@@ -4,6 +4,7 @@ export interface ApiDetail {
     cantidad: number,
     costo: number,
     codigoprod: number,
+    idvariante?: number | null,
     nombre?: string,
 }
 
@@ -79,6 +80,13 @@ export interface ApiHeaderDetail{
     _id: string,
     cantidad: number,
     costo: number,
+    idvariante?: number | null,
+    Variante?: {
+      idvariante: number;
+      sku?: string | null;
+      Talla?: { _id: number; nombre: string; tipo?: string } | null;
+      Color?: { _id: number; nombre: string; hex?: string | null } | null;
+    } | null;
     ProductoPresentacion: ApiProductoPresentacion;
 }
 
@@ -117,6 +125,7 @@ export interface CreateBuyPayload {
 
 export interface CreateBuyDetail {
   idprodPresenta: number;
+  idvariante?: number | null;
   cantidad: number;
   costo: number;
   fecha_vencimiento?: string;
