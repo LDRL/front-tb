@@ -25,6 +25,8 @@ function BuyShow() {
   const { data, isLoading, isError } = id ? useShowBuy(id) : { data: null, isLoading: false, isError: false };
   const adaptedData = data ? HeaderBuyAdapter(data.data):null;
 
+  console.log(adaptedData);
+
   const { control, reset} = useForm<HeaderH>({
     defaultValues: { id: '', date: dayjs(), address: '', providerId: 0, providerName: '' }
   });
@@ -56,7 +58,7 @@ function BuyShow() {
         field: 'cost',
         headerName: 'Precio',
         flex: 1,
-        renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+        renderCell: (params: GridRenderCellParams) => <>Q {Number(params.value).toFixed(2)}</>,
     }
   ];
   
@@ -161,7 +163,7 @@ function BuyShow() {
 
           <br />
           <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-            <h2>Total: Q {adaptedData?.header.total}</h2>
+            <h2>Total: Q {Number(adaptedData?.header.total ?? 0).toFixed(2)}</h2>
           </div>
 
           <div className='container_button'>

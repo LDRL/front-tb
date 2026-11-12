@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
-  Autocomplete, Box, IconButton, TextField, Tooltip, Typography
+  Autocomplete, Box, IconButton, InputAdornment, TextField, Tooltip, Typography
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -120,11 +120,22 @@ const PresentationBlock: React.FC<BlockProps> = ({
             size="small"
             fullWidth
             value={detail.price || ''}
-            onChange={(e) =>
-              onChange(detail.id!, { price: Number(e.target.value) || 0 })
-            }
+            onChange={(e) => {
+              let value = e.target.value;
+              if (value.includes('.')) {
+                const [intPart, decPart] = value.split('.');
+                if (decPart && decPart.length > 2) {
+                  value = `${intPart}.${decPart.slice(0, 2)}`;
+                }
+              }
+              onChange(detail.id!, { price: value === '' ? 0 : Number(value) });
+            }}
             error={!!errors.price}
             helperText={errors.price ? 'Es un campo requerido' : ''}
+            inputProps={{ step: '0.01', min: 0 }}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">Q</InputAdornment>,
+            }}
           />
         </Box>
 

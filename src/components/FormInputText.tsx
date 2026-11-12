@@ -325,6 +325,8 @@ interface FormNumberProps<T extends FieldValues> {
   label: string;
   rules?: any;
   disabled?: boolean;
+  startAdornment?: React.ReactNode;
+  maxDecimals?: number;
 }
 
 export const FormInputNumber = <T extends FieldValues>({
@@ -333,6 +335,8 @@ export const FormInputNumber = <T extends FieldValues>({
   label,
   rules,
   disabled,
+  startAdornment,
+  maxDecimals,
 }: FormNumberProps<T>) => {
   return (
     <Controller
@@ -351,9 +355,27 @@ export const FormInputNumber = <T extends FieldValues>({
           label={label}
           disabled={disabled}
           onChange={(e) => {
-            const value = e.target.value;
+            let value = e.target.value;
+            if (value === "") {
+              field.onChange("");
+              return;
+            }
+
+            if (maxDecimals !== undefined && value.includes(".")) {
+              const [intPart, decPart] = value.split(".");
+              if (decPart !== undefined && decPart.length > maxDecimals) {
+                value = `${intPart}.${decPart.slice(0, maxDecimals)}`;
+              }
+            }
+
             field.onChange(value === "" ? "" : Number(value));
           }}
+          inputProps={maxDecimals !== undefined ? { step: "0.01", min: 0 } : undefined}
+          InputProps={
+            startAdornment
+              ? { startAdornment: <InputAdornment position="start">{startAdornment}</InputAdornment> }
+              : undefined
+          }
         />
       )}
     />

@@ -65,9 +65,9 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
 
         details: (buy.Detalles ?? []).map((d) => ({
             id: d._id,
-            amount: d.cantidad,
+            amount: `${d.cantidad} - ${d.ProductoPresentacion.Presentacion.nombre}`,
             cost: d.costo,
-            product: `${d.ProductoPresentacion.Producto.nombre} - ${d.ProductoPresentacion.Presentacion.nombre}`,
+            product: d.ProductoPresentacion.Producto.nombre,
             variant: variantLabelFromHeaderDetail(d),
         })),
     };

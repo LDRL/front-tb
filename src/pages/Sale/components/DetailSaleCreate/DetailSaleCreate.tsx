@@ -158,7 +158,8 @@ export const DetailSaleCreate: React.FC<Props> = ({
       headerName: 'Precio venta',
       flex:1,
       type: 'number',
-      sortable: false
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => <>Q {Number(params.value ?? 0).toFixed(2)}</>
       
     },
     {
@@ -166,7 +167,8 @@ export const DetailSaleCreate: React.FC<Props> = ({
       headerName: 'Subtotal',
       flex:1,
       type: 'number',
-      sortable: false
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => <>Q {Number(params.value ?? 0).toFixed(2)}</>
     },
   ];
 
@@ -205,6 +207,8 @@ export const DetailSaleCreate: React.FC<Props> = ({
           name="cost"
           control={control}
           label="Precio venta"
+          startAdornment="Q"
+          maxDecimals={2}
         />
         {errors.cost && (
           <FormHelperText sx={{color: 'red'}}>Precio venta es un campo requerido</FormHelperText>

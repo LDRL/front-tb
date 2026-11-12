@@ -95,7 +95,7 @@ const ListOfBuys: React.FC = () => {
             field: 'total',
             headerName: 'Total',
             flex: 1,
-            renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
+            renderCell: (params: GridRenderCellParams) => <>Q {Number(params.value).toFixed(2)}</>,
         },
         {
             field: 'state',

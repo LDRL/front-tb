@@ -16,13 +16,14 @@ export function generateTicket(adaptedData: HeaderSale, paymentTypeName: string,
     const { header, details } = adaptedData;
 
     const rows = details.map((d) => {
-        const lineTotal = d.cost * d.amount;
+        const amount = typeof d.amount === 'number' ? d.amount : Number(String(d.amount).split(' - ')[0]) || 0;
+        const lineTotal = d.cost * amount;
         return `
             <tr>
                 <td>${escapeHtml(d.product)}</td>
-                <td class="center">${d.amount}</td>
-                <td class="right">${d.cost}</td>
-                <td class="right">${lineTotal.toFixed(2)}</td>
+                <td class="center">${escapeHtml(d.amount)}</td>
+                <td class="right">Q ${Number(d.cost).toFixed(2)}</td>
+                <td class="right">Q ${lineTotal.toFixed(2)}</td>
             </tr>`;
     }).join('');
 
@@ -94,7 +95,7 @@ export function generateTicket(adaptedData: HeaderSale, paymentTypeName: string,
         <tbody>
             <tr>
                 <td class="label">TOTAL</td>
-                <td class="right label">Q ${header.total}</td>
+                <td class="right label">Q ${Number(header.total).toFixed(2)}</td>
             </tr>
         </tbody>
     </table>

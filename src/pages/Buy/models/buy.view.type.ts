@@ -11,7 +11,7 @@ export interface HeaderH {
 
 export interface HeaderDetail {
   id: string;
-  amount: number;
+  amount: number | string;
   cost: number;
   product: string;
   variant?: string;

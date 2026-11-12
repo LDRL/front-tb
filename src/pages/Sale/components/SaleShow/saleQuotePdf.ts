@@ -20,12 +20,15 @@ function money(value: number | string): string {
 export function generateQuotePdf(adaptedData: HeaderSale, _paymentTypeName: string, company: Company): void {
     const { header, details } = adaptedData;
 
-    const body: Content[][] = details.map((d) => [
-        { text: d.product },
-        { text: String(d.amount), alignment: 'center' },
-        { text: money(d.cost), alignment: 'right' },
-        { text: money(d.cost * d.amount), alignment: 'right' },
-    ]);
+    const body: Content[][] = details.map((d) => {
+        const amount = typeof d.amount === 'number' ? d.amount : Number(String(d.amount).split(' - ')[0]) || 0;
+        return [
+            { text: d.product },
+            { text: String(d.amount), alignment: 'center' },
+            { text: money(d.cost), alignment: 'right' },
+            { text: money(d.cost * amount), alignment: 'right' },
+        ];
+    });
 
     const date = header.date.format('DD/MM/YYYY HH:mm');
 

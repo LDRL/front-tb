@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Box, Button, Divider, FormControl, InputLabel,
+  Box, Button, Divider, FormControl, InputAdornment, InputLabel,
   MenuItem, Select, TextField, Tooltip, Typography, useMediaQuery, useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -167,10 +167,21 @@ export const ProductPricesTab: React.FC<Props> = ({ rows, updateRowPrecios }) =>
                         type="number"
                         label="Precio"
                         value={precio.precio || ''}
-                        onChange={(e) =>
-                          handleChange(row.id!, precios, index, 'precio', e.target.value)
-                        }
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          if (value.includes('.')) {
+                            const [intPart, decPart] = value.split('.');
+                            if (decPart && decPart.length > 2) {
+                              value = `${intPart}.${decPart.slice(0, 2)}`;
+                            }
+                          }
+                          handleChange(row.id!, precios, index, 'precio', value);
+                        }}
                         sx={{ width: { xs: '100%', sm: 'auto' }, minWidth: { sm: 120 } }}
+                        inputProps={{ step: '0.01', min: 0 }}
+                        InputProps={{
+                          startAdornment: <InputAdornment position="start">Q</InputAdornment>,
+                        }}
                       />
 
                       {!isMobile && (
