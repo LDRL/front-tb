@@ -54,3 +54,17 @@ export const fetchBuyCreate = async (url: string, payload: CreateBuyPayload ): P
     return [new Error("Error de red"), undefined, undefined];
   }
 };
+
+// ANULAR
+export const fetchBuyAnnul = async (url: string): Promise<[Error?, any?, any?]> => {
+  try {
+    const response = await axiosClient.post(url);
+    const { data } = response.data;
+    return [undefined, data, response];
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return [error, undefined, undefined];
+    }
+    return [new Error("Error de red"), undefined, undefined];
+  }
+};

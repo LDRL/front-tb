@@ -5,7 +5,7 @@ import { BuyListAdapter, mapBuyToCreatePayload } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
-import { fetchBuyCreate } from '../services/buy';
+import { fetchBuyAnnul, fetchBuyCreate } from '../services/buy';
 import { userKey } from '@/redux/authSlice';
 import { ApiBuy, ApiHeaderBuy } from '../models/buy.api.type';
 import { Buy, BuyList, Detail } from '../models/buy.domain.type';
@@ -137,6 +137,23 @@ export const useShowBuy = (id:string) => {
             return response.data;   
         }
     });
+};
+
+export const useAnnulBuy = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, Error | unknown, { id: number | string }>({
+    mutationFn: async ({ id }) => {
+      const [error, data] = await fetchBuyAnnul(`${apiUrl}compras/anular/${id}`);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['buys'] });
+      queryClient.invalidateQueries({ queryKey: ['showBuy', String(variables.id)] });
+      queryClient.invalidateQueries({ queryKey: ['showBuy', variables.id] });
+    },
+  });
 };
 
 //Detail Create

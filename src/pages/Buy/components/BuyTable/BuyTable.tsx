@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import Loading from '@/components/Loading';
-import { useBuy } from '../../hooks/useBuy';
-import { Button } from '@mui/material';
+import { useAnnulBuy, useBuy } from '../../hooks/useBuy';
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Tooltip,
+} from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import BlockIcon from '@mui/icons-material/Block';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 import { Buy } from '../../models/buy.domain.type';
+import { getErrorMessage } from '@/utils/axiosClient';
+import { usePermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/modules/auth/helper/permissions';
+import { AppIconButton } from '@/components';
 
 // import { useDispatch } from 'react-redux';
 
@@ -14,6 +31,10 @@ const ListOfBuys: React.FC = () => {
 
     // const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { can } = usePermission();
+    const canAnnul = can(PERMISSIONS.PURCHASES.DELETE);
+    const annulMutation = useAnnulBuy();
+    const [buyToAnnul, setBuyToAnnul] = useState<Buy | null>(null);
     
     const {
         buys,
@@ -26,6 +47,21 @@ const ListOfBuys: React.FC = () => {
     const handleShowBuy = (buy: Buy) => {
         // dispatch(editCategory(category));
         navigate(`${buy.id}/show`)
+    };
+
+    const handleConfirmAnnul = async () => {
+        if (!buyToAnnul) return;
+        try {
+            const data = await annulMutation.mutateAsync({ id: buyToAnnul.id });
+            if (data?.advertencias?.length) {
+                toast.warning('Compra anulada con advertencias. Revise el stock de los productos afectados.');
+            } else {
+                toast.success('Compra anulada exitosamente');
+            }
+            setBuyToAnnul(null);
+        } catch (error) {
+            toast.error(getErrorMessage(error));
+        }
     };
 
     const columns: GridColDef[] = [
@@ -62,20 +98,54 @@ const ListOfBuys: React.FC = () => {
             renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
         },
         {
+            field: 'state',
+            headerName: 'Estado',
+            flex: 0.7,
+            minWidth: 120,
+            renderCell: (params: GridRenderCellParams) => (
+                <Chip
+                    size="small"
+                    label={params.row.state ? 'Activa' : 'Anulada'}
+                    color={params.row.state ? 'success' : 'default'}
+                    variant={params.row.state ? 'filled' : 'outlined'}
+                />
+            ),
+        },
+        {
             field: 'actions',
             type: 'actions',
             sortable: false,
-            headerName: '',
-            width: 200,
-            renderCell: (params: GridRenderCellParams) => (
-                <Button
-                    variant="contained"
-                    color="info"
-                    onClick={() => handleShowBuy(params.row as Buy)}
-                >
-                    Detalle
-                </Button>
-            ),
+            headerName: 'Acciones',
+            width: 140,
+            renderCell: (params: GridRenderCellParams) => {
+                const buy = params.row as Buy;
+                const canAnnulThis = canAnnul && !!buy.state;
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Tooltip title="Detalle">
+                            <AppIconButton
+                                color="info"
+                                onClick={() => handleShowBuy(buy)}
+                            >
+                                <VisibilityIcon />
+                            </AppIconButton>
+                        </Tooltip>
+                        {canAnnul && (
+                            <Tooltip title={buy.state ? 'Anular compra' : 'Compra ya anulada'}>
+                                <span>
+                                    <AppIconButton
+                                        color="error"
+                                        disabled={!canAnnulThis || annulMutation.isPending}
+                                        onClick={() => setBuyToAnnul(buy)}
+                                    >
+                                        <BlockIcon />
+                                    </AppIconButton>
+                                </span>
+                            </Tooltip>
+                        )}
+                    </Box>
+                );
+            },
         },
     ];
 
@@ -84,31 +154,62 @@ const ListOfBuys: React.FC = () => {
     }
 
     return (
-        <DataGrid
-            rows={buys}
-            rowCount={totalBuy}
-            columns={columns}
-            getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0
-                ? 'even-row'
-                : 'odd-row'
-            }
-            disableColumnSelector
-            disableRowSelectionOnClick
-            autoHeight
-            initialState={{
-                pagination: {
-                    paginationModel: {
-                        pageSize: paginationModel.pageSize,
-                        page: paginationModel.page,
+        <>
+            <DataGrid
+                rows={buys}
+                rowCount={totalBuy}
+                columns={columns}
+                getRowClassName={(params) =>
+                    params.indexRelativeToCurrentPage % 2 === 0
+                    ? 'even-row'
+                    : 'odd-row'
+                }
+                disableColumnSelector
+                disableRowSelectionOnClick
+                autoHeight
+                initialState={{
+                    pagination: {
+                        paginationModel: {
+                            pageSize: paginationModel.pageSize,
+                            page: paginationModel.page,
+                        },
                     },
-                },
-            }}
-            onPaginationModelChange={handlePaginationModelChange}
-            pageSizeOptions={[paginationModel.pageSize]}
-            getRowId={(row: any) => row.id}
-            paginationMode="server"
-        />
+                }}
+                onPaginationModelChange={handlePaginationModelChange}
+                pageSizeOptions={[paginationModel.pageSize]}
+                getRowId={(row: any) => row.id}
+                paginationMode="server"
+            />
+
+            <Dialog
+                open={!!buyToAnnul}
+                onClose={() => !annulMutation.isPending && setBuyToAnnul(null)}
+            >
+                <DialogTitle>Anular compra</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        ¿Seguro que querés anular la compra <strong>{buyToAnnul?.id}</strong>?
+                        Esta acción revertirá el stock asociado y no se puede deshacer.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setBuyToAnnul(null)}
+                        disabled={annulMutation.isPending}
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        color="error"
+                        variant="contained"
+                        onClick={handleConfirmAnnul}
+                        disabled={annulMutation.isPending}
+                    >
+                        {annulMutation.isPending ? 'Anulando...' : 'Anular'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 
