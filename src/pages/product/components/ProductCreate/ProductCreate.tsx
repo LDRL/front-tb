@@ -9,7 +9,7 @@ import { AppIconButton, FormDropdown,  FormInputImage,  FormInputNumber,  FormIn
 import { useForm } from 'react-hook-form';
 import CardForm from '../../../../components/Cards/CardForm'
 import LoadMask from '@/components/LoadMask/LoadMask';
-import { useFetchMarcaOptions, useFetchOptions, useFetchUnitOptions } from '@/hooks/useOption';
+import { useFetchMarcaOptions, useFetchOptions, useFetchPublicoOptions, useFetchUnitOptions } from '@/hooks/useOption';
 import { fetchProduct } from '../../services/product';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PrivateRoutes } from '@/models';
@@ -17,16 +17,18 @@ import { openModal, clearProduct } from '@/redux/productSlice';
 import Loading from '@/components/Loading';
 import "./ProductCreate.css"
 import { toast } from 'react-toastify';
-import { ProductForm, RowErrors } from '../../models/product.domain.type';
-import { useProductDetails } from '../../hooks/useProduct';
+import { ProductForm, RowErrors, VariantGroupErrors } from '../../models/product.domain.type';
+import { useProductDetails, useProductVariantGroups } from '../../hooks/useProduct';
 import { useSaveProduct } from '../../hooks/useSaveProduct';
 import { getErrorMessage } from '@/utils/axiosClient';
 import {
   buildPresentacionesPayload,
   validatePresentaciones,
 } from '../../schema/presentationRules';
+import { validateVariantGroups } from '../../schema/variantRules';
 import { PresentationsTab } from '../PresentationsTab/PresentationsTab';
 import { ProductPricesTab } from '../ProductPricesTab/ProductPricesTab';
+import { VariantsTab } from '../VariantsTab';
 
 const CreateProduct: React.FC = () => {
 
@@ -39,24 +41,38 @@ const CreateProduct: React.FC = () => {
   const { currentProduct } = useSelector((state: RootState) => state.product);
 
   const { control, handleSubmit, reset, setValue, watch} = useForm<ProductForm>({
-    defaultValues: { name: '', hasExpiration: false },
+    defaultValues: { name: '', hasExpiration: false, hasVariants: false, variantes: [] },
   });
 
   const hasExpiration = watch('hasExpiration');
+  const hasVariants = watch('hasVariants');
 
 
   const {data: options, isLoading, isError} = useFetchOptions();
   const {data: marcaOptions, isLoading: isMarcaLoading, isError: isMarcaError} = useFetchMarcaOptions();
 
   const {data: unitOptions} =   useFetchUnitOptions();
+  const {data: publicoOptions} = useFetchPublicoOptions();
 
   const {
     rows, addEmptyRow, updateRow, deleteRow, updateRowPrecios, hydrateRows, clearRows
   } = useProductDetails();
 
+  const {
+    groups: variantGroups,
+    flatRows: variantFlatRows,
+    addGroup,
+    updateGroup,
+    setGroupTallas,
+    removeGroup,
+    hydrateGroups,
+    clearGroups,
+  } = useProductVariantGroups();
+
   const { saveProduct, isSaving } = useSaveProduct();
 
   const [rowErrors, setRowErrors] = useState<Record<string, RowErrors>>({});
+  const [variantGroupErrors, setVariantGroupErrors] = useState<Record<string, VariantGroupErrors>>({});
 
   useEffect(() => {
     if (!id) {
@@ -69,11 +85,16 @@ const CreateProduct: React.FC = () => {
         idCategory: undefined,
         idBrand: undefined,
         idPresentation: undefined,
+        idPublico: null,
         hasExpiration: false,
-      });
+        hasVariants: false,
+        variantes: [],
+      } as Partial<ProductForm>);
 
       clearRows();
+      clearGroups();
       setRowErrors({});
+      setVariantGroupErrors({});
       setActiveTab(0);
       setSubtitulo("Nuevo");
       return;
@@ -92,18 +113,34 @@ const CreateProduct: React.FC = () => {
     };
 
     fetchProductData();
-  }, [id, dispatch, reset, clearRows, setRowErrors, setActiveTab]);
+  }, [id, dispatch, reset, clearRows, clearGroups]);
 
   useEffect(() => {
     if (currentProduct && id) {
-      reset(currentProduct);
+      reset({
+        ...currentProduct,
+        hasVariants: !!currentProduct.hasVariants,
+        idPublico: currentProduct.idPublico ?? null,
+      } as ProductForm);
       setSubtitulo("Editar");
       hydrateRows(currentProduct.presentacions || []);
+      hydrateGroups(currentProduct.variantes || []);
     }
-  }, [currentProduct, id, reset, hydrateRows]);
+  }, [currentProduct, id, reset, hydrateRows, hydrateGroups]);
+
+  useEffect(() => {
+    if (!hasVariants && activeTab === 3) {
+      setActiveTab(0);
+    }
+    if (!hasVariants) {
+      clearGroups();
+      setVariantGroupErrors({});
+    }
+  }, [hasVariants, activeTab, clearGroups]);
 
   const onSubmit = async (data: ProductForm) => {
     setRowErrors({});
+    setVariantGroupErrors({});
 
     const result = validatePresentaciones(rows);
 
@@ -114,13 +151,23 @@ const CreateProduct: React.FC = () => {
       return;
     }
 
-    const presentacions = buildPresentacionesPayload(rows);
+    const variantResult = validateVariantGroups(variantGroups, !!data.hasVariants);
+    if (!variantResult.ok) {
+      setVariantGroupErrors(variantResult.errors);
+      setActiveTab(3);
+      toast.error(variantResult.message);
+      return;
+    }
 
-    const newProduct = {
+    const presentacions = buildPresentacionesPayload(rows);
+    const variantes = data.hasVariants ? variantFlatRows : [];
+
+    const newProduct: ProductForm = {
       ...data,
       idPresentation: presentacions[0].idPresentation,
-      presentacions
-    }
+      presentacions,
+      variantes,
+    };
 
     try {
       const outcome = await saveProduct({ form: newProduct, product: currentProduct });
@@ -190,6 +237,7 @@ const CreateProduct: React.FC = () => {
             <Tab label="Información general" />
             <Tab label="Presentaciones" />
             <Tab label="Precios" />
+            <Tab label="Variantes" disabled={!hasVariants} />
           </Tabs>
 
           {/* ── Tab: Información general ── */}
@@ -232,6 +280,14 @@ const CreateProduct: React.FC = () => {
                       options={marcaOptions || []}
                     />
 
+                    <FormDropdown
+                      name="idPublico"
+                      control={control}
+                      label="Público objetivo"
+                      options={publicoOptions || []}
+                      disabled={!hasVariants}
+                    />
+
                     <FormInputNumber
                       name="stockMinimum"
                       label="Stock Minimo"
@@ -264,6 +320,24 @@ const CreateProduct: React.FC = () => {
                         onChange={(value) => setValue('hasExpiration', value)}
                         color="var(--color-primary)"
                         label="Controla vencimiento (requiere fecha de vencimiento en cada compra)"
+                      />
+                </div>
+
+                <div className='section' >
+                      <IosSwitch
+                        name="hasVariants"
+                        size="small"
+                        checked={!!hasVariants}
+                        onChange={(value) => {
+                          setValue('hasVariants', value);
+                          if (!value) {
+                            setValue('idPublico', null);
+                            clearGroups();
+                            setVariantGroupErrors({});
+                          }
+                        }}
+                        color="var(--color-primary)"
+                        label="Tiene variantes (habilita la pestaña de variantes)"
                       />
                 </div>
               
@@ -306,6 +380,18 @@ const CreateProduct: React.FC = () => {
             <ProductPricesTab
               rows={rows}
               updateRowPrecios={updateRowPrecios}
+            />
+          )}
+
+          {/* ── Tab: Variantes ── */}
+          {activeTab === 3 && hasVariants && (
+            <VariantsTab
+              groups={variantGroups}
+              groupErrors={variantGroupErrors}
+              addGroup={addGroup}
+              updateGroup={updateGroup}
+              setGroupTallas={setGroupTallas}
+              removeGroup={removeGroup}
             />
           )}
 

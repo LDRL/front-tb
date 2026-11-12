@@ -83,15 +83,17 @@ const ListOfProducts: React.FC = () => {
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'center',
-                            py: 0.5,
+                            justifyContent: 'flex-start',
+                            width: '100%',
+                            py: 0.25,
+                            gap: 0.25,
                         }}
                     >
                         {detalles.map((detalle, index) => (
                             <Typography
                                 key={`${detalle.idPresentation}-${index}`}
                                 variant="body2"
-                                sx={{ lineHeight: 1.4 }}
+                                sx={{ lineHeight: 1.5, whiteSpace: 'normal', wordBreak: 'break-word' }}
                             >
                                 {resolvePresentationName(detalle)}
                             </Typography>
@@ -115,18 +117,29 @@ const ListOfProducts: React.FC = () => {
                 const imageUrl = params.value || urlSinImage;
 
                 return (
-                <img
-                    src={imageUrl}
-                    alt="producto"
-                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                    e.currentTarget.src = urlSinImage; // 🔥 fallback si falla la URL
-                    }}
-                    style={{
-                        width: 50,
-                        height: 50,
-                        objectFit: "cover"                    
-                    }}
-                />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%',
+                            height: '100%',
+                            minHeight: 52,
+                        }}
+                    >
+                        <img
+                            src={imageUrl}
+                            alt="producto"
+                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                                e.currentTarget.src = urlSinImage; // 🔥 fallback si falla la URL
+                            }}
+                            style={{
+                                width: 50,
+                                height: 50,
+                                objectFit: 'cover',
+                            }}
+                        />
+                    </Box>
                 );
             },
             },
@@ -189,6 +202,21 @@ const ListOfProducts: React.FC = () => {
                 disableColumnSelector
                 disableRowSelectionOnClick
                 autoHeight
+                getRowHeight={(params) => {
+                    const product = products.find((p) => p.productCode === params.id);
+                    const count = product?.presentacions?.length ?? 0;
+                    if (count <= 1) return 52;
+                    return 20 + count * 24;
+                }}
+                sx={{
+                    '& .MuiDataGrid-cell': {
+                        alignItems: 'flex-start',
+                        py: 1,
+                    },
+                    '& .MuiDataGrid-columnHeader': {
+                        alignItems: 'center',
+                    },
+                }}
                 initialState={{
                     pagination: {
                         paginationModel: {

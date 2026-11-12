@@ -48,14 +48,16 @@ export const mapApiToProduct = (p: ApiProduct): Product => {
     idPresentation: p.idpresentacion,
     idCategory: p.idcategoria,
     idUnit: p.idunidad,
+    idPublico: p.idpublico ?? p.Publico?.id ?? null,
 
     imageUrl: p.imageUrl,
     image: p.imageUrl,
 
-    hasExpiration: p.controla_vencimiento,
+    hasExpiration: !!p.controla_vencimiento,
+    hasVariants: !!p.tiene_variantes,
     stockMinimum: p.stock_minimo,
 
-  presentacions: p.Presentaciones?.map(pres => ({
+    presentacions: p.Presentaciones?.map(pres => ({
       idprodPresenta: pres.idprodPresenta,
       idPresentation: pres.idpresentacion,
       baseQuantity: toNumber(pres.cantidad_base),
@@ -69,6 +71,17 @@ export const mapApiToProduct = (p: ApiProduct): Product => {
         tipoprecio: precio.tipoprecio,
       })),
     })) || [],
+
+    variantes: (p.variantes || []).map(v => ({
+      idvariante: v.idvariante,
+      sku: v.sku ?? '',
+      estado: v.estado,
+      idtalla: v.talla?.id ?? null,
+      idcolor: v.color?.id ?? null,
+      tallaNombre: v.talla?.nombre ?? null,
+      colorNombre: v.color?.nombre ?? null,
+      colorHex: v.color?.hex ?? null,
+    })),
   };
 };
 
@@ -84,8 +97,10 @@ export const mapProductToApi = (p: ProductForm): ApiCreateProduct => ({
   idmarca: p.idBrand,
   idpresentacion: p.idPresentation,
   idunidad: p.idUnit,
+  idpublico: p.idPublico ?? null,
   descripcion: p.description,
   controla_vencimiento: p.hasExpiration,
+  tiene_variantes: !!p.hasVariants,
   stock_minimo: p.stockMinimum,
   presentaciones: p.presentacions.map(d => ({
     idpresentacion: d.idPresentation,
@@ -101,7 +116,18 @@ export const mapProductToApi = (p: ProductForm): ApiCreateProduct => ({
         ...(p.idprecios != null ? { idprecios: p.idprecios } : {}),
       }))
     } : {}),
-  }))
+  })),
+  ...(p.hasVariants
+    ? {
+        variantes: (p.variantes || []).map(v => ({
+          ...(v.idvariante != null ? { idvariante: v.idvariante } : {}),
+          idtalla: v.idtalla ?? null,
+          idcolor: v.idcolor ?? null,
+          sku: v.sku && String(v.sku).trim() !== '' ? String(v.sku).trim() : null,
+          estado: v.estado ?? 1,
+        })),
+      }
+    : { variantes: [] }),
 });
 
 
@@ -114,6 +140,7 @@ export const productFormToProduct = ( form: ProductForm ): Product => {
     idBrand: form.idBrand,
     idCategory: form.idCategory,
     idUnit: form.idUnit,
+    idPublico: form.idPublico ?? null,
 
     // Si tu backend necesita objetos completos,
     // aquí puedes llenarlos después con los datos reales
@@ -146,10 +173,10 @@ export const productFormToProduct = ( form: ProductForm ): Product => {
     baseQuantity: form.baseQuantity,
 
     presentacions: form.presentacions ?? [],
+    variantes: form.variantes ?? [],
 
     hasExpiration: form.hasExpiration,
+    hasVariants: !!form.hasVariants,
     stockMinimum: form.stockMinimum
-
-    
   };
 };

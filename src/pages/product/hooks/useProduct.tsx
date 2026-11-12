@@ -13,6 +13,8 @@ import axiosClient from '@/utils/axiosClient';
 import { RootState } from '@/redux/store';
 
 import { presentationsReducer } from './presentationsReducer';
+import { variantsReducer } from './variantsReducer';
+import { variantsGroupReducer, flattenVariantGroups } from './variantsGroupReducer';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const productUrl = `${apiUrl}productos`;
@@ -107,19 +109,22 @@ export const useCreateProduct = () => {
 
       // agregar campos normales
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "presentaciones") {
-            formData.append(key, JSON.stringify(value));
+        if (value === undefined) return;
+        if (key === "presentaciones" || key === "variantes") {
+          formData.append(key, JSON.stringify(value));
+        } else if (typeof value === "boolean") {
+          formData.append(key, value ? "true" : "false");
+        } else if (value === null) {
+          formData.append(key, "");
         } else {
-            formData.append(key, value);
+          formData.append(key, String(value));
         }
-    });
+      });
 
       // agregar imagen
       if (newProduct.image instanceof File) {
         formData.append("imagen", newProduct.image);
       }
-
-
 
       const [error, producto] = await fetchProductCreate(
         `${apiUrl}productos`,
@@ -155,8 +160,13 @@ export const useUpdateProduct = () => {
 
             // agregar campos normales
             Object.entries(dataNew).forEach(([key, value]) => {
-                if (key === "presentaciones") {
+                if (value === undefined) return;
+                if (key === "presentaciones" || key === "variantes") {
                     formData.append(key, JSON.stringify(value));
+                } else if (typeof value === "boolean") {
+                    formData.append(key, value ? "true" : "false");
+                } else if (value === null) {
+                    formData.append(key, "");
                 } else {
                     formData.append(key, String(value));
                 }
@@ -210,6 +220,54 @@ export const useProductDetails = () => {
     updateRowPrecios,
     hydrateRows,
     clearRows,
+  };
+};
+
+export const useProductVariants = () => {
+  const [rows, dispatch] = useReducer(variantsReducer, []);
+
+  const addEmptyRow = useCallback(() => dispatch({ type: 'add' }), []);
+  const updateRow = useCallback((id: string, patch: Partial<import('../models/product.domain.type').VariantDetail>) =>
+    dispatch({ type: 'update', id, patch }), []);
+  const deleteRow = useCallback((id: string) => dispatch({ type: 'remove', id }), []);
+  const hydrateRows = useCallback((variantes: import('../models/product.domain.type').VariantDetail[]) =>
+    dispatch({ type: 'hydrate', variantes }), []);
+  const clearRows = useCallback(() => dispatch({ type: 'clear' }), []);
+
+  return {
+    rows,
+    addEmptyRow,
+    updateRow,
+    deleteRow,
+    hydrateRows,
+    clearRows,
+  };
+};
+
+export const useProductVariantGroups = () => {
+  const [groups, dispatch] = useReducer(variantsGroupReducer, []);
+
+  const addGroup = useCallback(() => dispatch({ type: 'addGroup' }), []);
+  const updateGroup = useCallback((id: string, patch: Partial<import('../models/product.domain.type').VariantGroupDetail>) =>
+    dispatch({ type: 'updateGroup', id, patch }), []);
+  const setGroupTallas = useCallback((id: string, tallas: import('../models/product.domain.type').VariantGroupTalla[]) =>
+    dispatch({ type: 'setGroupTallas', id, tallas }), []);
+  const removeGroup = useCallback((id: string) => dispatch({ type: 'removeGroup', id }), []);
+  const hydrateGroups = useCallback((variantes: import('../models/product.domain.type').VariantDetail[]) =>
+    dispatch({ type: 'hydrate', variantes }), []);
+  const clearGroups = useCallback(() => dispatch({ type: 'clear' }), []);
+
+  const flatRows = flattenVariantGroups(groups);
+
+  return {
+    groups,
+    flatRows,
+    addGroup,
+    updateGroup,
+    setGroupTallas,
+    removeGroup,
+    hydrateGroups,
+    clearGroups,
   };
 };
 

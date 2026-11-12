@@ -324,3 +324,119 @@ const SucursalAdapter = (roles: ApiSucursal[]): Option[] => {
         label: role.nombre,
     }));
 };
+
+// Publico objetivo
+interface ApiPublicoObjetivo {
+    _id: number;
+    nombre: string;
+    estado?: boolean | number;
+}
+
+interface ApiPublicoResponse {
+    message?: string;
+    data: ApiPublicoObjetivo[];
+    meta?: { total: number };
+    ok?: boolean;
+}
+
+export const useFetchPublicoOptions = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['dropdownPublico'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiPublicoResponse>(`${apiUrl}publicos/`);
+            return PublicosAdapter(response.data.data);
+        },
+    });
+};
+
+const PublicosAdapter = (items: ApiPublicoObjetivo[]): Option[] => {
+    return items.map((item) => ({
+        value: item._id,
+        label: item.nombre,
+    }));
+};
+
+// Tallas
+export interface ApiTalla {
+    _id: number;
+    nombre: string;
+    tipo?: 'ROPA' | 'CALZADO' | string;
+    orden?: number;
+    estado?: boolean | number;
+}
+
+interface ApiTallaResponse {
+    message?: string;
+    data: ApiTalla[];
+    meta?: { total: number };
+    ok?: boolean;
+}
+
+export const useFetchTallaOptions = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['dropdownTalla'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiTallaResponse>(`${apiUrl}tallas/`);
+            return TallasAdapter(response.data.data);
+        },
+    });
+};
+
+export const useFetchTallasCatalog = () => {
+    return useQuery<ApiTalla[], Error>({
+        queryKey: ['catalogTallas'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiTallaResponse>(`${apiUrl}tallas/`);
+            return response.data.data || [];
+        },
+    });
+};
+
+const TallasAdapter = (items: ApiTalla[]): Option[] => {
+    return items.map((item) => ({
+        value: item._id,
+        label: item.tipo ? `${item.nombre} (${item.tipo})` : item.nombre,
+    }));
+};
+
+// Colores
+export interface ApiColor {
+    _id: number;
+    nombre: string;
+    hex?: string | null;
+    estado?: boolean | number;
+}
+
+interface ApiColorResponse {
+    message?: string;
+    data: ApiColor[];
+    meta?: { total: number };
+    ok?: boolean;
+}
+
+export const useFetchColorOptions = () => {
+    return useQuery<Option[], Error>({
+        queryKey: ['dropdownColor'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiColorResponse>(`${apiUrl}colores/`);
+            return ColoresAdapter(response.data.data);
+        },
+    });
+};
+
+export const useFetchColoresCatalog = () => {
+    return useQuery<ApiColor[], Error>({
+        queryKey: ['catalogColores'],
+        queryFn: async () => {
+            const response = await axiosClient.get<ApiColorResponse>(`${apiUrl}colores/`);
+            return response.data.data || [];
+        },
+    });
+};
+
+const ColoresAdapter = (items: ApiColor[]): Option[] => {
+    return items.map((item) => ({
+        value: item._id,
+        label: item.hex ? `${item.nombre} (${item.hex})` : item.nombre,
+    }));
+};

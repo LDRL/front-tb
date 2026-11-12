@@ -16,8 +16,6 @@ interface CartItemProps {
 const urlSinImage = "/sinImagen.png";
 
 
-
-
 const CartItem: React.FC<CartItemProps> = ({ item, onIncrease, onDecrease, onSetAmount, onRemove }) => {
   const [inputValue, setInputValue] = useState(String(item.amount));
 
@@ -42,7 +40,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onIncrease, onDecrease, onSet
     }
   };
 
-  const imageUrl = item.imageUrl || urlSinImage; 
+  const imageUrl = item.imageUrl || urlSinImage;
 
   return (
     <Box

@@ -37,6 +37,31 @@ export interface ApiProductPresentacionResponse {
   Precios?: ApiPrecioCliente[];
 }
 
+export interface ApiPublicoObjetivo {
+  id: number;
+  nombre: string;
+}
+
+export interface ApiVarianteTalla {
+  id: number;
+  nombre: string;
+  tipo?: string;
+}
+
+export interface ApiVarianteColor {
+  id: number;
+  nombre: string;
+  hex?: string | null;
+}
+
+export interface ApiProductVarianteResponse {
+  idvariante: number;
+  sku: string | null;
+  estado: number;
+  talla: ApiVarianteTalla | null;
+  color: ApiVarianteColor | null;
+}
+
 export interface ApiProduct {
   codigoprod: number;
   nombre: string;
@@ -49,14 +74,18 @@ export interface ApiProduct {
   idpresentacion: number;
   idcategoria: number;
   idunidad: number;
+  idpublico?: number | null;
   estado: number;
-  controla_vencimiento: false;
+  controla_vencimiento: boolean;
+  tiene_variantes?: boolean;
 
   Marca: ApiBrand;
   //Presentacion: ApiPresentation;
   Categoria: ApiCategory;
   Unidad: ApiUnidad;
+  Publico?: ApiPublicoObjetivo | null;
   Presentaciones?: ApiProductPresentacionResponse[];
+  variantes?: ApiProductVarianteResponse[];
   stock_minimo: number;
 }
 
@@ -74,9 +103,12 @@ export interface ApiCreateProduct {
   idmarca: number;
   idpresentacion: number;
   idunidad: number;
+  idpublico?: number | null;
   descripcion: string;
   controla_vencimiento: boolean;
+  tiene_variantes: boolean;
   presentaciones: ApiProductPresentacion[];
+  variantes?: ApiProductVariante[];
   stock_minimo: number;
 }
 
@@ -94,4 +126,12 @@ interface ApiProductPresentacion {
 	codigo_barras:string,
   idprodPresenta?: number,
   precios?: ApiPrecioClienteCreate[]
+}
+
+interface ApiProductVariante {
+  idvariante?: number;
+  idtalla?: number | null;
+  idcolor?: number | null;
+  sku?: string | null;
+  estado?: number | boolean;
 }

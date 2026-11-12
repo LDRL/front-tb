@@ -184,7 +184,7 @@
 }
 
 .label_oculto {
-  opacity: 0;
+  display: none;
 }
 
 .Links.active,

@@ -15,11 +15,14 @@ const productSlice = createSlice({
           idPresentation: action.payload.idPresentation,
           idCategory: action.payload.idCategory,
           idUnit: action.payload.idUnit,
+          idPublico: action.payload.idPublico ?? null,
           description: action.payload.description,
           image: action.payload.image,
           hasExpiration: action.payload.hasExpiration ?? false,
+          hasVariants: action.payload.hasVariants ?? false,
 
           presentacions: action.payload.presentacions ?? [],
+          variantes: action.payload.variantes ?? [],
 
           price: action.payload.price ?? 0,
           barCode: action.payload.barCode ?? '',
