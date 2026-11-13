@@ -13,8 +13,7 @@ interface CartItemProps {
   onRemove: (id: string) => void;
 }
 
-const urlSinImage = "/sinImagen.png";
-
+const urlSinImage = '/sinImagen.png';
 
 const CartItem: React.FC<CartItemProps> = ({ item, onIncrease, onDecrease, onSetAmount, onRemove }) => {
   const [inputValue, setInputValue] = useState(String(item.amount));
@@ -34,105 +33,97 @@ const CartItem: React.FC<CartItemProps> = ({ item, onIncrease, onDecrease, onSet
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      (e.currentTarget as HTMLInputElement).blur();
+      (e.target as HTMLInputElement).blur();
     }
   };
 
-  const imageUrl = item.imageUrl || urlSinImage;
+  const subtitle = [item.presentationName || 'Unidad', item.variantLabel].filter(Boolean).join(' · ');
 
   return (
     <Box
       sx={{
+        p: 1.5,
         display: 'flex',
         gap: 1.5,
-        p: 1.5,
-        border: '1px solid #eee',
-        borderRadius: 2,
+        borderBottom: '1px solid #f0f0f0',
         bgcolor: '#fff',
-        position: 'relative'
+        '&:hover': { bgcolor: '#fafafa' },
       }}
     >
       <Box
+        component="img"
+        src={item.imageUrl || urlSinImage}
+        alt={item.name}
         sx={{
-          width: 64,
-          height: 64,
-          borderRadius: 1.5,
-          overflow: 'hidden',
-          bgcolor: '#f7f7f7',
-          flexShrink: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+          width: 48,
+          height: 48,
+          objectFit: 'cover',
+          borderRadius: 1,
+          border: '1px solid #eee',
+          bgcolor: '#f9f9f9',
         }}
-      >
-        { 
-          <img src={imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
-        }
-      </Box>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.5, minWidth: 0 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
-          <Box sx={{ minWidth: 0, pr: 4 }}>
-            <Typography variant="body2" sx={{ fontWeight: 600 }} title={item.name}>
-              {item.name}
-            </Typography>
-          </Box>
+      />
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }} noWrap title={item.name}>
+            {item.name}
+          </Typography>
+          <IconButton
+            size="small"
+            onClick={() => onRemove(item.id)}
+            sx={{ p: 0.25, ml: 0.5, mt: -0.25, color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+          >
+            <CloseIcon sx={{ fontSize: 16 }} />
+          </IconButton>
         </Box>
-        <Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0, gap: 0.5 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                {item.categoryName && (
-                  <Typography variant="caption" color="text.secondary" noWrap>
-                    Categoría: {item.categoryName}
-                  </Typography>
-                )}
-                {item.brandName && (
-                  <Typography variant="caption" color="text.secondary" noWrap>
-                    Marca: {item.brandName}
-                  </Typography>
-                )}
-                {item.presentationName && (
-                  <Typography variant="caption" color="text.secondary" noWrap>
-                    Presentación: {item.presentationName}
-                  </Typography>
-                )}
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-                <IconButton size="small" onClick={() => onDecrease(item.id)} sx={{ p: 0.25 }}>
-                  <RemoveIcon fontSize="small" />
-                </IconButton>
-                <TextField
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value.replace(/[^0-9]/g, ''))}
-                  onBlur={handleBlur}
-                  onKeyDown={handleKeyDown}
-                  size="small"
-                  inputProps={{ style: { textAlign: 'center', width: 34, padding: '1px 2px' } }}
-                />
-                <IconButton size="small" onClick={() => onIncrease(item.id)} sx={{ p: 0.25 }}>
-                  <AddIcon fontSize="small" />
-                </IconButton>
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mt: 0.25 }}>
 
-              
-              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.15 }}>
-                P.U. Q {item.price.toFixed(2)}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.15, pr: 1 }}>
-                Subtotal: Q {item.subtotal.toFixed(2)}
-              </Typography>
-            </Box>
+        <Typography variant="caption" color="text.secondary" noWrap sx={{ mb: 0.5 }} title={subtitle}>
+          {subtitle} · Q. {item.price.toFixed(2)}
+        </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', border: '1px solid #e0e0e0', borderRadius: 1, overflow: 'hidden', height: 28 }}>
+            <IconButton
+              size="small"
+              onClick={() => onDecrease(item.id)}
+              sx={{ p: 0.5, borderRadius: 0, height: '100%', '&:hover': { bgcolor: '#f0f0f0' } }}
+            >
+              <RemoveIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+            <TextField
+              variant="standard"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+              InputProps={{
+                disableUnderline: true,
+                sx: {
+                  width: 32,
+                  input: {
+                    textAlign: 'center',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    p: 0,
+                  },
+                },
+              }}
+            />
+            <IconButton
+              size="small"
+              onClick={() => onIncrease(item.id)}
+              sx={{ p: 0.5, borderRadius: 0, height: '100%', '&:hover': { bgcolor: '#f0f0f0' } }}
+            >
+              <AddIcon sx={{ fontSize: 14 }} />
+            </IconButton>
           </Box>
-          
+          <Typography variant="body2" sx={{ fontWeight: 700, color: 'text.primary' }}>
+            Q. {item.subtotal.toFixed(2)}
+          </Typography>
         </Box>
       </Box>
-      <IconButton size="small" color="error" onClick={() => onRemove(item.id)} sx={{ position: 'absolute', top: 2, right: 2 }}>
-        <CloseIcon fontSize="small" />
-      </IconButton>
     </Box>
   );
 };

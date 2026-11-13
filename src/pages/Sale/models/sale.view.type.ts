@@ -15,8 +15,11 @@ export interface HeaderS {
 export interface HeaderDetailSale {
     id: number;
     amount: number | string;
+    quantity?: number;
     cost: number;
+    subtotal?: number;
     product: string;
+    variant?: string;
 }
 
 interface Pay {

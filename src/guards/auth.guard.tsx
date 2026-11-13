@@ -20,7 +20,7 @@ export const AuthGuard = () => {
 
       <div className={styles.custom_flex_min_h}>
         <Header />
-        <main className="">
+        <main style={{ flex: 1, minHeight: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
           <Outlet />
         </main>
       </div>

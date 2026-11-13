@@ -365,10 +365,16 @@ export const FormInputNumber = <T extends FieldValues>({
               const [intPart, decPart] = value.split(".");
               if (decPart !== undefined && decPart.length > maxDecimals) {
                 value = `${intPart}.${decPart.slice(0, maxDecimals)}`;
+                e.target.value = value;
               }
             }
 
-            field.onChange(value === "" ? "" : Number(value));
+            const next = value === "" ? "" : Number(value);
+            // Si el valor numérico no cambia (ej. 550.50 -> 550.5) forzamos el display truncado
+            if (maxDecimals !== undefined) {
+              e.target.value = value;
+            }
+            field.onChange(next);
           }}
           inputProps={maxDecimals !== undefined ? { step: "0.01", min: 0 } : undefined}
           InputProps={

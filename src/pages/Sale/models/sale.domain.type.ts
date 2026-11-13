@@ -7,6 +7,8 @@ export interface Detail{
     name?: string,
     subtotal?: number,
     id?: string,
+    idvariante?: number | null,
+    variantLabel?: string,
 }
 
 export interface TypeOfSale {

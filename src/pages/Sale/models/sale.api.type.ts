@@ -56,10 +56,20 @@ interface ApiProduct {
     nombre: string,
 }
 
+export interface ApiHeaderDetailVariante {
+    idvariante?: number;
+    sku?: string | null;
+    estado?: number;
+    Talla?: { _id?: number; nombre?: string; tipo?: string } | null;
+    Color?: { _id?: number; nombre?: string; hex?: string | null } | null;
+}
+
 export interface ApiHeaderDetailSale{
     _id: number,
     cantidad: number,
-    precio: number,    
+    precio: number,
+    idvariante?: number | null,
+    Variante?: ApiHeaderDetailVariante | null;
     ProductoPresentacion: ApiProductoPresentacion;
     
 }
@@ -103,6 +113,7 @@ export interface CreateSaleDetail {
   idprodPresenta: number;
   cantidad: number;
   precio: number;
+  idvariante?: number | null;
 }
 
 export interface CreateSalePay {

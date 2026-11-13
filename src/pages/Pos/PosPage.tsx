@@ -1,100 +1,146 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Typography } from '@mui/material';
+import { toast } from 'react-toastify';
 import ProductGrid from './components/ProductGrid';
 import CartPanel from './components/CartPanel';
 import { usePosCart } from './hooks/usePosCart';
-import { PosProduct } from './models/pos.types';
+import { PosSellable } from './models/pos.types';
 import PosCheckoutDialog from './components/PosCheckoutDialog';
-
-const getPriceForClientType = (product: PosProduct, idTypeCli?: number) => {
-  if (product.presentacions && product.presentacions.length > 0) {
-    const presentation = product.presentacions[0];
-    const precios = presentation.precios || [];
-    if (idTypeCli && precios.length > 0) {
-      const found = precios.find((p) => Number(p.idtipoCli) === Number(idTypeCli));
-      if (found && found.precio !== undefined && found.precio !== null) {
-        return Number(found.precio);
-      }
-    }
-    if (presentation.price !== undefined && presentation.price !== null) {
-      return Number(presentation.price);
-    }
-  }
-  return 0;
-};
+import VariantSelectDialog from './components/VariantSelectDialog';
+import { getActiveVariants, getPresentationPrice } from './utils/posPricing';
+import { useFetchTypeClientsOptions } from '@/hooks/useOption';
 
 const PosPage: React.FC = () => {
-  const { rows, addItem, increase, decrease, setAmount, removeItem, clearCart, total } = usePosCart();
+  const { rows, addItem, increase, decrease, setAmount, removeItem, reprice, clearCart, total } = usePosCart();
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [idTypeCli] = useState<number>(1);
+  const [variantSellable, setVariantSellable] = useState<PosSellable | null>(null);
+  const [clientTypeId, setClientTypeId] = useState<number | undefined>(undefined);
+  const { data: clientTypeOptions = [] } = useFetchTypeClientsOptions();
 
-  // buildImageUrl not used in this file now
+  useEffect(() => {
+    if (clientTypeId != null || clientTypeOptions.length === 0) return;
+    const minorista = (clientTypeOptions as { value: number; label: string }[]).find((o) =>
+      /minor/i.test(o.label || '')
+    );
+    // Default: minorista si existe, sino precio de venta (base)
+    if (minorista) {
+      setClientTypeId(Number(minorista.value));
+    } else {
+      setClientTypeId(undefined);
+    }
+  }, [clientTypeId, clientTypeOptions]);
 
-  const handleAddProduct = (product: PosProduct) => {
-    if (!product.presentacions || product.presentacions.length === 0) {
+  // Reprice cart whenever client type changes (prevents showing/paying mismatched prices)
+  useEffect(() => {
+    reprice(clientTypeId);
+  }, [clientTypeId, reprice]);
+
+  const handleClientTypeChange = (id: number) => {
+    setClientTypeId(id);
+  };
+
+  const handleAddSellable = (sellable: PosSellable) => {
+    const { product, presentation } = sellable;
+
+    if (product.hasVariants) {
+      const active = getActiveVariants(product);
+      if (active.length === 0) {
+        toast.info('Este producto no tiene variantes activas disponibles');
+        return;
+      }
+      setVariantSellable(sellable);
       return;
     }
-    const presentation = product.presentacions[0];
-    const price = getPriceForClientType(product, idTypeCli);
-    const codProductPresentation = (presentation.idprodPresenta || presentation.id || `${product.productCode}-${presentation.idPresentation}`);
-    const rawImage = (product as any).imageUrl || (product as any).imagen || (presentation as any).imageUrl || (presentation as any).imagen;
-    const imageUrl = rawImage;
+
+    const price = getPresentationPrice(presentation, clientTypeId, null);
 
     addItem({
-      codProductPresentation: codProductPresentation as string | number,
+      codProductPresentation: presentation.idprodPresenta ?? presentation.idPresentation,
+      idvariante: null,
       productCode: product.productCode,
       name: product.name,
-      imageUrl: imageUrl,
+      imageUrl: product.imageUrl,
       brandName: product.brand?.name,
       categoryName: product.category?.name,
       presentationName: presentation.name,
-      price: price
+      price,
+      basePrice: presentation.price ?? 0,
+      precios: presentation.precios,
+      preciosVariante: presentation.preciosVariante,
+      stock: product.stock ?? null,
     });
   };
 
-  const handleSuccess = () => {
-    clearCart();
+  const handleAddVariantItem: React.ComponentProps<typeof VariantSelectDialog>['onAdd'] = (item) => {
+    addItem(item);
   };
 
+  const checkoutItems = useMemo(() => rows, [rows]);
+
   return (
-    <Box sx={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column', p: { xs: 1, sm: 2 } }}>
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h5">Punto de Venta (POS)</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Selecciona productos para agregar al carrito. Al continuar, se pedirá cliente y forma de pago.
-        </Typography>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', lg: 'row' },
+        flex: 1,
+        minHeight: 0,
+        height: '100%',
+        maxHeight: '100%',
+        gap: 2,
+        overflow: 'hidden',
+        p: { xs: 1, md: 2 }
+      }}
+    >
+      <Box sx={{ flex: { xs: '1 1 auto', lg: '1 1 0' }, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ mb: 1, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary' }}>Punto de venta</Typography>
+        </Box>
+        <ProductGrid
+          clientTypeId={clientTypeId}
+          clientTypeOptions={clientTypeOptions as { value: number; label: string }[]}
+          onClientTypeChange={handleClientTypeChange}
+          onAddSellable={handleAddSellable}
+        />
       </Box>
+
       <Box
         sx={{
-          flex: 1,
+          width: { xs: '100%', lg: 360, xl: 400 },
+          flexShrink: 0,
           minHeight: 0,
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
-          gap: 2
+          height: { xs: '45%', lg: '100%' },
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
-        <Box sx={{ height: '100%', minHeight: 0 }}>
-          <ProductGrid onAddProduct={handleAddProduct} />
-        </Box>
-        <Box sx={{ height: '100%', minHeight: 0 }}>
-          <CartPanel
-            items={rows}
-            total={total}
-            onIncrease={increase}
-            onDecrease={decrease}
-            onSetAmount={setAmount}
-            onRemove={removeItem}
-            onClear={clearCart}
-            onContinue={() => setCheckoutOpen(true)}
-          />
-        </Box>
+        <CartPanel
+          items={checkoutItems}
+          total={total}
+          onIncrease={increase}
+          onDecrease={decrease}
+          onSetAmount={setAmount}
+          onRemove={removeItem}
+          onClear={clearCart}
+          onContinue={() => setCheckoutOpen(true)}
+        />
       </Box>
+
+      <VariantSelectDialog
+        open={!!variantSellable}
+        sellable={variantSellable}
+        clientTypeId={clientTypeId}
+        onClose={() => setVariantSellable(null)}
+        onAdd={handleAddVariantItem}
+      />
+
       <PosCheckoutDialog
         open={checkoutOpen}
-        onClose={() => setCheckoutOpen(false)}
-        items={rows}
+        items={checkoutItems}
         total={total}
-        onSuccess={handleSuccess}
+        clientTypeId={clientTypeId}
+        onClientTypeChange={handleClientTypeChange}
+        onClose={() => setCheckoutOpen(false)}
+        onSuccess={clearCart}
       />
     </Box>
   );

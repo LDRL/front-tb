@@ -19,6 +19,7 @@ export interface ApiPrecioCliente {
   createdAt: string;
   updatedAt: string;
   TipoCliente: ApiTipoClienteRef;
+  idvariante?: number | null;
 }
 
 export interface ApiProductPresentacionResponse {
@@ -35,6 +36,7 @@ export interface ApiProductPresentacionResponse {
     estado: boolean;
   };
   Precios?: ApiPrecioCliente[];
+  PreciosVariante?: ApiPrecioCliente[];
 }
 
 export interface ApiPublicoObjetivo {
@@ -60,6 +62,9 @@ export interface ApiProductVarianteResponse {
   estado: number;
   talla: ApiVarianteTalla | null;
   color: ApiVarianteColor | null;
+  stock?: number | null;
+  stock_texto?: string | null;
+  variante_texto?: string | null;
 }
 
 export interface ApiProduct {
@@ -87,6 +92,9 @@ export interface ApiProduct {
   Presentaciones?: ApiProductPresentacionResponse[];
   variantes?: ApiProductVarianteResponse[];
   stock_minimo: number;
+  stock?: number | null;
+  stock_texto?: string | null;
+  stock_detalle?: string | null;
 }
 
 //Todo cuando se trabaje la vista de unidad

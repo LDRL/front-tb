@@ -53,25 +53,43 @@ function BuyShow() {
     {
         field: 'product',
         headerName: 'Producto',
-        flex: 1,
+        flex: 1.2,
+        minWidth: 220,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
-        width: 90
+    },
+    {
+        field: 'variant',
+        headerName: 'Variante',
+        flex: 1,
+        minWidth: 180,
+        renderCell: (params: GridRenderCellParams) => <>{params.value || '-'}</>,
     },
     {
         field: 'amount',
         headerName: 'Cantidad',
-        flex: 1,
+        flex: 0.9,
+        minWidth: 140,
         renderCell: (params: GridRenderCellParams) => <>{params.value}</>,
-        width:150
     },
     {
         field: 'cost',
         headerName: 'Precio',
-        flex: 1,
+        flex: 0.7,
+        minWidth: 120,
         renderCell: (params: GridRenderCellParams) => <>Q {Number(params.value).toFixed(2)}</>,
-        width:150
     },
-
+    {
+        field: 'subtotal',
+        headerName: 'Subtotal',
+        flex: 0.7,
+        minWidth: 120,
+        renderCell: (params: GridRenderCellParams) => {
+          const row = params.row as any;
+          const qty = row.quantity ?? Number(String(row.amount ?? '').split(' - ')[0]) ?? 0;
+          const subtotal = row.subtotal ?? qty * Number(row.cost ?? 0);
+          return <>Q {Number(subtotal).toFixed(2)}</>;
+        },
+    },
   ];
 
   useEffect(() => {

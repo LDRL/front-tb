@@ -46,6 +46,20 @@ export function SaleListAdapter(apiSaleList: ApiSale[]): Sale[] {
     return apiSaleList.map(SaleAdapter);
 }
 
+const variantLabelFromHeaderDetail = (d: any): string | undefined => {
+  const v = d?.Variante;
+  if (v) {
+    const parts: string[] = [];
+    if (v.Color?.nombre) parts.push(v.Color.nombre);
+    if (v.Talla?.nombre) parts.push(v.Talla.tipo ? `${v.Talla.nombre} (${v.Talla.tipo})` : v.Talla.nombre);
+    if (v.sku) parts.push(`SKU: ${v.sku}`);
+    if (parts.length) return parts.join(' - ');
+    if (v.idvariante != null) return `Variante #${v.idvariante}`;
+  }
+  if (d?.idvariante != null) return `Variante #${d.idvariante}`;
+  return undefined;
+};
+
 //SHOW HeaderSale
 export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
     return {
@@ -63,8 +77,11 @@ export const HeaderSaleAdapter = (sale: ApiHeaderSale): HeaderSale =>{
         details: (sale.Detalles ?? []).map((d) => ({
             id: d._id,
             amount: `${d.cantidad} - ${d.ProductoPresentacion.Presentacion.nombre}`,
-            cost: d.precio,
-            product: d.ProductoPresentacion.Producto.nombre
+            quantity: Number(d.cantidad),
+            cost: Number(d.precio),
+            subtotal: Number((Number(d.cantidad) * Number(d.precio)).toFixed(2)),
+            product: d.ProductoPresentacion.Producto.nombre,
+            variant: variantLabelFromHeaderDetail(d),
         })),
         
         pay:sale.Pago ? {
@@ -92,6 +109,7 @@ export const mapSaleToCreatePayload = (sale: Sale,idusuario: number,idsucursal: 
         idprodPresenta: d.codProductPresentation,
         cantidad: d.amount,
         precio: d.cost,
+        ...(d.idvariante != null ? { idvariante: d.idvariante } : {}),
     })),
     ...(sale.isQuote
         ? {}

@@ -16,14 +16,31 @@ export function generateTicket(adaptedData: HeaderSale, paymentTypeName: string,
     const { header, details } = adaptedData;
 
     const rows = details.map((d) => {
-        const amount = typeof d.amount === 'number' ? d.amount : Number(String(d.amount).split(' - ')[0]) || 0;
-        const lineTotal = d.cost * amount;
+        const qty = typeof d.amount === 'number'
+            ? d.amount
+            : Number(String(d.amount).split(' - ')[0]) || 0;
+
+        let description = String(d.product ?? '');
+        const variant = (d as any).variant ? String((d as any).variant) : '';
+        if (variant && !description.toLowerCase().includes(variant.toLowerCase())) {
+            description = `${description} - ${variant}`;
+        }
+        if (typeof d.amount === 'string') {
+            const parts = String(d.amount).split(' - ');
+            const presentation = parts.slice(1).join(' - ').trim();
+            if (presentation && !description.toLowerCase().includes(presentation.toLowerCase())) {
+                description = `${description} (${presentation})`;
+            }
+        }
+
+        const unitPrice = Number(d.cost ?? 0);
+        const lineTotal = unitPrice * qty;
         return `
             <tr>
-                <td>${escapeHtml(d.product)}</td>
-                <td class="center">${escapeHtml(d.amount)}</td>
-                <td class="right">Q ${Number(d.cost).toFixed(2)}</td>
-                <td class="right">Q ${lineTotal.toFixed(2)}</td>
+                <td class="center col-cant">${escapeHtml(qty)}</td>
+                <td class="col-desc">${escapeHtml(description)}</td>
+                <td class="right col-price">${unitPrice.toFixed(2)}</td>
+                <td class="right col-total">${lineTotal.toFixed(2)}</td>
             </tr>`;
     }).join('');
 
@@ -54,9 +71,13 @@ export function generateTicket(adaptedData: HeaderSale, paymentTypeName: string,
             border-top: 1px dashed #000;
             margin: 6px 0;
         }
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { border-bottom: 1px solid #000; text-align: left; }
-        td, th { padding: 2px 0; vertical-align: top; }
+        td, th { padding: 2px 2px; vertical-align: top; word-wrap: break-word; }
+        .col-cant { width: 10%; }
+        .col-desc { width: 48%; }
+        .col-price { width: 21%; }
+        .col-total { width: 21%; }
         .right { text-align: right; }
         .center { text-align: center; }
         .label { font-weight: bold; }
@@ -80,10 +101,10 @@ export function generateTicket(adaptedData: HeaderSale, paymentTypeName: string,
     <table>
         <thead>
             <tr>
-                <th>Producto</th>
-                <th class="center">Cant</th>
-                <th class="right">Precio</th>
-                <th class="right">Total</th>
+                <th class="center col-cant">Cant</th>
+                <th class="col-desc">Descripción</th>
+                <th class="right col-price">Precio</th>
+                <th class="right col-total">Total</th>
             </tr>
         </thead>
         <tbody>

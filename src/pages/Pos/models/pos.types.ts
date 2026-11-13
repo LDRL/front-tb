@@ -1,6 +1,10 @@
+import { Detail, PrecioCliente, Product } from '@/pages/product/models/product.domain.type';
+
 export interface PosCartItem {
   id: string;
   codProductPresentation: string | number;
+  idvariante?: number | null;
+  variantLabel?: string;
   productCode: number;
   name: string;
   imageUrl?: string;
@@ -10,23 +14,16 @@ export interface PosCartItem {
   price: number;
   amount: number;
   subtotal: number;
+  stock?: number | null;
+  precios?: PrecioCliente[];
+  preciosVariante?: PrecioCliente[];
+  basePrice?: number;
 }
 
-export interface PosProduct {
-  productCode: number;
-  name: string;
-  imageUrl?: string;
-  brand?: { id: number; name: string };
-  category?: { id: number; name: string };
-  presentacions?: Array<{
-    id?: string | number;
-    idprodPresenta?: number;
-    idPresentation: number;
-    name?: string;
-    price?: number;
-    barCode?: string;
-    baseQuantity?: number;
-    precios?: Array<{ idtipoCli: number; precio: number; tipoprecio?: string }>;
-  }>;
-  stockMinimum?: number;
+export type PosProduct = Product;
+
+export interface PosSellable {
+  key: string;
+  product: PosProduct;
+  presentation: Detail;
 }

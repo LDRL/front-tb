@@ -12,7 +12,9 @@ export interface HeaderH {
 export interface HeaderDetail {
   id: string;
   amount: number | string;
+  quantity?: number;
   cost: number;
+  subtotal?: number;
   product: string;
   variant?: string;
 }

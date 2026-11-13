@@ -6,12 +6,16 @@
 @media (min-width: 768px) {
   .custom_bg_gray{
     display: flex;
+    height: 100vh;
+    overflow: hidden;
   }
   .custom_flex_min_h {
     display: flex;
     flex: 1 1 0%;
     flex-direction: column;
     width: calc(100% - 220px);
+    min-height: 0;
+    height: 100%;
 
     background-color: rgb(255 255 255); /* Abarca la pantalla del main */
     

@@ -23,6 +23,9 @@ export interface Product {
   presentacions?: Detail[];
   variantes?: VariantDetail[];
   stockMinimum: number;
+  stock?: number | null;
+  stockTexto?: string | null;
+  stockDetalle?: string | null;
 }
 
 export interface Brand {
@@ -53,6 +56,7 @@ export interface PrecioCliente {
   idtipoCli: number;
   precio: number;
   tipoprecio: string;
+  idvariante?: number | null;
 }
 
 //Detail product 
@@ -65,6 +69,7 @@ export interface Detail {
   id?: string;
   idprodPresenta?: number;
   precios?: PrecioCliente[];
+  preciosVariante?: PrecioCliente[];
 }
 
 export interface RowErrors {
@@ -84,6 +89,9 @@ export interface VariantDetail {
   tallaNombre?: string | null;
   colorNombre?: string | null;
   colorHex?: string | null;
+  stock?: number | null;
+  stockTexto?: string | null;
+  varianteTexto?: string | null;
 }
 
 // Variante agrupada por color (UI): un color padre con varias tallas hijas

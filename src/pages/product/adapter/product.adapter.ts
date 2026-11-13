@@ -56,6 +56,9 @@ export const mapApiToProduct = (p: ApiProduct): Product => {
     hasExpiration: !!p.controla_vencimiento,
     hasVariants: !!p.tiene_variantes,
     stockMinimum: p.stock_minimo,
+    stock: p.stock ?? null,
+    stockTexto: p.stock_texto ?? null,
+    stockDetalle: p.stock_detalle ?? null,
 
     presentacions: p.Presentaciones?.map(pres => ({
       idprodPresenta: pres.idprodPresenta,
@@ -69,6 +72,14 @@ export const mapApiToProduct = (p: ApiProduct): Product => {
         idtipoCli: precio.idtipoCli,
         precio: toNumber(precio.precio),
         tipoprecio: precio.tipoprecio,
+        idvariante: precio.idvariante ?? null,
+      })),
+      preciosVariante: (pres.PreciosVariante || []).map(precio => ({
+        idprecios: precio.idprecios,
+        idtipoCli: precio.idtipoCli,
+        precio: toNumber(precio.precio),
+        tipoprecio: precio.tipoprecio,
+        idvariante: precio.idvariante ?? null,
       })),
     })) || [],
 
@@ -81,6 +92,9 @@ export const mapApiToProduct = (p: ApiProduct): Product => {
       tallaNombre: v.talla?.nombre ?? null,
       colorNombre: v.color?.nombre ?? null,
       colorHex: v.color?.hex ?? null,
+      stock: v.stock ?? null,
+      stockTexto: v.stock_texto ?? null,
+      varianteTexto: v.variante_texto ?? null,
     })),
   };
 };
