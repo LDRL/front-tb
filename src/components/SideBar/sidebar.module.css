@@ -91,23 +91,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
 }
 
 .Logocontent .imgcontent {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30px;
+  /*width: 30px; */
   cursor: pointer;
-  transition: transform 0.3s ease;
-  transform: scale(1.5);
+  /*transition: transform 0.3s ease;
+  transform: scale(1.5);*/
 }
 
 .Logocontent .imgcontent img {
   width: 100%;
-  animation: flotar 1.7s ease-in-out infinite alternate;
+  height: auto;
+  object-fit: contain; 
+  /*animation: flotar 1.7s ease-in-out infinite alternate;*/
 }
+
+.Logocontent_open .imgcontent img {
+  width: 50%;
+  height: 100px;
+  /*animation: flotar 1.7s ease-in-out infinite alternate;*/
+}
+
 
 .Logocontent_close {
   display: none;

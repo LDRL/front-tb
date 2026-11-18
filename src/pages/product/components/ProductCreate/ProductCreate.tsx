@@ -129,7 +129,7 @@ const CreateProduct: React.FC = () => {
   }, [currentProduct, id, reset, hydrateRows, hydrateGroups]);
 
   useEffect(() => {
-    if (!hasVariants && activeTab === 3) {
+    if (!hasVariants && activeTab === 1) {
       setActiveTab(0);
     }
     if (!hasVariants) {
@@ -137,6 +137,16 @@ const CreateProduct: React.FC = () => {
       setVariantGroupErrors({});
     }
   }, [hasVariants, activeTab, clearGroups]);
+
+  const tabOrder = hasVariants ? [0, 1, 2, 3] : [0, 2, 3];
+  const currentTabIndex = tabOrder.indexOf(activeTab);
+  const isLastTab = currentTabIndex === tabOrder.length - 1;
+
+  const goToNextTab = () => {
+    if (currentTabIndex >= 0 && currentTabIndex < tabOrder.length - 1) {
+      setActiveTab(tabOrder[currentTabIndex + 1]);
+    }
+  };
 
   const onSubmit = async (data: ProductForm) => {
     setRowErrors({});
@@ -146,7 +156,7 @@ const CreateProduct: React.FC = () => {
 
     if (!result.ok) {
       setRowErrors(result.errors);
-      setActiveTab(1);
+      setActiveTab(2);
       toast.error(result.message);
       return;
     }
@@ -154,7 +164,7 @@ const CreateProduct: React.FC = () => {
     const variantResult = validateVariantGroups(variantGroups, !!data.hasVariants);
     if (!variantResult.ok) {
       setVariantGroupErrors(variantResult.errors);
-      setActiveTab(3);
+      setActiveTab(1);
       toast.error(variantResult.message);
       return;
     }
@@ -235,9 +245,10 @@ const CreateProduct: React.FC = () => {
             sx={{ mb: 2 }}
           >
             <Tab label="Información general" />
-            <Tab label="Presentaciones" />
-            <Tab label="Precios" />
             <Tab label="Variantes" disabled={!hasVariants} />
+            <Tab label="Presentaciones ventas" />
+            <Tab label="Precios" />
+            
           </Tabs>
 
           {/* ── Tab: Información general ── */}
@@ -364,27 +375,8 @@ const CreateProduct: React.FC = () => {
             </div>
           )}
 
-          {/* ── Tab: Presentaciones ── */}
-          {activeTab === 1 && (
-            <PresentationsTab
-              rows={rows}
-              rowErrors={rowErrors}
-              addEmptyRow={addEmptyRow}
-              updateRow={updateRow}
-              deleteRow={deleteRow}
-            />
-          )}
-
-          {/* ── Tab: Precios ── */}
-          {activeTab === 2 && (
-            <ProductPricesTab
-              rows={rows}
-              updateRowPrecios={updateRowPrecios}
-            />
-          )}
-
           {/* ── Tab: Variantes ── */}
-          {activeTab === 3 && hasVariants && (
+          {activeTab === 1 && hasVariants && (
             <VariantsTab
               groups={variantGroups}
               groupErrors={variantGroupErrors}
@@ -395,16 +387,53 @@ const CreateProduct: React.FC = () => {
             />
           )}
 
+          {/* ── Tab: Presentaciones ── */}
+          {activeTab === 2 && (
+            <PresentationsTab
+              rows={rows}
+              rowErrors={rowErrors}
+              addEmptyRow={addEmptyRow}
+              updateRow={updateRow}
+              deleteRow={deleteRow}
+            />
+          )}
+
+          {/* ── Tab: Precios ── */}
+          {activeTab === 3 && (
+            <ProductPricesTab
+              rows={rows}
+              updateRowPrecios={updateRowPrecios}
+            />
+          )}
+
+          
+
           {/**Botones */}
 
-          <div className='container_button'>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ mt: 2 }}
-            >
-              Guardar
-            </Button>
+          <div className='container_button_left'>
+            {isLastTab ? (
+              <Button
+                key="save"
+                variant="contained"
+                type="submit"
+                sx={{ mt: 2 }}
+              >
+                Guardar
+              </Button>
+            ) : (
+              <Button
+                key="next"
+                variant="contained"
+                type="button"
+                sx={{ mt: 2 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToNextTab();
+                }}
+              >
+                Siguiente
+              </Button>
+            )}
             <Button
               variant="contained"
               type="button"

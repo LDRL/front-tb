@@ -8,6 +8,9 @@ import { useEffect, useState } from 'react';
 import { updateSidebar, toggleMobileMenu } from '@/redux/sidebar';
 import { hasPermission } from '@/modules/auth/helper/auth.helper';
 
+const sinImagen = '/logo1.png';
+
+
 const Sidebar = () => {
   const sidebarState = useSelector((store: AppStore) => store.sidebar);
   const user = useSelector((state: AppStore) => state.auth.user);
@@ -106,18 +109,15 @@ const Sidebar = () => {
               [styles.container_close]: !isOpen
             })}
           >
-            <div className={styles.Logocontent}>
+            <div className={classNames({
+                  [styles.Logocontent]: true,
+                  [styles.Logocontent_open]: isOpen
+                })}>  
               <div className={styles.imgcontent}>
-                {/* <img src={v.logo} /> */}
+                 <img src={sinImagen} alt='Sin imagen' /> 
               </div>
-              <h2
-                className={classNames({
-                  [styles.Logocontent_open]: isOpen,
-                  [styles.Logocontent_close]: !isOpen
-                })}
-              >
-                Tienda Bendición
-              </h2>
+
+              
             </div>
             <ul className={styles.sidebar_list}>
               {linksWithFilteredSubNav.map(({ icon, label, to, subNav }) => {

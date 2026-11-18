@@ -116,7 +116,7 @@ const PresentationBlock: React.FC<BlockProps> = ({
         <Box sx={{ flex: 1, minWidth: 120 }}>
           <TextField
             type="number"
-            label="Precio"
+            label="Precio venta"
             size="small"
             fullWidth
             value={detail.price || ''}

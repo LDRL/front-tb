@@ -165,7 +165,7 @@ export const ProductPricesTab: React.FC<Props> = ({ rows, updateRowPrecios }) =>
                       <TextField
                         size="small"
                         type="number"
-                        label="Precio"
+                        label="Precio venta"
                         value={precio.precio || ''}
                         onChange={(e) => {
                           let value = e.target.value;

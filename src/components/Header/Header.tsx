@@ -12,6 +12,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 
+const sinImagen = '/logo2.png';
+
 
 const Header = () => {
 
@@ -74,10 +76,6 @@ const Header = () => {
             >
               {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
-
-            <h2 className={styles.custom_text}>
-              Tienda la bendición
-            </h2>
           </div>
 
             <div className={styles.profile} ref={profileRef}>
