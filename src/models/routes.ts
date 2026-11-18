@@ -20,6 +20,7 @@ export const PrivateRoutes = {
     PRESENTATION_CREATE: 'presentation/create',
     PRESENTATION_EDIT: 'presentation/:id/editar',
     UNIT: 'unit',
+    TALLA: 'talla',
     BUY: 'buy',
     BUY_CREATE: 'buy/create',
     BUY_SHOW: 'buy/:id/show',

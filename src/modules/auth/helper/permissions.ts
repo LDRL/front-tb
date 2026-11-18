@@ -42,6 +42,13 @@ export const PERMISSIONS = {
     DELETE: "unidades:delete",
   },
 
+  TALLAS: {
+    READ: "tallas:read",
+    CREATE: "tallas:create",
+    UPDATE: "tallas:update",
+    DELETE: "tallas:delete",
+  },
+
   PRODUCTS: {
     READ: "productos:read",
     CREATE: "productos:create",
