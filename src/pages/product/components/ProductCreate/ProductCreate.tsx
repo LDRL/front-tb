@@ -180,15 +180,26 @@ const CreateProduct: React.FC = () => {
     };
 
     try {
-      const outcome = await saveProduct({ form: newProduct, product: currentProduct });
+      const result = await saveProduct({ form: newProduct, product: currentProduct });
 
-      toast.success(
-        outcome === 'updated'
-          ? "Producto actualizado exitosamente"
-          : "Producto creado exitosamente"
-      );
+      if (result.outcome === 'updated') {
+        toast.success("Producto actualizado exitosamente");
+        navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
+        return;
+      }
 
-      navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
+      toast.success("Producto creado exitosamente");
+      const createdId =
+        result.createdProduct?.codigoprod ?? result.createdProduct?.productCode;
+
+      if (createdId) {
+        navigate(`/private/product/${createdId}/ingreso-inicial`, {
+          replace: true,
+          state: { createdProduct: result.createdProduct },
+        });
+      } else {
+        navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
+      }
     } catch (error: unknown) {
       toast.error(getErrorMessage(error));
     }

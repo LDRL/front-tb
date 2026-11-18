@@ -27,11 +27,11 @@ export const useSaveProduct = () => {
           productCode: product.productCode,
           data: form,
         });
-        return 'updated' as const;
+        return { outcome: 'updated' as const };
       }
 
-      await createProduct.mutateAsync(form);
-      return 'created' as const;
+      const createdProduct = await createProduct.mutateAsync(form);
+      return { outcome: 'created' as const, createdProduct };
     },
     [createProduct, updateProduct]
   );

@@ -12,6 +12,7 @@ const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
 const Home = lazy(() => import("./Home/Home"))
 const Product = lazy(() => import("../product/ProductPage"))
 const ProductCreate = lazy(() => import("../product").then(m => ({ default: m.ProductCreate })))
+const ProductInitialStock = lazy(() => import("../product").then(m => ({ default: m.ProductInitialStock })))
 const Category = lazy(() => import("../Category/CategoryPage"))
 const CategoryCreate = lazy(() => import("../Category").then(m => ({ default: m.CategoryCreate })))
 const Brand = lazy(() => import("../Brand/BrandPage"))
@@ -49,6 +50,7 @@ export const publicRoutes: RouteConfig[] = [
 export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.PRODUCT, Component: Product, permission: PERMISSIONS.PRODUCTS.READ },
   { path: PrivateRoutes.PRODUCT_CREATE, Component: ProductCreate, permission: PERMISSIONS.PRODUCTS.CREATE },
+  { path: PrivateRoutes.PRODUCT_INITIAL_STOCK, Component: ProductInitialStock, permission: PERMISSIONS.PRODUCTS.CREATE },
   { path: PrivateRoutes.PRODUCT_EDIT, Component: ProductCreate, permission: PERMISSIONS.PRODUCTS.UPDATE },
 
   { path: PrivateRoutes.CATEGORY, Component: Category, permission: PERMISSIONS.CATEGORIES.READ },

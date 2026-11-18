@@ -12,11 +12,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 
-const sinImagen = '/logo2.png';
-
-
 const Header = () => {
-
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const sidebar = useSelector((store: AppStore) => store.sidebar)

@@ -9,6 +9,7 @@ export const PrivateRoutes = {
     PRODUCT: 'product',
     PRODUCT_CREATE: 'product/create',
     PRODUCT_EDIT: 'product/:id/editar',
+    PRODUCT_INITIAL_STOCK: 'product/:id/ingreso-inicial',
     CATEGORY: 'category',
     CATEGORY_CREATE: 'category/create',
     CATEGORY_EDIT: 'category/:id/editar',
