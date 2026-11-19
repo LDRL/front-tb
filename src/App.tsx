@@ -11,6 +11,7 @@ import Loading from './components/Loading.tsx'
 import "./App.css";
 import { NotFound } from './components/index.ts'
 import { SessionExpiryListener } from './modules/auth/components/SessionExpiryListener'
+import ConfigBootstrap from './modules/config/components/ConfigBootstrap'
 
 const Login = lazy(() => import('./pages/Login/Login'))
 const Private = lazy(() => import('./pages/Private/Private'))
@@ -22,6 +23,7 @@ function App() {
       <Suspense fallback={<Loading loading={true} />}>
         <Provider store ={store}>
         <BrowserRouter>
+          <ConfigBootstrap />
           <SessionExpiryListener />
           <RoutesWithNotFound>
             <Route path="/" element={<Navigate to ={PrivateRoutes.PRIVATE} />} />

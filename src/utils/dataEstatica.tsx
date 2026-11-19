@@ -179,6 +179,11 @@ export const LinksArray: SidebarLink[] = [
         path: "/private/user",
         permission: PERMISSIONS.USERS.READ,
       },
+      {
+        title: "Configuración",
+        path: "/private/configuracion",
+        permission: PERMISSIONS.USERS.READ,
+      },
     ],
   },
   {

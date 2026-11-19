@@ -17,6 +17,7 @@ import userSlice from './userSlice';
 import supplierSlice from './supplierSlice';
 import rolSlice from './rolSlice';
 import buySlice from './buySlice';
+import configSlice from './configSlice';
 
 import { CategoryState } from '@/pages/Category';
 import { BrandState } from '@/pages/Brand';
@@ -33,6 +34,7 @@ import { AuthState } from '@/modules/auth/models/login.domain.type';
 import { ProductState } from '@/pages/product';
 import { UserState } from '@/pages/User/models/user.domain.type';
 import { BuyState } from '@/pages/Buy/models/buy.domain.type';
+import { ConfigState } from '@/modules/config/models';
 
 
 interface sidebarInfo {
@@ -64,6 +66,7 @@ export interface AppStore {
   supplier: SupplierState
   rol: RoleState
   buy: BuyState
+  config: ConfigState
 }
 
 export const store = configureStore<AppStore>({
@@ -83,7 +86,8 @@ export const store = configureStore<AppStore>({
     user: userSlice,
     supplier: supplierSlice,
     rol: rolSlice,
-    buy: buySlice
+    buy: buySlice,
+    config: configSlice,
   },
 });
 

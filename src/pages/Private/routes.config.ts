@@ -38,6 +38,7 @@ const Client = lazy(() => import("../Client/ClientPage"))
 const ClientCreate = lazy(() => import("../Client").then(m => ({ default: m.ClientCreate })))
 const Rol = lazy(() => import("../Rol/RolPage"))
 const RolCreate = lazy(() => import("../Rol").then(m => ({ default: m.RoleCreate })))
+const Configuracion = lazy(() => import("../Config/ConfigPage"))
 const Reporte = lazy(() => import("../Reporte").then(m => ({ default: m.ReportePage })))
 const ReporteInventario = lazy(() => import("../Reporte").then(m => ({ default: m.InventarioPage })))
 const ReporteLote = lazy(() => import("../Reporte").then(m => ({ default: m.LotePage })))
@@ -97,4 +98,6 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.ROL, Component: Rol, permission: PERMISSIONS.ROLES.READ },
   { path: PrivateRoutes.ROL_CREATE, Component: RolCreate, permission: PERMISSIONS.ROLES.CREATE },
   { path: PrivateRoutes.ROL_EDIT, Component: RolCreate, permission: PERMISSIONS.ROLES.UPDATE },
+
+  { path: PrivateRoutes.CONFIGURACION, Component: Configuracion, permission: PERMISSIONS.USERS.READ },
 ];
