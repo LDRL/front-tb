@@ -124,6 +124,7 @@ const SupplierFormModal: React.FC<Props> = ({ open, onClose, supplier }) => {
               control={control}
               label="Nit"
               rules={{ required: 'Nit requerido' }}
+              max={11}
             />
           </DialogContent>
 

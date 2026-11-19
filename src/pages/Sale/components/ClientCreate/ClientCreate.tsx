@@ -69,6 +69,7 @@ const ClientCreate: React.FC = () => {
                             control={control}
                             label="Nit"
                             rules={{ required: 'Nit es requerido' }}
+                            max={11}
                         />
                     </div>
 
@@ -113,6 +114,7 @@ const ClientCreate: React.FC = () => {
                             name="telphone"
                             control={control}
                             label="Teléfono"
+                            max={8}
                         />
                     </div>
 

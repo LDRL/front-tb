@@ -72,7 +72,7 @@ const PosPage: React.FC = () => {
   };
 
   const handleAddVariantItem: React.ComponentProps<typeof VariantSelectDialog>['onAdd'] = (item) => {
-    addItem(item);
+    return addItem(item);
   };
 
   const checkoutItems = useMemo(() => rows, [rows]);

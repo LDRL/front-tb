@@ -99,6 +99,7 @@ const ClientFormModal: React.FC<Props> = ({ open, onClose, client }) => {
               control={control}
               label="Nit"
               rules={{ required: "El nit es requerido" }}
+              max={11}
             />
 
             <FormInputText
@@ -133,6 +134,7 @@ const ClientFormModal: React.FC<Props> = ({ open, onClose, client }) => {
               name="telphone"
               control={control}
               label="Teléfono"
+              max={8}
             />
 
             <FormAutocompleteAsync

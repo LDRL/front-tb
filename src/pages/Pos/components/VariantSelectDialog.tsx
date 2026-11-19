@@ -18,7 +18,7 @@ interface VariantSelectDialogProps {
   sellable: PosSellable | null;
   clientTypeId?: number;
   onClose: () => void;
-  onAdd: (item: Omit<PosCartItem, 'id' | 'subtotal' | 'amount'> & { amount?: number }) => void;
+  onAdd: (item: Omit<PosCartItem, 'id' | 'subtotal' | 'amount'> & { amount?: number }) => boolean | void;
 }
 
 const VariantSelectDialog: React.FC<VariantSelectDialogProps> = ({ open, sellable, clientTypeId, onClose, onAdd }) => {
@@ -39,7 +39,7 @@ const VariantSelectDialog: React.FC<VariantSelectDialogProps> = ({ open, sellabl
     if (variant.idvariante == null) return;
     const price = getPresentationPrice(presentation, clientTypeId, variant.idvariante);
     const label = getVariantLabel(variant);
-    onAdd({
+    const added = onAdd({
       codProductPresentation: presentation.idprodPresenta ?? presentation.idPresentation,
       idvariante: variant.idvariante,
       variantLabel: label,
@@ -55,7 +55,7 @@ const VariantSelectDialog: React.FC<VariantSelectDialogProps> = ({ open, sellabl
       preciosVariante: presentation.preciosVariante,
       stock: variant.stock ?? null,
     });
-    onClose();
+    if (added !== false) onClose();
   };
 
   return (

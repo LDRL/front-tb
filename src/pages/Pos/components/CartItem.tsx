@@ -114,6 +114,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onIncrease, onDecrease, onSet
             <IconButton
               size="small"
               onClick={() => onIncrease(item.id)}
+              disabled={item.stock != null && item.amount >= Number(item.stock)}
               sx={{ p: 0.5, borderRadius: 0, height: '100%', '&:hover': { bgcolor: '#f0f0f0' } }}
             >
               <AddIcon sx={{ fontSize: 14 }} />

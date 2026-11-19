@@ -24,12 +24,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ sellable, clientTypeId, onCli
 
   return (
     <Box
-      onClick={onClick}
+      onClick={outOfStock ? undefined : onClick}
       sx={{
         border: '1px solid #e0e0e0',
         borderRadius: 2,
         overflow: 'hidden',
-        cursor: 'pointer',
+        cursor: outOfStock ? 'not-allowed' : 'pointer',
         bgcolor: '#fff',
         display: 'flex',
         flexDirection: 'column',
@@ -37,8 +37,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ sellable, clientTypeId, onCli
         transition: 'all 0.15s ease-in-out',
         boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
         opacity: outOfStock ? 0.7 : 1,
-        '&:active': { transform: 'scale(0.98)' },
-        '&:hover': { borderColor: 'primary.main', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' },
+        '&:active': outOfStock ? undefined : { transform: 'scale(0.98)' },
+        '&:hover': outOfStock ? undefined : { borderColor: 'primary.main', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' },
       }}
     >
       <Box sx={{ position: 'relative' }}>
