@@ -28,7 +28,15 @@ const CartItem: React.FC<CartItemProps> = ({ item, onIncrease, onDecrease, onSet
       setInputValue(String(item.amount));
       return;
     }
-    if (num !== item.amount) {
+
+    const stock = item.stock != null ? Math.max(0, Math.floor(Number(item.stock))) : null;
+    let corrected = Math.floor(num);
+    if (corrected < 1) corrected = 1;
+    if (stock != null && corrected > stock) corrected = stock;
+
+    setInputValue(String(corrected));
+
+    if (corrected !== item.amount || corrected !== num) {
       onSetAmount(item.id, num);
     }
   };
