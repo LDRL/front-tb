@@ -294,10 +294,14 @@ export const useSaleDetails = () => {
 
   const addRow = (detail: Detail) => {
     setRows(prev => {
-      const existing = prev.find(r => r.codProductPresentation === detail.codProductPresentation);
+      const sameLine = (r: Detail) =>
+        r.codProductPresentation === detail.codProductPresentation &&
+        (r.idvariante ?? null) === (detail.idvariante ?? null);
+
+      const existing = prev.find(sameLine);
       if (existing) {
         const updated = prev.map(r =>
-          r.codProductPresentation === detail.codProductPresentation
+          sameLine(r)
             ? {
                 ...r,
                 amount: r.amount + detail.amount,
@@ -308,10 +312,8 @@ export const useSaleDetails = () => {
         calculateTotal(updated);
         return updated;
       }
-      const updated = [
-        ...prev,
-        { ...detail, id: uuidv4() },
-      ];
+
+      const updated = [...prev, { ...detail, id: uuidv4() }];
       calculateTotal(updated);
       return updated;
     });

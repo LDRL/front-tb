@@ -1,14 +1,17 @@
 import { Client } from "@/pages/Client/models";
 
-export interface Detail{
-    amount: number,
-    cost: number, 
-    codProductPresentation: number, 
-    name?: string,
-    subtotal?: number,
-    id?: string,
-    idvariante?: number | null,
-    variantLabel?: string,
+export interface Detail {
+    amount: number;
+    cost: number;
+    codProductPresentation: number;
+    name?: string;
+    subtotal?: number;
+    id?: string;
+    idvariante?: number | null;
+    variantLabel?: string;
+    productCode?: number;
+    baseQuantity?: number;
+    availableStock?: number | null;
 }
 
 export interface TypeOfSale {

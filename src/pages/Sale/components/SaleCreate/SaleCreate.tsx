@@ -49,6 +49,7 @@ const SaleCreate: React.FC = () => {
     amount: false,
     cost: false,
     idProduct: false,
+    idvariante: false,
     detailProduct: false,
   });
 
@@ -73,6 +74,7 @@ const SaleCreate: React.FC = () => {
       amount: false,
       cost: false,
       idProduct: false,
+      idvariante: false,
       detailProduct: false,
     });
 
