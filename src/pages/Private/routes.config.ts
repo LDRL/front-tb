@@ -21,6 +21,7 @@ const Presentation = lazy(() => import("../Presentation/PresentationPage"))
 const PresentationCreate = lazy(() => import("../Presentation").then(m => ({ default: m.PresentationCreate })))
 const Unit = lazy(() => import("../Unit/UnitPage"))
 const Talla = lazy(() => import("../Talla/TallaPage"))
+const Color = lazy(() => import("../Color/ColorPage"))
 const Buy = lazy(() => import("../Buy/BuyPage"))
 const BuyCreate = lazy(() => import("../Buy").then(m => ({ default: m.BuyCreate })))
 const BuyShow = lazy(() => import("../Buy").then(m => ({ default: m.BuyShow })))
@@ -68,6 +69,7 @@ export const protectedRoutes: RouteConfig[] = [
 
   { path: PrivateRoutes.UNIT, Component: Unit, permission: PERMISSIONS.UNITS.READ },
   { path: PrivateRoutes.TALLA, Component: Talla, permission: PERMISSIONS.TALLAS.READ },
+  { path: PrivateRoutes.COLOR, Component: Color, permission: PERMISSIONS.COLORS.READ },
 
   { path: PrivateRoutes.BUY, Component: Buy, permission: PERMISSIONS.PURCHASES.READ },
   { path: PrivateRoutes.BUY_CREATE, Component: BuyCreate, permission: PERMISSIONS.PURCHASES.CREATE },

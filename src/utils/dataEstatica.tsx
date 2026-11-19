@@ -68,7 +68,8 @@ export const LinksArray: SidebarLink[] = [
       PERMISSIONS.BRANDS.READ,
       PERMISSIONS.PRESENTATIONS.READ,
       PERMISSIONS.UNITS.READ,
-      PERMISSIONS.TALLAS.READ
+      PERMISSIONS.TALLAS.READ,
+      PERMISSIONS.COLORS.READ
     ],
 
     subNav: [
@@ -101,6 +102,11 @@ export const LinksArray: SidebarLink[] = [
         title: "Tallas",
         path: "/private/talla",
         permission: PERMISSIONS.TALLAS.READ,
+      },
+      {
+        title: "Colores",
+        path: "/private/color",
+        permission: PERMISSIONS.COLORS.READ,
       },
     ],
   },

@@ -9,6 +9,7 @@ import brandSlice from './brandSlice';
 import presentationSlice from './presentationSlice';
 import unitSlice from './unitSlice';
 import tallaSlice from './tallaSlice';
+import colorSlice from './colorSlice';
 import saleSlice from './saleSlice';
 import clientSlice from './clientSlice';
 import userSlice from './userSlice';
@@ -21,6 +22,7 @@ import { BrandState } from '@/pages/Brand';
 import { PresentationState } from '@/pages/Presentation';
 import { UnitState } from '@/pages/Unit';
 import { TallaState } from '@/pages/Talla';
+import { ColorState } from '@/pages/Color';
 import { Client } from '@/pages/Client/models/client.domain.type';
 import { SaleState } from '@/pages/Sale/models/sale.domain.type';
 import { SupplierState } from '@/pages/Supplier/models/supplier.domain.type';
@@ -51,6 +53,7 @@ export interface AppStore {
   presentation: PresentationState
   unit: UnitState
   talla: TallaState
+  color: ColorState
   product: ProductState
   sale: SaleState
   client:ClientState
@@ -69,6 +72,7 @@ export const store = configureStore<AppStore>({
     presentation: presentationSlice,
     unit: unitSlice,
     talla: tallaSlice,
+    color: colorSlice,
     product: productSliceReducer,
     sale: saleSlice,
     client: clientSlice,
