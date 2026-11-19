@@ -31,6 +31,7 @@ export const PrivateRoutes = {
     SALE_CREATE: 'sale/create',
     SALE_SHOW: 'sale/:id/show',
     POS: 'pos',
+    RESTAURANT: 'restaurant',
     USER: 'user',
     USER_CREATE:'user/create',
     USER_EDIT:'user/:id/editar',

@@ -1,6 +1,7 @@
 import HomeIcon from '@mui/icons-material/Home';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 
 import PersonIcon from '@mui/icons-material/Person';
 import InventoryIcon  from '@mui/icons-material/Inventory';
@@ -129,6 +130,13 @@ export const LinksArray: SidebarLink[] = [
     to: "/private/pos",
     path: "/private/pos",
     permission: PERMISSIONS.SALES.READ
+  },
+  {
+    label: "Restaurante",
+    icon: <RestaurantMenuIcon />,
+    to: "/private/restaurant",
+    path: "/private/restaurant",
+    permission: null
   },
 
   {

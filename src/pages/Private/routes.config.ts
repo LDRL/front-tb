@@ -30,6 +30,7 @@ const Sale = lazy(() => import("../Sale/SalePage"))
 const SaleCreate = lazy(() => import("../Sale").then(m => ({ default: m.SaleCreate })))
 const SaleShow = lazy(() => import("../Sale").then(m => ({ default: m.SaleShow })))
 const Pos = lazy(() => import("../Pos/PosPage"))
+const Restaurant = lazy(() => import("../Restaurant/RestaurantPage"))
 const User = lazy(() => import("../User/UserPage"))
 const UserCreate = lazy(() => import("../User").then(m => ({ default: m.UserCreate })))
 const Supplier = lazy(() => import("../Supplier/SupplierPage"))
@@ -82,6 +83,7 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.SALE_CREATE, Component: SaleCreate, permission: PERMISSIONS.SALES.CREATE },
   { path: PrivateRoutes.SALE_SHOW, Component: SaleShow, permission: PERMISSIONS.SALES.READ },
   { path: PrivateRoutes.POS, Component: Pos, permission: [PERMISSIONS.SALES.READ, PERMISSIONS.SALES.CREATE] },
+  { path: PrivateRoutes.RESTAURANT, Component: Restaurant },
 
   { path: PrivateRoutes.USER, Component: User, permission: PERMISSIONS.USERS.READ },
   { path: PrivateRoutes.USER_CREATE, Component: UserCreate, permission: PERMISSIONS.USERS.CREATE },
