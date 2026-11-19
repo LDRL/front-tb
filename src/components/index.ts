@@ -1,4 +1,5 @@
 export * from './CustomDialog/index';
+export * from './Footer';
 export * from './Loading';
 export * from './FormInputText';
 export * from './FormInputDropdown';

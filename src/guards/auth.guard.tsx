@@ -1,5 +1,6 @@
 import Header from "@/components/Header/Header";
 import Sidebar from "@/components/SideBar/SideBar";
+import Footer from "@/components/Footer/Footer";
 import { PublicRoutes } from "@/models";
 import { AppStore } from "@/redux/store";
 import { useSelector } from "react-redux";
@@ -23,6 +24,7 @@ export const AuthGuard = () => {
         <main style={{ flex: 1, minHeight: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
           <Outlet />
         </main>
+        <Footer />
       </div>
     </div>
   );
