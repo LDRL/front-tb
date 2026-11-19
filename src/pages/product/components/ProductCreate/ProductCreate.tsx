@@ -1,7 +1,16 @@
 import React, {useEffect, useState } from 'react';
 import { RootState } from '@/redux/store';
 import {
-  Box, Button, Tab, Tabs, Tooltip
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Tab,
+  Tabs,
+  Tooltip
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,6 +43,9 @@ const CreateProduct: React.FC = () => {
 
   const [subtitulo, setSubtitulo] = useState<string>("");
   const [activeTab, setActiveTab] = useState<number>(0);
+  const [initialStockDialogOpen, setInitialStockDialogOpen] = useState(false);
+  const [createdProductId, setCreatedProductId] = useState<string | number | null>(null);
+  const [createdProductData, setCreatedProductData] = useState<any>(null);
   const navigate = useNavigate();
 
   const {id} = useParams<{id: string}>(); //Se captura el id de un producto
@@ -193,10 +205,9 @@ const CreateProduct: React.FC = () => {
         result.createdProduct?.codigoprod ?? result.createdProduct?.productCode;
 
       if (createdId) {
-        navigate(`/private/product/${createdId}/ingreso-inicial`, {
-          replace: true,
-          state: { createdProduct: result.createdProduct },
-        });
+        setCreatedProductId(createdId);
+        setCreatedProductData(result.createdProduct ?? null);
+        setInitialStockDialogOpen(true);
       } else {
         navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
       }
@@ -218,6 +229,20 @@ const CreateProduct: React.FC = () => {
   if(isMarcaError){
     return <p>Error al cargar las opciones</p>
   }
+
+  const handleGoToInitialStock = () => {
+    if (!createdProductId) return;
+    setInitialStockDialogOpen(false);
+    navigate(`/private/product/${createdProductId}/ingreso-inicial`, {
+      replace: true,
+      state: { createdProduct: createdProductData },
+    });
+  };
+
+  const handleSkipInitialStock = () => {
+    setInitialStockDialogOpen(false);
+    navigate(`/private/${PrivateRoutes.PRODUCT}`, { replace: true });
+  };
 
   return (    
     <div >
@@ -457,6 +482,28 @@ const CreateProduct: React.FC = () => {
           </div>
         </Box>
       </CardForm>
+
+      <Dialog
+        open={initialStockDialogOpen}
+        onClose={handleSkipInitialStock}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Ingesar Stock Inicial</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            El producto se creó correctamente. ¿Desea ingresar stock inicial?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSkipInitialStock} color="inherit">
+            No
+          </Button>
+          <Button onClick={handleGoToInitialStock} variant="contained" autoFocus>
+            Sí, ingresar stock
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>  
   );
 };

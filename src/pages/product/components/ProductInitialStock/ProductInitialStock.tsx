@@ -315,11 +315,11 @@ const ProductInitialStock: React.FC = () => {
     <div>
       {(saving || isProvidersLoading) && <Loading loading />}
 
-      <CardForm titulo="Ingreso inicial" subtitulo={normalized.name}>
+      <CardForm titulo="Ingresar Stock" subtitulo="">
         <Box sx={{ mb: 2 }}>
           <Typography variant="body2" color="text.secondary">
             Ingrese las cantidades iniciales por variante y presentación. Las filas con cantidad en 0 no se
-            registrarán en el inventario.
+            registrarán en el inventario del producto. <strong>{normalized.name}</strong>
           </Typography>
         </Box>
 
@@ -350,7 +350,7 @@ const ProductInitialStock: React.FC = () => {
                     </>
                   )}
                   <TableCell>Presentación venta</TableCell>
-                  <TableCell sx={{ width: 180 }}>Cantidad a vender</TableCell>
+                  <TableCell sx={{ width: 180 }}>Stock inicial</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -381,20 +381,20 @@ const ProductInitialStock: React.FC = () => {
         )}
 
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-          <Button variant="outlined" color="inherit" onClick={goToList} disabled={saving}>
-            Omitir
+          <Button variant="contained" color='error' onClick={goToList} disabled={saving}>
+            Cancelar
           </Button>
           <Button
             variant="contained"
             onClick={handleSaveClick}
             disabled={saving || isProvidersLoading || rows.length === 0 || !canSavePurchase}
           >
-            Guardar ingreso
+            Guardar
           </Button>
         </Box>
         {!canSavePurchase && rows.length > 0 && (
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, textAlign: 'right' }}>
-            Complete los requisitos (sesión/sucursal/proveedor) o use "Omitir" para finalizar sin ingreso inicial.
+            Complete los requisitos (sesión/sucursal/proveedor) o use "Cancelar" para finalizar sin ingreso inicial.
           </Typography>
         )}
       </CardForm>
