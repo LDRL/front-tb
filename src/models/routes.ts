@@ -22,6 +22,7 @@ export const PrivateRoutes = {
     UNIT: 'unit',
     TALLA: 'talla',
     COLOR: 'color',
+    PUBLICO: 'publico',
     BUY: 'buy',
     BUY_CREATE: 'buy/create',
     BUY_SHOW: 'buy/:id/show',
