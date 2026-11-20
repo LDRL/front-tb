@@ -1,7 +1,6 @@
 export type BusinessMode = 'retail' | 'restaurant';
 
 export interface AppFeatures {
-  combos: boolean;
   recipes: boolean;
   modifiers: boolean;
   inventoryByIngredients: boolean;
@@ -26,7 +25,6 @@ export const CONFIG_SCHEMA_VERSION = 1;
 export const CONFIG_STORAGE_KEY = 'app_config_v1';
 
 export const defaultAppFeatures: AppFeatures = {
-  combos: false,
   recipes: false,
   modifiers: false,
   inventoryByIngredients: false,

@@ -388,6 +388,101 @@ export const FormInputNumber = <T extends FieldValues>({
   );
 };
 
+{/** Labeled inline number (bordered style) */}
+interface FormLabeledNumberProps<T extends FieldValues> {
+  name: Path<T>;
+  control: Control<T>;
+  label: string;
+  rules?: any;
+  disabled?: boolean;
+  allowEmpty?: boolean;
+  emptyValue?: number | undefined;
+  defaultValue?: number;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+}
+
+export const FormLabeledNumber = <T extends FieldValues>({
+  name,
+  control,
+  label,
+  rules,
+  disabled,
+  allowEmpty = false,
+  emptyValue,
+  defaultValue = 0,
+  inputProps,
+}: FormLabeledNumberProps<T>) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field, fieldState: { error } }) => {
+        const value =
+          field.value === undefined || field.value === null || field.value === ""
+            ? (allowEmpty ? "" : defaultValue)
+            : field.value;
+
+        return (
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                border: error ? "1px solid #d32f2f" : "1px solid #ccc",
+                borderRadius: 2,
+                overflow: "hidden",
+                width: "fit-content",
+                height: 38,
+                opacity: disabled ? 0.6 : 1,
+              }}
+            >
+              <Box sx={{ px: 1.5, fontSize: 13, color: "#666" }}>{label}</Box>
+              <Box
+                sx={{
+                  width: "1px",
+                  alignSelf: "stretch",
+                  bgcolor: "divider",
+                }}
+              />
+              <TextField
+                type="number"
+                variant="standard"
+                value={value}
+                disabled={disabled}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === "") {
+                    field.onChange(allowEmpty ? emptyValue : defaultValue);
+                    return;
+                  }
+                  const num = Number(raw);
+                  field.onChange(Number.isNaN(num) ? (allowEmpty ? emptyValue : defaultValue) : num);
+                }}
+                InputProps={{ disableUnderline: true }}
+                inputProps={inputProps}
+                sx={{
+                  width: 65,
+                  "& input": {
+                    textAlign: "center",
+                    fontSize: 14,
+                    padding: "8px 4px",
+                  },
+                }}
+              />
+            </Box>
+            {error && (
+              <FormHelperText sx={{ color: "red", ml: 0.5 }}>
+                {error.message}
+              </FormHelperText>
+            )}
+          </Box>
+        );
+      }}
+    />
+  );
+};
+
 
 {/** Image */}
 

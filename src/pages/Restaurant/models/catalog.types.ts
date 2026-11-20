@@ -1,5 +1,6 @@
 import { ComboTemplate } from './combo.types';
 import { InventoryItem } from './inventory.types';
+import { MenuProduct } from './product.types';
 import { ModifierGroup } from './modifier.types';
 import { Recipe } from './recipe.types';
 
@@ -8,6 +9,7 @@ export interface RestaurantCatalog {
   inventoryItems: InventoryItem[];
   recipes: Recipe[];
   modifierGroups: ModifierGroup[];
+  products: MenuProduct[];
   combos: ComboTemplate[];
 }
 
@@ -19,5 +21,6 @@ export const defaultRestaurantCatalog: RestaurantCatalog = {
   inventoryItems: [],
   recipes: [],
   modifierGroups: [],
+  products: [],
   combos: [],
 };

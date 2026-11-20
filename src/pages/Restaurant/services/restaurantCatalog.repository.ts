@@ -19,6 +19,7 @@ const normalizeCatalog = (raw: any): RestaurantCatalog => {
       inventoryItems: [],
       recipes: [],
       modifierGroups: [],
+      products: [],
       combos: [],
     };
   }
@@ -29,6 +30,7 @@ const normalizeCatalog = (raw: any): RestaurantCatalog => {
     inventoryItems: asArray(raw.inventoryItems),
     recipes: asArray(raw.recipes),
     modifierGroups: asArray(raw.modifierGroups),
+    products: asArray(raw.products),
     combos: asArray(raw.combos),
   };
 };
@@ -43,6 +45,7 @@ export const localStorageRestaurantCatalogRepository: RestaurantCatalogRepositor
           inventoryItems: [],
           recipes: [],
           modifierGroups: [],
+          products: [],
           combos: [],
         };
       }
@@ -54,6 +57,7 @@ export const localStorageRestaurantCatalogRepository: RestaurantCatalogRepositor
         inventoryItems: [],
         recipes: [],
         modifierGroups: [],
+        products: [],
         combos: [],
       };
     }

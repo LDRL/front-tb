@@ -48,18 +48,39 @@ const applySelectedModifiersToConsumption = (
     const opt = getModifierOption(group, sel.optionId);
     if (!group || !opt) return;
 
-    const targetId = opt.targetInventoryItemId || opt.inventoryImpact?.inventoryItemId || null;
-    const impactQty = Number(opt.inventoryImpact?.quantity ?? 1);
-    const qty = Number(sel.quantity ?? 1) * impactQty;
+    const qty = Number(sel.quantity ?? 1);
+    const recipeId = opt.sourceType === 'recipe' ? opt.sourceId : opt.targetRecipeId || opt.inventoryImpact?.recipeId || null;
+    const productItemId =
+      opt.sourceType === 'product'
+        ? opt.sourceId
+        : opt.targetInventoryItemId || opt.inventoryImpact?.inventoryItemId || null;
 
-    if (group.kind === 'removal' && targetId) {
+    if (group.kind === 'removal') {
       // Preventive approximation: removing an ingredient means do not consume it.
-      addConsumption(into, targetId, -qty);
-    } else if (group.kind === 'extra' && targetId) {
-      addConsumption(into, targetId, qty);
-    } else if (targetId && opt.inventoryImpact?.trackInventory !== false) {
-      // Generic impact for selection-type modifiers that map to a concrete item.
-      addConsumption(into, targetId, qty);
+      const targetId = productItemId;
+      const impactQty = Number(opt.inventoryImpact?.quantity ?? 1);
+      if (targetId) addConsumption(into, targetId, -(qty * impactQty));
+      return;
+    }
+
+    let consumed = false;
+    if (recipeId) {
+      consumeRecipe(catalog, recipeId, into, qty);
+      consumed = true;
+    }
+    if (productItemId) {
+      const impactQty = Number(opt.inventoryImpact?.quantity ?? 1);
+      addConsumption(into, productItemId, qty * impactQty);
+      consumed = true;
+    }
+
+    // Fallback for legacy options without explicit source
+    if (!consumed) {
+      const legacyTarget = opt.targetInventoryItemId || opt.inventoryImpact?.inventoryItemId || null;
+      if (legacyTarget) {
+        const impactQty = Number(opt.inventoryImpact?.quantity ?? 1);
+        addConsumption(into, legacyTarget, qty * impactQty);
+      }
     }
   });
 };

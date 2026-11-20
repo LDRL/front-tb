@@ -28,10 +28,9 @@ import {
 import type { AppConfig, BusinessMode } from '@/modules/config/models';
 
 const featureLabels: Record<keyof AppConfig['features'], string> = {
-  combos: 'Combos',
   recipes: 'Recetas / BOM',
   modifiers: 'Modificadores y extras',
-  inventoryByIngredients: 'Inventario por insumos',
+  inventoryByIngredients: 'Inventario por producto',
   kds: 'KDS / cocina',
 };
 
@@ -71,7 +70,6 @@ export default function ConfigPage() {
         mode === 'restaurant'
           ? prev.features
           : {
-              combos: false,
               recipes: false,
               modifiers: false,
               inventoryByIngredients: false,
@@ -138,7 +136,7 @@ export default function ConfigPage() {
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                   Estas opciones se aplican cuando el modo restaurante está activo. Sirven como base para
-                  módulos como creación de combos, recetas y modificadores.
+                  módulos como recetas, personalizaciones e inventario por insumos.
                 </Typography>
 
                 <Stack spacing={1}>

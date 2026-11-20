@@ -17,7 +17,6 @@ const isValidBusinessMode = (value: unknown): value is AppConfig['businessMode']
 const normalizeFeatures = (raw: any): AppConfig['features'] => {
   const features = raw && typeof raw === 'object' ? raw : {};
   return {
-    combos: typeof features.combos === 'boolean' ? features.combos : defaultAppFeatures.combos,
     recipes: typeof features.recipes === 'boolean' ? features.recipes : defaultAppFeatures.recipes,
     modifiers:
       typeof features.modifiers === 'boolean' ? features.modifiers : defaultAppFeatures.modifiers,

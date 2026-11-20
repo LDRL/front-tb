@@ -7,7 +7,9 @@ export type RestaurantUnit =
   | 'kg'
   | 'ml'
   | 'l'
-  | 'portion';
+  | 'portion'
+  | 'rodaja'
+  ;
 
 export type BusinessChannel = 'restaurant' | 'cafe';
 

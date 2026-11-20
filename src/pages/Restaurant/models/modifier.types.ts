@@ -4,6 +4,8 @@ export type ModifierSelectionType = 'single' | 'multiple';
 
 export type ModifierGroupKind = 'selection' | 'removal' | 'extra';
 
+export type ModifierOptionSourceType = 'recipe' | 'product';
+
 export interface ModifierInventoryImpact {
   inventoryItemId?: RestaurantEntityId | null;
   recipeId?: RestaurantEntityId | null;
@@ -19,6 +21,9 @@ export interface ModifierInventoryImpact {
 export interface ModifierOption extends AuditFields {
   id: RestaurantEntityId;
   name: string;
+  /** Source backing this option: a recipe or an inventory item of kind 'product'. */
+  sourceType?: ModifierOptionSourceType;
+  sourceId?: RestaurantEntityId | null;
   priceDelta?: number;
   /**
    * Target component affected by this option (e.g. an ingredient in a sandwich recipe).
@@ -32,8 +37,12 @@ export interface ModifierOption extends AuditFields {
 export interface ModifierGroup extends AuditFields {
   id: RestaurantEntityId;
   name: string;
+  /** Etiqueta distintiva interna (no visible para clientes). */
+  internalLabel?: string;
   kind: ModifierGroupKind;
   selectionType: ModifierSelectionType;
+  /** Permite escoger la misma opción más de una vez. */
+  allowRepeat?: boolean;
   required?: boolean;
   minSelections?: number;
   maxSelections?: number;

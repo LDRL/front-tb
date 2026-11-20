@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import {
   ComboTemplate,
   InventoryItem,
+  MenuProduct,
   ModifierGroup,
   Recipe,
   RestaurantCatalog,
@@ -23,6 +24,8 @@ interface RestaurantCatalogContextValue {
   deleteRecipe: (id: string) => Promise<void>;
   upsertModifierGroup: (item: ModifierGroup) => Promise<void>;
   deleteModifierGroup: (id: string) => Promise<void>;
+  upsertProduct: (item: MenuProduct) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   upsertCombo: (item: ComboTemplate) => Promise<void>;
   deleteCombo: (id: string) => Promise<void>;
 }
@@ -46,6 +49,7 @@ export const RestaurantCatalogProvider: React.FC<{ children: React.ReactNode }> 
     inventoryItems: [],
     recipes: [],
     modifierGroups: [],
+    products: [],
     combos: [],
   });
   const [status, setStatus] = useState<CatalogStatus>('idle');
@@ -124,6 +128,20 @@ export const RestaurantCatalogProvider: React.FC<{ children: React.ReactNode }> 
     [catalog, save]
   );
 
+  const upsertProduct = useCallback(
+    async (item: MenuProduct) => {
+      await save({ ...catalog, products: upsertById(catalog.products, item) });
+    },
+    [catalog, save]
+  );
+
+  const deleteProduct = useCallback(
+    async (id: string) => {
+      await save({ ...catalog, products: removeById(catalog.products, id) });
+    },
+    [catalog, save]
+  );
+
   const upsertCombo = useCallback(
     async (item: ComboTemplate) => {
       await save({ ...catalog, combos: upsertById(catalog.combos, item) });
@@ -151,6 +169,8 @@ export const RestaurantCatalogProvider: React.FC<{ children: React.ReactNode }> 
       deleteRecipe,
       upsertModifierGroup,
       deleteModifierGroup,
+      upsertProduct,
+      deleteProduct,
       upsertCombo,
       deleteCombo,
     }),
@@ -166,6 +186,8 @@ export const RestaurantCatalogProvider: React.FC<{ children: React.ReactNode }> 
       deleteRecipe,
       upsertModifierGroup,
       deleteModifierGroup,
+      upsertProduct,
+      deleteProduct,
       upsertCombo,
       deleteCombo,
     ]

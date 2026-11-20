@@ -134,9 +134,25 @@ export const LinksArray: SidebarLink[] = [
   {
     label: "Restaurante",
     icon: <RestaurantMenuIcon />,
-    to: "/private/restaurant",
-    path: "/private/restaurant",
-    permission: null
+    to: "/private/restaurant/pedidos",
+    permission: null,
+    subNav: [
+      {
+        title: "Pedidos",
+        path: "/private/restaurant/pedidos",
+        permission: null,
+      },
+      {
+        title: "Caja",
+        path: "/private/restaurant/caja",
+        permission: null,
+      },
+      {
+        title: "Menu",
+        path: "/private/restaurant/menu",
+        permission: null,
+      },
+    ],
   },
 
   {
