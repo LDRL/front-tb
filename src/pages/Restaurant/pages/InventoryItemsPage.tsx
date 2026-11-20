@@ -27,7 +27,6 @@ import { InventoryItem, InventoryItemKind, RestaurantUnit } from '../models';
 const kindOptions: { value: InventoryItemKind; label: string }[] = [
   { value: 'product', label: 'Producto' },
   { value: 'ingredient', label: 'Insumo' },
-  { value: 'prepared', label: 'Preparado' },
 ];
 
 const unitOptions: { value: RestaurantUnit; label: string }[] = [
@@ -105,13 +104,13 @@ export default function InventoryItemsPage() {
     setOpen(false);
   };
 
-  const dialogTitle = catalog.inventoryItems.some((i) => i.id === getValues('id')) ? 'Editar ítem' : 'Nuevo ítem';
+  const dialogTitle = catalog.inventoryItems.some((i) => i.id === getValues('id')) ? 'Editar Insumo' : 'Nuevo Insumo';
 
   return (
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">Ingredientes / Ítems</Typography>
-        <Button variant="contained" onClick={openCreate} disabled={isBusy}>Nuevo ítem</Button>
+        <Typography variant="h6">Insumos y Productos</Typography>
+        <Button variant="contained" onClick={openCreate} disabled={isBusy}>Nuevo Insumo</Button>
       </Stack>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -148,7 +147,7 @@ export default function InventoryItemsPage() {
           {items.length === 0 && (
             <TableRow>
               <TableCell colSpan={7}>
-                <Typography variant="body2" color="text.secondary">No hay ítems registrados.</Typography>
+                <Typography variant="body2" color="text.secondary">No hay Insumos registrados.</Typography>
               </TableCell>
             </TableRow>
           )}

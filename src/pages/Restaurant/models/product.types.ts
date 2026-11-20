@@ -17,7 +17,10 @@ export interface MenuProductIncludedItemOption {
   name: string;
   sourceType: ModifierOptionSourceType;
   sourceId: RestaurantEntityId | null;
+  /** Price adjustment relative to product/base price (delta mode). */
   priceDelta?: number;
+  /** Absolute price for this option when the parent item has allowOptionPrices enabled. */
+  price?: number;
 }
 
 export interface MenuProductIncludedItem {
@@ -35,6 +38,8 @@ export interface MenuProductIncludedItem {
   options?: MenuProductIncludedItemOption[];
   /** For choice items: allow selecting the same option more than once */
   allowRepeat?: boolean;
+  /** For choice items: enable absolute price per option (instead of price delta). */
+  allowOptionPrices?: boolean;
   minSelections?: number;
   maxSelections?: number;
 }

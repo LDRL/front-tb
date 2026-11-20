@@ -16,8 +16,6 @@ import {
   FormControlLabel,
   InputAdornment,
   MenuItem,
-  Radio,
-  RadioGroup,
   Stack,
   Table,
   TableBody,
@@ -34,7 +32,7 @@ import { FormInputImage, FormInputNumber, FormInputText, FormTextArea } from '@/
 import { CategoryFormModal } from '@/pages/Category/components/CategoryFormModal';
 import { useFetchOptions } from '@/hooks/useOption';
 import { createRestaurantId, useRestaurantCatalog } from '../hooks';
-import type { MenuProduct, MenuProductIncludedItem, MenuProductIncludedItemOption, MenuProductPriceOption, ModifierOptionSourceType } from '../models';
+import type { MenuProduct, MenuProductIncludedItem, MenuProductIncludedItemOption, ModifierOptionSourceType } from '../models';
 import ModifierGroupPreview from '../components/ModifierGroupPreview';
 
 type MenuProductForm = {
@@ -45,19 +43,12 @@ type MenuProductForm = {
   image: File | string | null;
   recipeId: string;
   price: number | '';
-  priceOptions: MenuProductPriceOption[];
   includedItems: MenuProductIncludedItem[];
   personalizationGroupIds: string[];
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
-
-const emptyPriceOption = (): MenuProductPriceOption => ({
-  id: createRestaurantId(),
-  name: '',
-  price: 0,
-});
 
 const emptyIncludedItem = (): MenuProductIncludedItem => ({
   id: createRestaurantId(),
@@ -68,6 +59,7 @@ const emptyIncludedItem = (): MenuProductIncludedItem => ({
   inventoryItemId: null,
   options: [],
   allowRepeat: false,
+  allowOptionPrices: false,
   minSelections: 1,
   maxSelections: 1,
 });
@@ -78,6 +70,7 @@ const emptyIncludedItemOption = (): MenuProductIncludedItemOption => ({
   sourceType: 'product',
   sourceId: null,
   priceDelta: 0,
+  price: 0,
 });
 
 const emptyProductForm = (): MenuProductForm => ({
@@ -88,7 +81,6 @@ const emptyProductForm = (): MenuProductForm => ({
   image: null,
   recipeId: '',
   price: '',
-  priceOptions: [],
   includedItems: [],
   personalizationGroupIds: [],
   isActive: true,
@@ -112,7 +104,6 @@ const toMenuProductForm = (product: MenuProduct): MenuProductForm => {
     image: product.image ?? null,
     recipeId: legacyRecipeId || '',
     price: product.price ?? product.basePrice ?? '',
-    priceOptions: (product.priceOptions || []).map((p) => ({ ...p })),
     includedItems: (product.includedItems || []).map((item) => ({
       ...item,
       options: (item.options || []).map((o) => ({ ...o })),
@@ -136,9 +127,9 @@ export default function ProductosPage() {
   const [personalizationModalOpen, setPersonalizationModalOpen] = useState(false);
   const [personalizationSearch, setPersonalizationSearch] = useState('');
   const [showRecipeSelector, setShowRecipeSelector] = useState(false);
-  const [selectedPreviewPriceId, setSelectedPreviewPriceId] = useState<string>('');
   const [includedFixedRemovals, setIncludedFixedRemovals] = useState<Record<string, Record<number, string[]>>>({});
   const [includedChoiceSelections, setIncludedChoiceSelections] = useState<Record<string, Record<string, number>>>({});
+  const [baseRecipeRemovals, setBaseRecipeRemovals] = useState<string[]>([]);
 
   const isBusy = status === 'saving' || status === 'loading';
   const products = useMemo(() => catalog.products ?? [], [catalog.products]);
@@ -150,25 +141,20 @@ export default function ProductosPage() {
     defaultValues: emptyProductForm(),
   });
 
-  const { fields: priceOptionFields, append: appendPriceOption, remove: removePriceOption } = useFieldArray({
-    control,
-    name: 'priceOptions',
-  });
-
   const { fields: includedItemFields, append: appendIncludedItem, remove: removeIncludedItem } = useFieldArray({
     control,
     name: 'includedItems',
   });
 
   const watched = useWatch({ control }) as MenuProductForm;
-  const hasVariantPrices = priceOptionFields.length > 0;
+  const hasIncludedOptionPricing = (watched?.includedItems || []).some((i: MenuProductIncludedItem) => i.kind === 'choice' && i.allowOptionPrices);
 
   const openCreate = () => {
     reset(emptyProductForm());
     setShowRecipeSelector(false);
-    setSelectedPreviewPriceId('base');
     setIncludedFixedRemovals({});
     setIncludedChoiceSelections({});
+    setBaseRecipeRemovals([]);
     setOpen(true);
   };
 
@@ -176,10 +162,9 @@ export default function ProductosPage() {
     const form = toMenuProductForm(product);
     reset(form);
     setShowRecipeSelector(!!form.recipeId);
-    const firstVariantId = form.priceOptions?.[0]?.id;
-    setSelectedPreviewPriceId(form.priceOptions && form.priceOptions.length > 0 ? (firstVariantId || '') : 'base');
     setIncludedFixedRemovals({});
     setIncludedChoiceSelections({});
+    setBaseRecipeRemovals([]);
     setOpen(true);
   };
 
@@ -216,18 +201,8 @@ export default function ProductosPage() {
       imageValue = data.image;
     }
 
-    const cleanedPriceOptions = (data.priceOptions || [])
-      .filter((p) => p.name?.trim())
-      .map((p) => ({
-        id: p.id || createRestaurantId(),
-        name: p.name.trim(),
-        price: Number(p.price || 0),
-      }));
-
-    const hasVariants = cleanedPriceOptions.length > 0;
-    const baseOrMainPrice = hasVariants
-      ? cleanedPriceOptions[0].price
-      : (data.price === '' || data.price === null || data.price === undefined ? 0 : Number(data.price));
+    const baseOrMainPrice =
+      data.price === '' || data.price === null || data.price === undefined ? 0 : Number(data.price);
 
     const cleanedIncludedItems = (data.includedItems || [])
       .map((item) => {
@@ -246,6 +221,7 @@ export default function ProductosPage() {
             inventoryItemId: item.inventoryItemId || null,
           } as MenuProductIncludedItem;
         }
+        const allowOptionPrices = !!item.allowOptionPrices;
         const options = (item.options || [])
           .filter((o) => o.sourceId)
           .map((o) => {
@@ -260,7 +236,8 @@ export default function ProductosPage() {
               name: resolvedName,
               sourceType: (o.sourceType || 'product') as ModifierOptionSourceType,
               sourceId: o.sourceId || null,
-              priceDelta: Number(o.priceDelta || 0),
+              priceDelta: allowOptionPrices ? 0 : Number(o.priceDelta || 0),
+              price: Number(o.price || 0),
             };
           });
         if (options.length === 0) return null;
@@ -271,6 +248,7 @@ export default function ProductosPage() {
           quantity,
           options,
           allowRepeat: !!item.allowRepeat,
+          allowOptionPrices,
           minSelections: Number(item.minSelections ?? quantity),
           maxSelections: Number(item.maxSelections ?? quantity),
         } as MenuProductIncludedItem;
@@ -286,7 +264,7 @@ export default function ProductosPage() {
       recipeId: data.recipeId || null,
       price: baseOrMainPrice,
       basePrice: baseOrMainPrice,
-      priceOptions: cleanedPriceOptions,
+      priceOptions: [],
       recipes: data.recipeId ? [{ recipeId: data.recipeId, quantity: 1 }] : [],
       includedItems: cleanedIncludedItems,
       personalizationGroupIds: data.personalizationGroupIds || [],
@@ -310,19 +288,6 @@ export default function ProductosPage() {
   });
 
   const basePriceValue = Number(watched?.price || 0);
-  const variantPreviewOptions = (watched?.priceOptions || [])
-    .filter((p) => p.name?.trim() || Number(p.price) > 0)
-    .map((p) => ({ id: p.id, name: p.name || 'Variante', price: Number(p.price || 0) }));
-
-  const previewPriceOptions = hasVariantPrices
-    ? variantPreviewOptions
-    : [{ id: 'base', name: 'Precio', price: basePriceValue }];
-
-  const effectivePreviewPriceId = previewPriceOptions.some((p) => p.id === selectedPreviewPriceId)
-    ? selectedPreviewPriceId
-    : (previewPriceOptions[0]?.id || '');
-
-  const selectedPreviewPrice = previewPriceOptions.find((p) => p.id === effectivePreviewPriceId) || previewPriceOptions[0];
 
   const imagePreviewSrc = useMemo(() => {
     const img = watched?.image;
@@ -332,6 +297,31 @@ export default function ProductosPage() {
   }, [watched?.image]);
 
   const previewIncludedItems = ((watched?.includedItems || []) as MenuProductIncludedItem[]);
+  const selectedBaseRecipe = watched?.recipeId ? recipes.find((r) => r.id === watched.recipeId) : undefined;
+  const baseRecipeRemovableComponents = (selectedBaseRecipe?.components || []).filter((c) => c.optional && c.inventoryItemId);
+
+  let includedChoicesPriceDelta = 0;
+  let includedChoicesAbsolute = 0;
+  let hasAbsolutePricedSelection = false;
+  previewIncludedItems.forEach((item) => {
+    if (item.kind !== 'choice') return;
+    const selectedMap = includedChoiceSelections[item.id] || {};
+    const options = item.options || [];
+    Object.entries(selectedMap).forEach(([optId, qty]) => {
+      const opt = options.find((o) => o.id === optId);
+      if (!opt) return;
+      if (item.allowOptionPrices) {
+        includedChoicesAbsolute += Number(opt.price || 0) * qty;
+        hasAbsolutePricedSelection = true;
+      } else {
+        includedChoicesPriceDelta += Number(opt.priceDelta || 0) * qty;
+      }
+    });
+  });
+  const baseForPreview = hasAbsolutePricedSelection ? 0 : basePriceValue;
+  const previewTotalPrice = hasAbsolutePricedSelection
+    ? includedChoicesAbsolute
+    : baseForPreview + includedChoicesPriceDelta;
 
   const toggleIncludedFixedRemoval = (itemId: string, instanceIndex: number, componentItemId: string) => {
     setIncludedFixedRemovals((prev) => {
@@ -346,6 +336,12 @@ export default function ProductosPage() {
       else next[itemId] = itemMap;
       return next;
     });
+  };
+
+  const toggleBaseRecipeRemoval = (componentItemId: string) => {
+    setBaseRecipeRemovals((prev) =>
+      prev.includes(componentItemId) ? prev.filter((id) => id !== componentItemId) : [...prev, componentItemId]
+    );
   };
 
   const toggleIncludedChoiceOption = (itemId: string, optionId: string, maxQty: number, allowRepeat: boolean) => {
@@ -501,7 +497,18 @@ export default function ProductosPage() {
                         name="recipeId"
                         control={control}
                         render={({ field }) => (
-                          <TextField {...field} select label="Receta" value={field.value || ''} fullWidth size="small">
+                          <TextField
+                            {...field}
+                            select
+                            label="Receta"
+                            value={field.value || ''}
+                            fullWidth
+                            size="small"
+                            onChange={(e) => {
+                              field.onChange(e);
+                              setBaseRecipeRemovals([]);
+                            }}
+                          >
                             <MenuItem value="">Seleccionar...</MenuItem>
                             {recipes.map((recipe) => (
                               <MenuItem key={recipe.id} value={recipe.id}>{recipe.name}</MenuItem>
@@ -514,7 +521,7 @@ export default function ProductosPage() {
                           color="error"
                           startIcon={<DeleteIcon />}
                           type="button"
-                          onClick={() => { setValue('recipeId', '', { shouldDirty: true }); setShowRecipeSelector(false); }}
+                          onClick={() => { setValue('recipeId', '', { shouldDirty: true }); setShowRecipeSelector(false); setBaseRecipeRemovals([]); }}
                         >
                           Borrar
                         </Button>
@@ -523,69 +530,19 @@ export default function ProductosPage() {
                   )}
                 </Box>
 
-                {!hasVariantPrices && (
+                {!hasIncludedOptionPricing && (
                   <Box>
                     <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Precio</Typography>
                     <FormInputNumber name="price" control={control} label="Precio" />
                   </Box>
                 )}
 
-                <Box>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                    <Typography variant="subtitle2">Opciones de precio (variantes)</Typography>
-                    <Button
-                      variant="text"
-                      startIcon={<AddIcon />}
-                      type="button"
-                      onClick={() => {
-                        appendPriceOption(emptyPriceOption());
-                        if (!hasVariantPrices) {
-                          setSelectedPreviewPriceId('');
-                        }
-                      }}
-                    >
-                      + Agregar otro precio
-                    </Button>
-                  </Stack>
-                  <Stack spacing={1.5}>
-                    {priceOptionFields.map((field, index) => (
-                      <Box key={field.id} sx={{ p: 1.5, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
-                          <FormInputText name={`priceOptions.${index}.name` as const} control={control} label="Nombre de variante" />
-                          <Box sx={{ minWidth: 160 }}>
-                            <FormInputNumber name={`priceOptions.${index}.price` as const} control={control} label="Precio" />
-                          </Box>
-                          <Button
-                            color="error"
-                            startIcon={<DeleteIcon />}
-                            type="button"
-                            onClick={() => {
-                              const removedId = watched?.priceOptions?.[index]?.id;
-                              removePriceOption(index);
-                              if (selectedPreviewPriceId === removedId) {
-                                setSelectedPreviewPriceId('');
-                              }
-                            }}
-                          >
-                            Borrar
-                          </Button>
-                        </Stack>
-                      </Box>
-                    ))}
-                    {priceOptionFields.length === 0 && (
-                      <Typography variant="body2" color="text.secondary">
-                        Si el producto tiene más de un precio, agregá variantes de precio.
-                      </Typography>
-                    )}
-                  </Stack>
-                </Box>
-
                 <Divider />
                 <Box>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                    <Typography variant="subtitle2">Ítems incluidos (composición)</Typography>
+                    <Typography variant="subtitle2">Insumos incluidos (composición)</Typography>
                     <Button variant="outlined" startIcon={<AddIcon />} type="button" onClick={() => appendIncludedItem(emptyIncludedItem())}>
-                      + Agregar ítem incluido
+                      + Agregar Insumo incluido
                     </Button>
                   </Stack>
                   <Stack spacing={1.5}>
@@ -632,7 +589,17 @@ export default function ProductosPage() {
                               <Box sx={{ width: 140 }}>
                                 <FormInputNumber name={`includedItems.${index}.quantity` as any} control={control} label="Cantidad" />
                               </Box>
-                              <Button color="error" startIcon={<DeleteIcon />} type="button" onClick={() => removeIncludedItem(index)}>
+                              <Button color="error" startIcon={<DeleteIcon />} type="button" onClick={() => removeIncludedItem(index)}
+                                size='small'
+                                sx={{
+                                  color: '#808080',
+                                  borderColor: '#808080',
+                                  gap: 0,
+                                  '& .MuiButton-startIcon': {
+                                    marginRight: '2px',
+                                  },
+                                }}
+                              >
                                 Borrar
                               </Button>
                             </Stack>
@@ -667,16 +634,28 @@ export default function ProductosPage() {
                               />
                             ) : (
                               <Stack spacing={1}>
-                                <Controller
-                                  name={`includedItems.${index}.allowRepeat` as any}
-                                  control={control}
-                                  render={({ field: f }) => (
-                                    <FormControlLabel
-                                      control={<Checkbox checked={!!f.value} onChange={(e) => f.onChange(e.target.checked)} />}
-                                      label="Permitir repetir opción"
-                                    />
-                                  )}
-                                />
+                                <Stack direction="row" spacing={2} flexWrap="wrap">
+                                  <Controller
+                                    name={`includedItems.${index}.allowRepeat` as any}
+                                    control={control}
+                                    render={({ field: f }) => (
+                                      <FormControlLabel
+                                        control={<Checkbox checked={!!f.value} onChange={(e) => f.onChange(e.target.checked)} />}
+                                        label="Permitir repetir opción"
+                                      />
+                                    )}
+                                  />
+                                  <Controller
+                                    name={`includedItems.${index}.allowOptionPrices` as any}
+                                    control={control}
+                                    render={({ field: f }) => (
+                                      <FormControlLabel
+                                        control={<Checkbox checked={!!f.value} onChange={(e) => f.onChange(e.target.checked)} />}
+                                        label="Permitir agregar precios"
+                                      />
+                                    )}
+                                  />
+                                </Stack>
                                 <Typography variant="caption" color="text.secondary">Opciones a elegir (ej. bebidas)</Typography>
                                 {choiceOptions.map((opt, optIndex) => (
                                   <Stack key={opt.id || optIndex} direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems={{ sm: 'center' }}>
@@ -731,6 +710,15 @@ export default function ProductosPage() {
                                         );
                                       }}
                                     />
+                                    {item.allowOptionPrices && (
+                                      <Box sx={{ width: 170 }}>
+                                        <FormInputNumber
+                                          name={`includedItems.${index}.options.${optIndex}.price` as any}
+                                          control={control}
+                                          label="Precio (Q)"
+                                        />
+                                      </Box>
+                                    )}
                                     <Button
                                       color="error"
                                       size="small"
@@ -739,6 +727,11 @@ export default function ProductosPage() {
                                         const opts = [...(getValues(`includedItems.${index}.options` as any) || [])];
                                         opts.splice(optIndex, 1);
                                         setValue(`includedItems.${index}.options` as any, opts);
+                                      }}
+                                      
+                                      sx={{
+                                        color: '#808080',
+                                        borderColor: '#808080'
                                       }}
                                     >
                                       Quitar
@@ -764,7 +757,7 @@ export default function ProductosPage() {
                     })}
                     {includedItemFields.length === 0 && (
                       <Typography variant="body2" color="text.secondary">
-                        Agregá ítems incluidos para productos compuestos (ej. 2 sándwiches + 2 bebidas).
+                        Agregá Insumo incluidos para productos compuestos (ej. 2 sándwiches + 2 bebidas).
                       </Typography>
                     )}
                   </Stack>
@@ -785,7 +778,17 @@ export default function ProductosPage() {
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>{group.name}</Typography>
                           {group.internalLabel && <Typography variant="caption" color="text.secondary">{group.internalLabel}</Typography>}
                         </Box>
-                        <Button color="error" startIcon={<DeleteIcon />} type="button" onClick={() => removePersonalization(group.id)}>
+                        <Button color="error" startIcon={<DeleteIcon />} type="button" onClick={() => removePersonalization(group.id)}
+                          size='small'
+                          sx={{
+                            color: '#808080',
+                            borderColor: '#808080',
+                            gap: 0,
+                            '& .MuiButton-startIcon': {
+                              marginRight: '2px',
+                            },
+                          }}
+                        >
                           Remover
                         </Button>
                       </Box>
@@ -816,39 +819,74 @@ export default function ProductosPage() {
                     </Typography>
 
                     <Divider sx={{ my: 1.5 }} />
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Opciones</Typography>
-                    {previewPriceOptions.length === 0 ? (
-                      <Typography variant="body2" color="text.secondary">Agregá al menos una variante de precio.</Typography>
+                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>{hasIncludedOptionPricing ? 'Precio' : 'Opciones'}</Typography>
+                    {hasIncludedOptionPricing ? (
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        Precio estimado: Q {previewTotalPrice.toFixed(2)}
+                      </Typography>
                     ) : (
                       <>
-                        <RadioGroup value={effectivePreviewPriceId} onChange={(e) => setSelectedPreviewPriceId(e.target.value)}>
-                          {previewPriceOptions.map((opt) => (
-                            <FormControlLabel
-                              key={opt.id}
-                              value={opt.id}
-                              control={<Radio size="small" />}
-                              label={`${opt.name || 'Precio'} - Q ${Number(opt.price || 0).toFixed(2)}`}
-                            />
-                          ))}
-                        </RadioGroup>
-                        {selectedPreviewPrice && (
-                          <Typography variant="caption" color="text.secondary">
-                            Seleccionado: {selectedPreviewPrice.name || 'Precio'} (Q {Number(selectedPreviewPrice.price || 0).toFixed(2)})
+                        <Typography variant="caption" color="text.secondary" display="block">
+                          Base: Q {basePriceValue.toFixed(2)}
+                          {includedChoicesPriceDelta !== 0 ? ` · Ajuste: ${includedChoicesPriceDelta >= 0 ? '+' : ''}Q ${includedChoicesPriceDelta.toFixed(2)}` : ''}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.5 }}>
+                          Precio estimado: Q {previewTotalPrice.toFixed(2)}
+                        </Typography>
+                      </>
+                    )}
+
+                    {selectedBaseRecipe && (
+                      <>
+                        <Divider sx={{ my: 1.5 }} />
+                        <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Receta</Typography>
+                        <Box sx={{ p: 1, border: '1px solid #eee', borderRadius: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                            {selectedBaseRecipe.name}
                           </Typography>
-                        )}
+                          {baseRecipeRemovableComponents.length > 0 ? (
+                            <Box>
+                              <Typography variant="caption" color="text.secondary" display="block">
+                                Podés quitar:
+                              </Typography>
+                              {baseRecipeRemovableComponents.map((comp) => {
+                                const ingName = inventoryItems.find((i) => i.id === comp.inventoryItemId)?.name || comp.inventoryItemId;
+                                const isRemoved = baseRecipeRemovals.includes(comp.inventoryItemId);
+                                return (
+                                  <FormControlLabel
+                                    key={`base-recipe-${comp.inventoryItemId}`}
+                                    sx={{ display: 'flex', ml: 0 }}
+                                    control={
+                                      <Checkbox
+                                        size="small"
+                                        checked={isRemoved}
+                                        onChange={() => toggleBaseRecipeRemoval(comp.inventoryItemId)}
+                                      />
+                                    }
+                                    label={`Sin ${ingName}`}
+                                  />
+                                );
+                              })}
+                            </Box>
+                          ) : (
+                            <Typography variant="caption" color="text.secondary" display="block">
+                              Sin ingredientes que se puedan quitar.
+                            </Typography>
+                          )}
+                        </Box>
                       </>
                     )}
 
                     {previewIncludedItems.length > 0 && (
                       <>
                         <Divider sx={{ my: 1.5 }} />
-                        <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Ítems incluidos</Typography>
+                        <Typography variant="subtitle2" sx={{ mb: 0.5 }}>Insumos incluidos</Typography>
                         <Stack spacing={1.5}>
                           {previewIncludedItems.map((item) => {
                             const qty = Math.max(1, Number(item.quantity || 1));
                             if (item.kind === 'fixed') {
                               const recipe = item.recipeId ? recipes.find((r) => r.id === item.recipeId) : undefined;
-                              const baseName = item.name || recipe?.name || 'Ítem';
+                              const baseName = item.name || recipe?.name || 'Insumo';
                               const removableComponents = (recipe?.components || []).filter((c) => c.optional && c.inventoryItemId);
                               return (
                                 <Box key={item.id} sx={{ p: 1, border: '1px solid #eee', borderRadius: 1 }}>
@@ -888,7 +926,7 @@ export default function ProductosPage() {
                                           ) : (
                                             qty > 1 ? (
                                               <Typography variant="caption" color="text.secondary" display="block">
-                                                Sin componentes removibles configurados.
+                                                Sin Ingredientes removibles configurados.
                                               </Typography>
                                             ) : null
                                           )}
@@ -924,6 +962,12 @@ export default function ProductosPage() {
                                           ? recipes.find((r) => r.id === opt.sourceId)?.name
                                           : inventoryItems.find((i) => i.id === opt.sourceId)?.name) ||
                                         'Opción';
+                                      const isPricedMode = !!item.allowOptionPrices;
+                                      const price = Number(opt.price || 0);
+                                      const delta = Number(opt.priceDelta || 0);
+                                      const optLabel = isPricedMode
+                                        ? `${optName} - Q ${price.toFixed(2)}`
+                                        : (delta ? `${optName} (${delta >= 0 ? '+' : ''}Q ${delta.toFixed(2)})` : optName);
                                       const optQty = selectedMap[opt.id] || 0;
                                       const checked = optQty > 0;
                                       const disabledAdd = !checked && !canAddMore;
@@ -938,7 +982,7 @@ export default function ProductosPage() {
                                                 onChange={() => toggleIncludedChoiceOption(item.id, opt.id, qty, allowRepeat)}
                                               />
                                             }
-                                            label={optName}
+                                            label={optLabel}
                                           />
                                           {allowRepeat && checked && (
                                             <Stack direction="row" spacing={0.5} alignItems="center">

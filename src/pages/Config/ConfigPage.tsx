@@ -28,7 +28,7 @@ import {
 import type { AppConfig, BusinessMode } from '@/modules/config/models';
 
 const featureLabels: Record<keyof AppConfig['features'], string> = {
-  recipes: 'Recetas / BOM',
+  recipes: 'Recetas',
   modifiers: 'Modificadores y extras',
   inventoryByIngredients: 'Inventario por producto',
   kds: 'KDS / cocina',

@@ -36,6 +36,7 @@ const unitOptions: { value: RestaurantUnit; label: string }[] = [
   { value: 'ml', label: 'Mililitros (ml)' },
   { value: 'l', label: 'Litros (l)' },
   { value: 'portion', label: 'Porción' },
+  { value: 'rodaja', label: 'Rodaja'}
 ];
 
 const emptyComponent = (): RecipeComponent => ({
@@ -112,7 +113,7 @@ export default function RecipesPage() {
   return (
     <Box>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">Recetas / BOM</Typography>
+        <Typography variant="h6">Recetas</Typography>
         <Button variant="contained" onClick={openCreate} disabled={isBusy}>Nueva receta</Button>
       </Stack>
 
@@ -123,7 +124,7 @@ export default function RecipesPage() {
           <TableRow>
             <TableCell>Nombre</TableCell>
             <TableCell>Descripción</TableCell>
-            <TableCell>Componentes</TableCell>
+            <TableCell>Ingredientes</TableCell>
             <TableCell align="right">Acciones</TableCell>
           </TableRow>
         </TableHead>
@@ -161,13 +162,13 @@ export default function RecipesPage() {
 
               <Divider />
               <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="subtitle1">Componentes (BOM)</Typography>
+                <Typography variant="subtitle1">Ingredientes</Typography>
                 <Button startIcon={<AddIcon />} onClick={() => append(emptyComponent())} disabled={inventoryItems.length === 0} type="button">
-                  Agregar componente
+                  Agregar Ingrediente
                 </Button>
               </Stack>
               {inventoryItems.length === 0 && (
-                <Alert severity="info">Primero registrá insumos/ítems para poder armar recetas.</Alert>
+                <Alert severity="info">Primero registrá Insumos/Productos para poder armar recetas.</Alert>
               )}
 
               {fields.map((field, index) => (
@@ -178,7 +179,7 @@ export default function RecipesPage() {
                         name={`components.${index}.inventoryItemId` as const}
                         control={control}
                         render={({ field: f }) => (
-                          <TextField {...f} select label="Insumo / Ítem" value={f.value || ''} fullWidth size="small">
+                          <TextField {...f} select label="Insumos y Productos" value={f.value || ''} fullWidth size="small">
                             <MenuItem value="">Seleccionar...</MenuItem>
                             {inventoryItems.map((item) => (
                               <MenuItem key={item.id} value={item.id}>{item.name} ({item.unit})</MenuItem>
@@ -186,7 +187,7 @@ export default function RecipesPage() {
                           </TextField>
                         )}
                       />
-                      <IconButton color="error" onClick={() => remove(index)} aria-label="Eliminar componente">
+                      <IconButton color="error" onClick={() => remove(index)} aria-label="Eliminar Ingrediente">
                         <DeleteIcon />
                       </IconButton>
                     </Stack>
