@@ -436,7 +436,7 @@ export default function ModifierGroupsPage() {
               </Stack>
 
               <Box sx={{ width: { xs: '100%', md: 360 }, flexShrink: 0 }}>
-                <ModifierGroupPreview group={(watched as DraftGroupForm) || emptyGroup()} recipes={recipes} products={productItems} />
+                <ModifierGroupPreview group={(watched as DraftGroupForm) || emptyGroup()} recipes={recipes} inventoryItems={catalog.inventoryItems} />
               </Box>
             </Stack>
           </Box>

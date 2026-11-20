@@ -4,11 +4,13 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  FormControlLabel,
   IconButton,
   MenuItem,
   Stack,
@@ -40,6 +42,7 @@ const emptyComponent = (): RecipeComponent => ({
   inventoryItemId: '',
   quantity: 1,
   unit: 'unit',
+  optional: false,
 });
 
 const emptyRecipe = (): Recipe => ({
@@ -95,6 +98,7 @@ export default function RecipesPage() {
           ...c,
           quantity: Number(c.quantity),
           unit: c.unit || 'unit',
+          optional: !!c.optional,
         })),
       updatedAt: new Date().toISOString(),
       createdAt: data.createdAt ?? new Date().toISOString(),
@@ -186,7 +190,7 @@ export default function RecipesPage() {
                         <DeleteIcon />
                       </IconButton>
                     </Stack>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ sm: 'center' }}>
                       <FormInputNumber name={`components.${index}.quantity` as const} control={control} label="Cantidad" />
                       <Controller
                         name={`components.${index}.unit` as const}
@@ -195,6 +199,17 @@ export default function RecipesPage() {
                           <TextField {...f} select label="Unidad" fullWidth size="small">
                             {unitOptions.map((opt) => <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>)}
                           </TextField>
+                        )}
+                      />
+                      <Controller
+                        name={`components.${index}.optional` as const}
+                        control={control}
+                        render={({ field: f }) => (
+                          <FormControlLabel
+                            control={<Checkbox checked={!!f.value} onChange={(e) => f.onChange(e.target.checked)} />}
+                            label="Se puede quitar en el pedido"
+                            sx={{ whiteSpace: 'nowrap' }}
+                          />
                         )}
                       />
                     </Stack>

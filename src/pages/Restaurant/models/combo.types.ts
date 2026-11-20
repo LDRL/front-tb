@@ -46,6 +46,8 @@ export interface SelectedModifierOption {
   optionName?: string;
   quantity?: number;
   priceDelta?: number;
+  /** Inventory item ids of recipe components removed for this selected option (e.g. "sin tomate"). */
+  removedComponentIds?: RestaurantEntityId[];
 }
 
 export interface ConfiguredComboSlotSelection {
