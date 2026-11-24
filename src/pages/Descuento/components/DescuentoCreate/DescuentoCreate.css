@@ -1,0 +1,15 @@
+.descuento-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.descuento-field-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .descuento-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

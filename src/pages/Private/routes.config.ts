@@ -44,6 +44,8 @@ const ReporteLote = lazy(() => import("../Reporte").then(m => ({ default: m.Lote
 const Caja = lazy(() => import("../Caja/CajaPage"))
 const CajaHistorial = lazy(() => import("../Caja/CajaHistorialPage"))
 const CajaSesion = lazy(() => import("../Caja/components/SesionDetail/CajaSesionPage"))
+const Descuento = lazy(() => import("../Descuento/DescuentoPage"))
+const DescuentoCreate = lazy(() => import("../Descuento").then(m => ({ default: m.DescuentoCreate })))
 
 export const publicRoutes: RouteConfig[] = [
   { path: PrivateRoutes.DASHBOARD, Component: Dashboard },
@@ -105,4 +107,8 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.CAJA_SESION_CAJA, Component: Caja, permission: PERMISSIONS.CAJA.READ },
   { path: PrivateRoutes.CAJA_HISTORIAL, Component: CajaHistorial, permission: PERMISSIONS.CAJA.READ },
   { path: PrivateRoutes.CAJA_SESION, Component: CajaSesion, permission: PERMISSIONS.CAJA.READ },
+
+  { path: PrivateRoutes.DESCUENTO, Component: Descuento, permission: PERMISSIONS.DESCUENTOS.READ },
+  { path: PrivateRoutes.DESCUENTO_CREATE, Component: DescuentoCreate, permission: PERMISSIONS.DESCUENTOS.CREATE },
+  { path: PrivateRoutes.DESCUENTO_EDIT, Component: DescuentoCreate, permission: PERMISSIONS.DESCUENTOS.UPDATE },
 ];

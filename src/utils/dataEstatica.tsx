@@ -71,7 +71,8 @@ export const LinksArray: SidebarLink[] = [
       PERMISSIONS.UNITS.READ,
       PERMISSIONS.TALLAS.READ,
       PERMISSIONS.COLORS.READ,
-      PERMISSIONS.PUBLICOS.READ
+      PERMISSIONS.PUBLICOS.READ,
+      PERMISSIONS.DESCUENTOS.READ
     ],
 
     subNav: [
@@ -94,6 +95,11 @@ export const LinksArray: SidebarLink[] = [
         title: "Presentaciones",
         path: "/private/presentation",
         permission: PERMISSIONS.PRESENTATIONS.READ,
+      },
+      {
+        title: "Descuentos",
+        path: "/private/descuento",
+        permission: PERMISSIONS.DESCUENTOS.READ,
       },
       {
         title: "Unidades de medida",

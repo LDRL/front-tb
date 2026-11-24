@@ -113,6 +113,13 @@ export const PERMISSIONS = {
     OPERAR: "caja:operar",
   },
 
+  DESCUENTOS: {
+    READ: "descuentos:read",
+    CREATE: "descuentos:create",
+    UPDATE: "descuentos:update",
+    DELETE: "descuentos:delete",
+  },
+
   REPORT: {
     READ: "reporte:read",
   },

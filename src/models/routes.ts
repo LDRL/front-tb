@@ -55,4 +55,8 @@ export const PrivateRoutes = {
     CAJA_SESION_CAJA: 'caja/sesion',
     CAJA_HISTORIAL: 'caja/historial',
     CAJA_SESION: 'caja/sesiones/:id',
+
+    DESCUENTO: 'descuento',
+    DESCUENTO_CREATE: 'descuento/create',
+    DESCUENTO_EDIT: 'descuento/:id/editar',
 }
