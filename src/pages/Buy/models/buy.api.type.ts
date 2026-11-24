@@ -35,6 +35,16 @@ export interface ApiBuy {
 
 //Para obtener el encabezado y detalle de la compra
 
+export interface ApiPagoCompra {
+  idpago?: number;
+  _id?: number;
+  idcompra?: number | string;
+  importe: number | string;
+  idtipopago: number;
+  estado: 'Pagado' | 'Pendiente' | string;
+  fecha_pago?: string;
+}
+
 export interface ApiHeaderBuy {
     _id: string;
     nombre: string;
@@ -45,6 +55,7 @@ export interface ApiHeaderBuy {
     total: number; // 👈 importante
     idusuario: number;
     idsucursal: number;
+    saldoPendiente?: number | string;
 
     Proveedor: {
         _id: number;
@@ -74,6 +85,7 @@ export interface ApiHeaderBuy {
     };
 
     Detalles: ApiHeaderDetail[];
+    Pagos?: ApiPagoCompra[];
 }
 
 export interface ApiHeaderDetail{

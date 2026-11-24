@@ -60,7 +60,8 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
             address: buy.direccion,
             providerId: buy.idproveedor,
             providerName: buy.Proveedor?.nombre ?? "",
-            total: buy.total,
+            total: Number(buy.total ?? 0),
+            saldoPendiente: buy.saldoPendiente !== undefined ? Number(buy.saldoPendiente) : undefined,
         },
 
         details: (buy.Detalles ?? []).map((d) => ({
@@ -71,6 +72,13 @@ export const HeaderBuyAdapter = (buy: ApiHeaderBuy): HeaderBuy => {
             subtotal: Number((Number(d.cantidad) * Number(d.costo)).toFixed(2)),
             product: d.ProductoPresentacion.Producto.nombre,
             variant: variantLabelFromHeaderDetail(d),
+        })),
+        payments: (buy.Pagos ?? []).map((p) => ({
+            id: p.idpago ?? p._id ?? `${p.idcompra}-${p.fecha_pago}-${p.importe}`,
+            amount: Number(p.importe ?? 0),
+            paymentTypeId: Number(p.idtipopago ?? 0),
+            status: String(p.estado ?? ''),
+            date: p.fecha_pago,
         })),
     };
 };

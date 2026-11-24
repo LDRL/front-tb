@@ -5,7 +5,7 @@ import { BuyListAdapter, mapBuyToCreatePayload } from '../adapter';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { pageSize, PaginationModel } from '@/utils';
-import { fetchBuyAnnul, fetchBuyCreate } from '../services/buy';
+import { fetchBuyAnnul, fetchBuyCreate, fetchRegisterBuyPayment } from '../services/buy';
 import { userKey } from '@/redux/authSlice';
 import { ApiBuy, ApiHeaderBuy } from '../models/buy.api.type';
 import { Buy, BuyList, Detail } from '../models/buy.domain.type';
@@ -155,6 +155,35 @@ export const useAnnulBuy = () => {
       const [error, data] = await fetchBuyAnnul(`${apiUrl}compras/anular/${id}`, idcaja ? { idcaja } : undefined);
       if (error) throw error;
       return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['buys'] });
+      queryClient.invalidateQueries({ queryKey: ['showBuy', String(variables.id)] });
+      queryClient.invalidateQueries({ queryKey: ['showBuy', variables.id] });
+    },
+  });
+};
+
+export const useRegisterBuyPayment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    any,
+    Error | unknown,
+    { id: number | string; payload: { importe: number; idtipopago: number; estado: 'Pagado' | 'Pendiente'; fecha_pago?: string; idcaja?: number } }
+  >({
+    mutationFn: async ({ id, payload }) => {
+      const [error, data, response] = await fetchRegisterBuyPayment(`${apiUrl}compras/${id}/pagos`, payload);
+      if (error) throw error;
+      const advertencias =
+        response?.data?.data?.advertencias ??
+        response?.data?.advertencias ??
+        data?.advertencias ??
+        [];
+      return {
+        ...(data ?? {}),
+        advertencias: Array.isArray(advertencias) ? advertencias : [],
+      };
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['buys'] });

@@ -68,3 +68,20 @@ export const fetchBuyAnnul = async (url: string, payload?: { idcaja?: number }):
     return [new Error("Error de red"), undefined, undefined];
   }
 };
+
+// REGISTRAR PAGO
+export const fetchRegisterBuyPayment = async (
+  url: string,
+  payload: { importe: number; idtipopago: number; estado: 'Pagado' | 'Pendiente'; fecha_pago?: string; idcaja?: number }
+): Promise<[Error?, any?, any?]> => {
+  try {
+    const response = await axiosClient.post(url, payload);
+    const { data } = response.data;
+    return [undefined, data, response];
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return [error, undefined, undefined];
+    }
+    return [new Error("Error de red"), undefined, undefined];
+  }
+};

@@ -7,6 +7,7 @@ export interface HeaderH {
   providerId: number;
   providerName: string;
   total:number;
+  saldoPendiente?: number;
 }
 
 export interface HeaderDetail {
@@ -19,7 +20,16 @@ export interface HeaderDetail {
   variant?: string;
 }
 
+export interface BuyPaymentView {
+  id: number | string;
+  amount: number;
+  paymentTypeId: number;
+  status: string;
+  date?: string;
+}
+
 export interface HeaderBuy {
   header: HeaderH;
   details: HeaderDetail[];
+  payments: BuyPaymentView[];
 }
