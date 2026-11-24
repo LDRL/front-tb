@@ -103,6 +103,14 @@ export const PERMISSIONS = {
     CREATE: "sucursales:create",
     UPDATE: "sucursales:update",
     DELETE: "sucursales:delete",
+  },
+
+  CAJA: {
+    READ: "caja:read",
+    CREATE: "caja:create",
+    UPDATE: "caja:update",
+    DELETE: "caja:delete",
+    OPERAR: "caja:operar",
   }
 
 } as const;

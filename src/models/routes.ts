@@ -50,4 +50,7 @@ export const PrivateRoutes = {
     REPORTE: 'reporte',
     REPORTE_INVENTARIO: 'reporte/inventario',
     REPORTE_LOTE_X_VENCER: 'reporte/lote',
+
+    CAJA: 'caja',
+    CAJA_SESION: 'caja/sesiones/:id',
 }

@@ -1,6 +1,7 @@
 import HomeIcon from '@mui/icons-material/Home';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 import PersonIcon from '@mui/icons-material/Person';
 import InventoryIcon  from '@mui/icons-material/Inventory';
@@ -97,7 +98,7 @@ export const LinksArray: SidebarLink[] = [
       {
         title: "Unidades de medida",
         path: "/private/unit",
-        permission: null,
+        permission: PERMISSIONS.UNITS.READ,
       },
       {
         title: "Tallas",
@@ -129,6 +130,14 @@ export const LinksArray: SidebarLink[] = [
     to: "/private/pos",
     path: "/private/pos",
     permission: PERMISSIONS.SALES.READ
+  },
+
+  {
+    label: "Caja",
+    icon: <AccountBalanceWalletIcon />,
+    to: "/private/caja",
+    path: "/private/caja",
+    permission: PERMISSIONS.CAJA.READ
   },
 
   {
