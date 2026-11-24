@@ -111,6 +111,14 @@ export const PERMISSIONS = {
     UPDATE: "caja:update",
     DELETE: "caja:delete",
     OPERAR: "caja:operar",
+  },
+
+  REPORT: {
+    READ: "reporte:read",
+  },
+
+  LOTE: {
+    READ: "lotes:read",
   }
 
 } as const;

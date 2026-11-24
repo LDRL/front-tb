@@ -16,6 +16,9 @@ import { Buy, BuyForm } from '../../models/buy.domain.type';
 import { getErrorMessage } from '@/utils/axiosClient';
 import debounce from 'just-debounce-it';
 import { DetailCreate } from '../DetailCreate/DetailCreate';
+import { FormDropdown } from '@/components';
+import { useFetchPaymentTypes } from '@/pages/Sale/hooks/useSale';
+import { useSesionActual } from '@/pages/Caja/hooks/useCaja';
 
 const BuyCreate: React.FC = () => {
   const [loading , setLoading] = useState<boolean>(false);
@@ -23,8 +26,10 @@ const BuyCreate: React.FC = () => {
   const navigate = useNavigate();
 
   const createBrandMutation = useCreateBuy();
+  const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
+  const { data: sesionActual } = useSesionActual();
   const { control, handleSubmit, reset, getValues, setValue} = useForm<BuyForm>({
-    defaultValues: { id: 0, address: '', name:'', details:[], total:0},
+    defaultValues: { id: 0, address: '', name:'', details:[], total:0, idTypePay: 3, paymentStatus: 0 as any },
   });
 
   useEffect(() => {
@@ -112,6 +117,9 @@ const BuyCreate: React.FC = () => {
       idSucursal: 0,
       idUser: "",
       total: parseFloat(total.toFixed(2)),
+      idTypePay: data.idTypePay,
+      paymentStatus: Number(data.paymentStatus) === 1 ? 'Pagado' : 'Pendiente',
+      idCaja: Number(data.paymentStatus) === 1 && sesionActual?.status === 'ABIERTA' ? sesionActual.cajaId : undefined,
 
       provider: {
         id: data.idProvider!,
@@ -125,9 +133,12 @@ const BuyCreate: React.FC = () => {
       details: rows,
     };
 
-    await createBrandMutation.mutateAsync(newBuy);
+    const result: any = await createBrandMutation.mutateAsync(newBuy);
 
     toast.success("Compra creada exitosamente");
+    if (result?.advertencias?.length) {
+      toast.warning('La compra se registró, pero hay advertencias de caja. Revisá la sesión de caja.');
+    }
 
     navigate(`/private/${PrivateRoutes.BUY}`, {
       replace: true,
@@ -218,6 +229,27 @@ const BuyCreate: React.FC = () => {
                   rules={{required: 'Fecha es un campo requerido'}}
                   maxDate={dayjs()}
                   defaultValue={dayjs()}
+                />
+              </div>
+
+              <div className='section'>
+                <FormDropdown
+                  name="idTypePay"
+                  control={control}
+                  label="Forma de pago"
+                  options={paymentTypeOptions}
+                />
+              </div>
+
+              <div className='section'>
+                <FormDropdown
+                  name="paymentStatus"
+                  control={control}
+                  label="Estado de pago"
+                  options={[
+                    { value: 0, label: 'Pendiente' },
+                    { value: 1, label: 'Pagado' },
+                  ]}
                 />
               </div>
               {/*Encabezado fin */}

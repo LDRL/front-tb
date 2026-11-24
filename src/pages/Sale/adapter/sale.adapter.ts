@@ -105,6 +105,7 @@ export const mapSaleToCreatePayload = (sale: Sale,idusuario: number,idsucursal: 
     idsucursal,
     total: sale.total ?? 0,
     esCotizacion: sale.isQuote,
+    ...(sale.idCaja ? { idcaja: sale.idCaja } : {}),
     detalles: sale.details.map(d => ({
         idprodPresenta: d.codProductPresentation,
         cantidad: d.amount,

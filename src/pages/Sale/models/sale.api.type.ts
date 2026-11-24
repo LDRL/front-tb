@@ -103,6 +103,7 @@ export interface CreateSalePayload {
   idsucursal: number;
   esCotizacion: boolean;
   total: number;
+  idcaja?: number;
 
   detalles: CreateSaleDetail[];
   pago?: CreateSalePay;

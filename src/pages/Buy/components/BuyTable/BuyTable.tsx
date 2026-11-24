@@ -24,6 +24,7 @@ import { getErrorMessage } from '@/utils/axiosClient';
 import { usePermission } from '@/hooks/usePermission';
 import { PERMISSIONS } from '@/modules/auth/helper/permissions';
 import { AppIconButton } from '@/components';
+import { useSesionActual } from '@/pages/Caja/hooks/useCaja';
 
 // import { useDispatch } from 'react-redux';
 
@@ -34,6 +35,7 @@ const ListOfBuys: React.FC = () => {
     const { can } = usePermission();
     const canAnnul = can(PERMISSIONS.PURCHASES.DELETE);
     const annulMutation = useAnnulBuy();
+    const { data: sesionActual } = useSesionActual();
     const [buyToAnnul, setBuyToAnnul] = useState<Buy | null>(null);
     
     const {
@@ -52,7 +54,10 @@ const ListOfBuys: React.FC = () => {
     const handleConfirmAnnul = async () => {
         if (!buyToAnnul) return;
         try {
-            const data = await annulMutation.mutateAsync({ id: buyToAnnul.id });
+            const data = await annulMutation.mutateAsync({
+                id: buyToAnnul.id,
+                idcaja: sesionActual?.status === 'ABIERTA' ? sesionActual.cajaId : undefined,
+            });
             if (data?.advertencias?.length) {
                 toast.warning('Compra anulada con advertencias. Revise el stock de los productos afectados.');
             } else {

@@ -200,12 +200,12 @@ export const LinksArray: SidebarLink[] = [
       {
         title: "Inventario",
         path: "/private/reporte/inventario",
-        permission: null
+        permission: PERMISSIONS.REPORT.READ
       },
       {
         title: "Lotes",
         path: "/private/reporte/lote",
-        permission: null
+        permission: PERMISSIONS.LOTE.READ
       },
     ],
   },

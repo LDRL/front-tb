@@ -56,9 +56,9 @@ export const fetchBuyCreate = async (url: string, payload: CreateBuyPayload ): P
 };
 
 // ANULAR
-export const fetchBuyAnnul = async (url: string): Promise<[Error?, any?, any?]> => {
+export const fetchBuyAnnul = async (url: string, payload?: { idcaja?: number }): Promise<[Error?, any?, any?]> => {
   try {
-    const response = await axiosClient.post(url);
+    const response = await axiosClient.post(url, payload ?? {});
     const { data } = response.data;
     return [undefined, data, response];
   } catch (error: any) {

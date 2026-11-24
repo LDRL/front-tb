@@ -119,8 +119,13 @@ export interface CreateBuyPayload {
   idusuario: number;
   idsucursal: number;
   total: number;
+  idcaja?: number;
 
   detalles: CreateBuyDetail[];
+  pago?: {
+    idtipopago: number;
+    estado: 'Pagado' | 'Pendiente';
+  };
 }
 
 export interface CreateBuyDetail {

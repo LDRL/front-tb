@@ -103,7 +103,7 @@ export const fetchSaleCreate = async (url: string, payload: CreateSalePayload ):
 
 // Convertir cotización a venta
 
-export const convertQuote = async (url: string, payload: { pago: CreateSalePay }): Promise<[Error?, Sale?, any?]> => {
+export const convertQuote = async (url: string, payload: { pago: CreateSalePay; idcaja?: number }): Promise<[Error?, Sale?, any?]> => {
   try {
     const response = await axiosClient.post(url, payload);
     const { data } = response.data;

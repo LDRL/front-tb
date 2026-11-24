@@ -8,6 +8,7 @@ import { useConvertQuote, useFetchPaymentTypes } from "../../hooks/useSale";
 import { getErrorMessage } from "@/utils/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "@/models";
+import { useSesionActual } from "@/pages/Caja/hooks/useCaja";
 
 interface Props {
     id: string;
@@ -21,6 +22,7 @@ const ConfirmSale: React.FC<Props> = ({ id }) => {
     });
 
     const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
+    const { data: sesionActual } = useSesionActual();
 
     const convertMutation = useConvertQuote();
 
@@ -30,9 +32,16 @@ const ConfirmSale: React.FC<Props> = ({ id }) => {
 
     const onSubmit = async (data: { idTypePay: number }) => {
         try {
-            await convertMutation.mutateAsync({ id, idTypePay: data.idTypePay });
+            const result = await convertMutation.mutateAsync({
+                id,
+                idTypePay: data.idTypePay,
+                idcaja: sesionActual?.status === 'ABIERTA' ? sesionActual.cajaId : undefined,
+            });
 
             toast.success("Venta registrada correctamente");
+            if (result?.advertencias?.length) {
+                toast.warning('La venta se registró, pero hay advertencias de caja. Revisá la sesión de caja.');
+            }
 
             handleExit();
             navigate(`/private/${PrivateRoutes.SALE}`, { replace: true });

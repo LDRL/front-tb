@@ -23,6 +23,7 @@ import { Sale, SaleForm } from '../../models/sale.domain.type';
 import { getErrorMessage } from '@/utils/axiosClient';
 import { FormDropdown } from '@/components';
 import { useFetchTypeClientsOptions } from '@/hooks/useOption';
+import { useSesionActual } from '@/pages/Caja/hooks/useCaja';
 
 const SaleCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ const SaleCreate: React.FC = () => {
   const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
 
   const { data: clientTypeOptions = [] } = useFetchTypeClientsOptions();
+  const { data: sesionActual } = useSesionActual();
 
   const [errors, setErrors] = useState({
     amount: false,
@@ -103,6 +105,7 @@ const SaleCreate: React.FC = () => {
         total: parseFloat(total.toFixed(2)),
         isQuote: data.isQuote,
         idTypePay: data.idTypePay,
+        idCaja: !data.isQuote && sesionActual?.status === 'ABIERTA' ? sesionActual.cajaId : undefined,
 
         client: currentClient ?? {
           id: 0,
@@ -121,9 +124,12 @@ const SaleCreate: React.FC = () => {
         details: rows,
       };
 
-      await createSaleMutation.mutateAsync(newData);
+      const result = await createSaleMutation.mutateAsync(newData);
 
       toast.success("Venta creada exitosamente");
+      if (result?.advertencias?.length) {
+        toast.warning('La venta se registró, pero hay advertencias de caja. Revisá la sesión de caja.');
+      }
       navigate(`/private/${PrivateRoutes.SALE}`, { replace: true });
 
     } catch (error: any) {

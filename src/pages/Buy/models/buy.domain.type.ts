@@ -29,6 +29,9 @@ export interface Buy {
   idSucursal: number;
   idUser: string;
   total?: number;
+  idTypePay?: number;
+  paymentStatus?: 'Pagado' | 'Pendiente';
+  idCaja?: number;
 
   provider: Provider;
   details: Detail[];
@@ -44,6 +47,9 @@ export interface BuyForm {
   idSucursal: number;
   idUser: string;
   total?: number;
+  idTypePay?: number;
+  paymentStatus?: 'Pagado' | 'Pendiente';
+  idCaja?: number;
 
   provider: Provider;
   details: Detail[];

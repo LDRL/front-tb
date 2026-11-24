@@ -27,6 +27,7 @@ import { generateTicket } from '@/pages/Sale/components/SaleShow/saleTicket';
 import { useSelector as useAppSelector } from 'react-redux';
 import { AppStore } from '@/redux/store';
 import { HeaderSale } from '@/pages/Sale/models/sale.view.type';
+import { useSesionActual } from '@/pages/Caja/hooks/useCaja';
 
 interface PosCheckoutDialogProps {
   open: boolean;
@@ -67,6 +68,7 @@ const PosCheckoutDialog: React.FC<PosCheckoutDialogProps> = ({
   const { client } = useClientSearch();
   const currentClient = useSelector((state: any) => state.client.currentClient);
   const company = useAppSelector((state: AppStore) => state.auth.user.company);
+  const { data: sesionActual } = useSesionActual();
   const [loading, setLoading] = useState(false);
   const watchedTypeCli = watch('idTypeCli');
   const watchedTypePay = watch('idTypePay');
@@ -179,6 +181,7 @@ const PosCheckoutDialog: React.FC<PosCheckoutDialogProps> = ({
         total: Number(total.toFixed(2)),
         isQuote: false,
         idTypePay: data.idTypePay,
+        idCaja: sesionActual?.status === 'ABIERTA' ? sesionActual.cajaId : undefined,
         client: currentClient ?? {
           id: 0,
           nit: data.nit || '',
@@ -196,9 +199,12 @@ const PosCheckoutDialog: React.FC<PosCheckoutDialogProps> = ({
 
       const response: any = await createSaleMutation.mutateAsync(newData);
       toast.success('Venta creada exitosamente');
+      if (response?.advertencias?.length) {
+        toast.warning('La venta se registró, pero hay advertencias de caja. Revisá la sesión de caja.');
+      }
 
       const paymentTypeName = paymentTypeOptions.find((p: any) => p.value === data.idTypePay)?.label || '';
-      const saleId = response?.data?.id ?? response?.id ?? 0;
+      const saleId = response?.id ?? response?.data?.id ?? 0;
 
       const adaptedData: HeaderSale = {
         header: {

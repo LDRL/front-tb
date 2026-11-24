@@ -87,6 +87,7 @@ export const mapBuyToCreatePayload = (buy: Buy,idusuario: number, idsucursal: nu
   idusuario,
   idsucursal,
   total: buy.total ?? 0,
+  ...(buy.idCaja ? { idcaja: buy.idCaja } : {}),
 
   detalles: buy.details.map(d => ({
     idprodPresenta: d.codProductPresentation,
@@ -95,6 +96,14 @@ export const mapBuyToCreatePayload = (buy: Buy,idusuario: number, idsucursal: nu
     costo: d.cost,
     ...(d.expirationDate ? { fecha_vencimiento: d.expirationDate } : {}),
   })),
+  ...(buy.idTypePay
+    ? {
+        pago: {
+          idtipopago: buy.idTypePay,
+          estado: buy.paymentStatus ?? 'Pendiente',
+        },
+      }
+    : {}),
 });
 
 

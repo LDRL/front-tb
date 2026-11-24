@@ -135,7 +135,7 @@ export const useCreateSale = () => {
     const idsucursal = usuario?.branchId;
     const idusuario = usuario?.id;
 
-    return useMutation<string, Error, Sale>({
+    return useMutation<{ id?: number; advertencias?: any[]; raw?: any }, Error, Sale>({
         mutationFn: async (newSale) => {
 
             if (!idsucursal) throw new Error("No sucursal");
@@ -147,7 +147,7 @@ export const useCreateSale = () => {
                 idsucursal
             );
 
-            const [error, nuevaOrden] = await fetchSaleCreate(
+            const [error, nuevaOrden, response] = await fetchSaleCreate(
                 `${apiUrl}ventas`,
                 payload
             );
@@ -160,7 +160,16 @@ export const useCreateSale = () => {
                 throw new Error('Orden no creado');
             }
 
-            return "creado ";
+            const advertencias =
+              response?.data?.data?.advertencias ??
+              response?.data?.advertencias ??
+              [];
+
+            return {
+              id: nuevaOrden.id ? Number(nuevaOrden.id) : undefined,
+              advertencias: Array.isArray(advertencias) ? advertencias : [],
+              raw: response?.data,
+            };
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['sales'] });
@@ -184,16 +193,17 @@ export const useShowSale = (id:string, enabled: boolean = true) => {
 export const useConvertQuote = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<string, Error, { id: string; idTypePay: number }>({
-        mutationFn: async ({ id, idTypePay }) => {
-            const payload = {
+    return useMutation<{ advertencias?: any[] }, Error, { id: string; idTypePay: number; idcaja?: number }>({
+        mutationFn: async ({ id, idTypePay, idcaja }) => {
+            const payload: any = {
                 pago: {
                     idtipopago: idTypePay,
                     estado: "Pagado",
                 },
+                ...(idcaja ? { idcaja } : {}),
             };
 
-            const [error, converted] = await convertQuote(
+            const [error, converted, response] = await convertQuote(
                 `${apiUrl}ventas/${id}/convertir`,
                 payload
             );
@@ -206,7 +216,12 @@ export const useConvertQuote = () => {
                 throw new Error('Cotización no convertida');
             }
 
-            return "convertido";
+            const advertencias =
+              response?.data?.data?.advertencias ??
+              response?.data?.advertencias ??
+              [];
+
+            return { advertencias: Array.isArray(advertencias) ? advertencias : [] };
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['sales'] });

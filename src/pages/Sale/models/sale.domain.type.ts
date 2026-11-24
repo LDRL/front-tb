@@ -32,6 +32,7 @@ export interface Sale {
     total?: number;
     isQuote: boolean;
     idTypePay: number;
+    idCaja?: number;
     client: Client;
     details: Detail[];
     typeOfSale: TypeOfSale
@@ -50,6 +51,7 @@ export interface SaleForm {
     pay: PayForm;
     isQuote: boolean;
     idTypePay: number;
+    idCaja?: number;
 
     // campos temporales del form (detalle)
 

@@ -96,7 +96,7 @@ export const useCreateBuy = () => {
     const idusuario = usuario?.id;
 
 
-    return useMutation<Buy, Error | unknown, Buy>({
+    return useMutation<Buy & { advertencias?: any[] }, Error | unknown, Buy>({
         mutationFn: async (newBuy) => {
             if (!idsucursal) throw new Error("No sucursal");
             if (!idusuario) throw new Error("No usuario");
@@ -107,7 +107,7 @@ export const useCreateBuy = () => {
                 idsucursal
             );
 
-            const [error, producto] = await fetchBuyCreate(
+            const [error, producto, response] = await fetchBuyCreate(
                 `${apiUrl}compras`,
                 payload
             );
@@ -118,7 +118,15 @@ export const useCreateBuy = () => {
                 throw new Error('Producto no creado');
             }
 
-            return producto;
+            const advertencias =
+              response?.data?.data?.advertencias ??
+              response?.data?.advertencias ??
+              [];
+
+            return {
+              ...producto,
+              advertencias: Array.isArray(advertencias) ? advertencias : [],
+            };
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['buys'] });
@@ -142,9 +150,9 @@ export const useShowBuy = (id:string) => {
 export const useAnnulBuy = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<any, Error | unknown, { id: number | string }>({
-    mutationFn: async ({ id }) => {
-      const [error, data] = await fetchBuyAnnul(`${apiUrl}compras/anular/${id}`);
+  return useMutation<any, Error | unknown, { id: number | string; idcaja?: number }>({
+    mutationFn: async ({ id, idcaja }) => {
+      const [error, data] = await fetchBuyAnnul(`${apiUrl}compras/anular/${id}`, idcaja ? { idcaja } : undefined);
       if (error) throw error;
       return data;
     },
