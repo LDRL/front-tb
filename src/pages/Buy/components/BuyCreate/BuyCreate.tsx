@@ -29,8 +29,16 @@ const BuyCreate: React.FC = () => {
   const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
   const { data: sesionActual } = useSesionActual();
   const { control, handleSubmit, reset, getValues, setValue} = useForm<BuyForm>({
-    defaultValues: { id: 0, address: '', name:'', details:[], total:0, idTypePay: 3, paymentStatus: 0 as any },
+    defaultValues: { id: 0, address: '', name:'', details:[], total:0, idTypePay: 1, paymentStatus: 1 as any },
   });
+
+  useEffect(() => {
+    if (!paymentTypeOptions.length) return;
+    const efectivo = (paymentTypeOptions as any[]).find((p) => /efectivo/i.test(String(p.label || '')));
+    if (efectivo?.value) {
+      setValue('idTypePay', Number(efectivo.value));
+    }
+  }, [paymentTypeOptions, setValue]);
 
   useEffect(() => {
     reset({ idProvider: undefined, address: '', name:'', date:undefined});

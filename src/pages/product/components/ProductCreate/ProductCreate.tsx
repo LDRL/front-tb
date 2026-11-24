@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppIconButton, FormDropdown,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea, IosSwitch } from '@/components';
+import { AppIconButton, FormAutocompleteAsync,  FormInputImage,  FormInputNumber,  FormInputText, FormTextArea, IosSwitch } from '@/components';
 import { useForm } from 'react-hook-form';
 import CardForm from '../../../../components/Cards/CardForm'
 import LoadMask from '@/components/LoadMask/LoadMask';
@@ -303,36 +303,46 @@ const CreateProduct: React.FC = () => {
                   </div>
 
                   <div className="row">
-                    <FormDropdown
+                    <FormAutocompleteAsync
                       name="idCategory"
                       control={control}
                       label="Categoria"
                       rules={{ required: 'Categoria es un campo requerido' }}
                       options={options || []}
+                      isLoading={isLoading}
+                      getOptionLabel={(o: any) => o.label}
+                      getOptionValue={(o: any) => o.value}
                     />
 
-                    <FormDropdown
+                    <FormAutocompleteAsync
                       name="idUnit"
                       control={control}
                       label="Unidad de medida"
                       rules={{ required: 'Unidad de medida es un campo requerido' }}
                       options={unitOptions || []}
+                      getOptionLabel={(o: any) => o.label}
+                      getOptionValue={(o: any) => o.value}
                     />
 
-                    <FormDropdown
+                    <FormAutocompleteAsync
                       name="idBrand"
                       control={control}
                       label="Marca"
                       rules={{ required: 'Marca es un campo requerido' }}
                       options={marcaOptions || []}
+                      isLoading={isMarcaLoading}
+                      getOptionLabel={(o: any) => o.label}
+                      getOptionValue={(o: any) => o.value}
                     />
 
-                    <FormDropdown
+                    <FormAutocompleteAsync
                       name="idPublico"
                       control={control}
                       label="Público objetivo"
                       options={publicoOptions || []}
                       disabled={!hasVariants}
+                      getOptionLabel={(o: any) => o.label}
+                      getOptionValue={(o: any) => o.value}
                     />
 
                     <FormInputNumber

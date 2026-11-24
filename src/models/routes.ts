@@ -52,5 +52,7 @@ export const PrivateRoutes = {
     REPORTE_LOTE_X_VENCER: 'reporte/lote',
 
     CAJA: 'caja',
+    CAJA_SESION_CAJA: 'caja/sesion',
+    CAJA_HISTORIAL: 'caja/historial',
     CAJA_SESION: 'caja/sesiones/:id',
 }

@@ -42,6 +42,7 @@ const Reporte = lazy(() => import("../Reporte").then(m => ({ default: m.ReporteP
 const ReporteInventario = lazy(() => import("../Reporte").then(m => ({ default: m.InventarioPage })))
 const ReporteLote = lazy(() => import("../Reporte").then(m => ({ default: m.LotePage })))
 const Caja = lazy(() => import("../Caja/CajaPage"))
+const CajaHistorial = lazy(() => import("../Caja/CajaHistorialPage"))
 const CajaSesion = lazy(() => import("../Caja/components/SesionDetail/CajaSesionPage"))
 
 export const publicRoutes: RouteConfig[] = [
@@ -101,5 +102,7 @@ export const protectedRoutes: RouteConfig[] = [
   { path: PrivateRoutes.ROL_EDIT, Component: RolCreate, permission: PERMISSIONS.ROLES.UPDATE },
 
   { path: PrivateRoutes.CAJA, Component: Caja, permission: PERMISSIONS.CAJA.READ },
+  { path: PrivateRoutes.CAJA_SESION_CAJA, Component: Caja, permission: PERMISSIONS.CAJA.READ },
+  { path: PrivateRoutes.CAJA_HISTORIAL, Component: CajaHistorial, permission: PERMISSIONS.CAJA.READ },
   { path: PrivateRoutes.CAJA_SESION, Component: CajaSesion, permission: PERMISSIONS.CAJA.READ },
 ];

@@ -6,3 +6,4 @@ export * from './AbrirCajaDialog';
 export * from './CerrarCajaDialog';
 export * from './MovimientoDialog';
 export * from './SesionDetail';
+export * from './SesionesTable';

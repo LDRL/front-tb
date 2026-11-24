@@ -135,9 +135,20 @@ export const LinksArray: SidebarLink[] = [
   {
     label: "Caja",
     icon: <AccountBalanceWalletIcon />,
-    to: "/private/caja",
-    path: "/private/caja",
-    permission: PERMISSIONS.CAJA.READ
+    to: "#",
+    permission: PERMISSIONS.CAJA.READ,
+    subNav: [
+      {
+        title: "Sesión de caja",
+        path: "/private/caja/sesion",
+        permission: PERMISSIONS.CAJA.READ,
+      },
+      {
+        title: "Historial",
+        path: "/private/caja/historial",
+        permission: PERMISSIONS.CAJA.READ,
+      },
+    ],
   },
 
   {

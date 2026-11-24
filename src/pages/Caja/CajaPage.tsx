@@ -22,7 +22,7 @@ export default function CajaPage() {
   return (
     <div>
       <div className="page-title-box">
-        <h4>Caja</h4>
+        <h4>Sesión de caja</h4>
         <Header onCreate={openCreate} />
       </div>
 

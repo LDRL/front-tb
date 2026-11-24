@@ -167,6 +167,7 @@ export const useSesiones = (params: {
   page?: number;
   limit?: number;
   idcaja?: number;
+  idusuario?: number;
   estado?: 'ABIERTA' | 'CERRADA';
   desde?: string;
   hasta?: string;

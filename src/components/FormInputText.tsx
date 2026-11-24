@@ -192,6 +192,7 @@ export interface FormAutocompleteAsyncProps<T extends FieldValues, TOption> {
   options: TOption[];
   isLoading?: boolean;
   rules?: any;
+  disabled?: boolean;
 
   getOptionLabel: (option: TOption) => string;
   getOptionValue: (option: TOption) => string | number;
@@ -210,6 +211,7 @@ export const FormAutocompleteAsync = <
   options,            // ✅ AQUÍ FALTABA
   isLoading,
   rules,
+  disabled,
   getOptionLabel,
   getOptionValue,
   onInputChange,
@@ -231,6 +233,7 @@ export const FormAutocompleteAsync = <
               styles={customStyles}
               isLoading={isLoading}
               isClearable
+              isDisabled={disabled}
               options={options}
               menuPortalTarget={document.body}
               menuPosition="fixed"
