@@ -182,8 +182,6 @@ const Sidebar = () => {
                                   [styles.LinkSub_active]: isSubActive
                                 })}
                                 onClick={() => {
-                                  setOpenSubnav(null);
-
                                   if (sidebarState.mobileOpen) {
                                     dispatch(toggleMobileMenu());
                                   }
