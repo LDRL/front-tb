@@ -19,8 +19,8 @@ import {
 import CardForm from "@/components/Cards/CardForm";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { HeaderBuyAdapter } from "../../adapter";
-import { FormDate, FormInputText } from "@/components";
-import { useForm } from 'react-hook-form';
+import { FormDate, FormDropdown, FormInputNumber, FormInputText } from "@/components";
+import { Controller, useForm } from 'react-hook-form';
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import { HeaderH } from "../../models/buy.view.type";
@@ -47,13 +47,14 @@ function BuyShow() {
   
   const [color] = useState("#ffffff");
   const [paymentOpen, setPaymentOpen] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState<number | ''>('');
-  const [paymentType, setPaymentType] = useState<number>(1);
-  const [paymentStatus, setPaymentStatus] = useState<'Pagado' | 'Pendiente'>('Pagado');
 
   const { data: paymentTypeOptions = [] } = useFetchPaymentTypes();
   const { data: sesionActual } = useSesionActual();
   const registerPayment = useRegisterBuyPayment();
+
+  const paymentForm = useForm<{ amount: number | ''; idtipopago: number; estado: 'Pagado' | 'Pendiente' }>({
+    defaultValues: { amount: '', idtipopago: 1, estado: 'Pagado' },
+  });
 
   const totalPagado = useMemo(
     () => (adaptedData?.payments ?? []).reduce((acc, p) => acc + Number(p.amount || 0), 0),
@@ -67,19 +68,23 @@ function BuyShow() {
   useEffect(() => {
     if (!paymentTypeOptions.length) return;
     const efectivo = (paymentTypeOptions as any[]).find((p) => /efectivo/i.test(String(p.label || '')));
-    if (efectivo?.value) setPaymentType(Number(efectivo.value));
-  }, [paymentTypeOptions]);
+    if (efectivo?.value) paymentForm.setValue('idtipopago', Number(efectivo.value));
+  }, [paymentTypeOptions, paymentForm]);
 
   const openPaymentDialog = () => {
     if (saldoPendiente <= 0) return;
-    setPaymentAmount(Number(saldoPendiente.toFixed(2)));
-    setPaymentStatus('Pagado');
+    const efectivo = (paymentTypeOptions as any[]).find((p) => /efectivo/i.test(String(p.label || '')));
+    paymentForm.reset({
+      amount: Number(saldoPendiente.toFixed(2)),
+      idtipopago: efectivo?.value ? Number(efectivo.value) : Number(paymentForm.getValues('idtipopago') || 1),
+      estado: 'Pagado',
+    });
     setPaymentOpen(true);
   };
 
-  const handleRegisterPayment = async () => {
+  const handleRegisterPayment = paymentForm.handleSubmit(async (values) => {
     if (!id) return;
-    const importe = Number(paymentAmount);
+    const importe = Number(values.amount);
     if (!importe || importe <= 0) {
       toast.error('El importe debe ser mayor a 0');
       return;
@@ -93,9 +98,9 @@ function BuyShow() {
         id,
         payload: {
           importe,
-          idtipopago: Number(paymentType),
-          estado: paymentStatus,
-          ...(paymentStatus === 'Pagado' && sesionActual?.status === 'ABIERTA' ? { idcaja: sesionActual.cajaId } : {}),
+          idtipopago: Number(values.idtipopago),
+          estado: values.estado,
+          ...(values.estado === 'Pagado' && sesionActual?.status === 'ABIERTA' ? { idcaja: sesionActual.cajaId } : {}),
         },
       });
       toast.success('Pago registrado exitosamente');
@@ -106,7 +111,7 @@ function BuyShow() {
     } catch (error) {
       toast.error(getErrorMessage(error));
     }
-  };
+  });
 
   const columns: GridColDef[] = [
     {
@@ -307,35 +312,38 @@ function BuyShow() {
           <Dialog open={paymentOpen} onClose={() => setPaymentOpen(false)} fullWidth maxWidth="xs">
             <DialogTitle>Registrar pago</DialogTitle>
             <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 2.5 }}>
-              <TextField
+              <FormInputNumber
+                name="amount"
+                control={paymentForm.control}
                 label="Importe"
-                type="number"
-                inputProps={{ min: 0.01, step: '0.01' }}
-                fullWidth
-                value={paymentAmount}
-                onChange={(e) => setPaymentAmount(e.target.value === '' ? '' : Number(e.target.value))}
+                maxDecimals={2}
+                rules={{ required: 'Importe es requerido' }}
               />
-              <TextField
-                select
+              <FormDropdown
+                name="idtipopago"
+                control={paymentForm.control}
                 label="Forma de pago"
-                fullWidth
-                value={paymentType}
-                onChange={(e) => setPaymentType(Number(e.target.value))}
-              >
-                {paymentTypeOptions.map((opt: any) => (
-                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                label="Estado"
-                fullWidth
-                value={paymentStatus}
-                onChange={(e) => setPaymentStatus(e.target.value as 'Pagado' | 'Pendiente')}
-              >
-                <MenuItem value="Pagado">Pagado</MenuItem>
-                <MenuItem value="Pendiente">Pendiente</MenuItem>
-              </TextField>
+                options={paymentTypeOptions as any[]}
+                rules={{ required: 'Forma de pago es requerida' }}
+              />
+              <Controller
+                name="estado"
+                control={paymentForm.control}
+                rules={{ required: 'Estado es requerido' }}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    {...field}
+                    select
+                    fullWidth
+                    label="Estado"
+                    error={!!error}
+                    helperText={error?.message}
+                  >
+                    <MenuItem value="Pagado">Pagado</MenuItem>
+                    <MenuItem value="Pendiente">Pendiente</MenuItem>
+                  </TextField>
+                )}
+              />
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2 }}>
               <Button onClick={() => setPaymentOpen(false)} color="error" variant="contained" sx={{ borderRadius: 5 }}>

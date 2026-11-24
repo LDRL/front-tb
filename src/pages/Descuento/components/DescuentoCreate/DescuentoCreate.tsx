@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CardForm from "@/components/Cards/CardForm";
 import Loading from "@/components/Loading";
-import { FormAutocompleteAsync, FormDate } from "@/components";
+import { FormAutocompleteAsync, FormDate, FormInputNumber } from "@/components";
 import { PrivateRoutes } from "@/models";
 import { getErrorMessage } from "@/utils/axiosClient";
 import { useFetchProductOptions } from "@/hooks/useOption";
@@ -132,41 +132,19 @@ const DescuentoCreate: React.FC = () => {
               )}
             />
 
-            <Controller
+            <FormInputNumber
               name="value"
               control={control}
+              label={type === "porcentaje" ? "Valor (%)" : "Valor (Q)"}
               rules={{ required: "Valor es requerido" }}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  type="number"
-                  fullWidth
-                  label={type === "porcentaje" ? "Valor (%)" : "Valor (Q)"}
-                  inputProps={{ min: 0, step: "0.01" }}
-                  error={!!error}
-                  helperText={error?.message}
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
-                />
-              )}
+              maxDecimals={2}
             />
 
-            <Controller
+            <FormInputNumber
               name="minimum"
               control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  type="number"
-                  fullWidth
-                  label="Cantidad mínima"
-                  inputProps={{ min: 0, step: "1" }}
-                  error={!!error}
-                  helperText={error?.message}
-                  value={field.value ?? ""}
-                  onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
-                />
-              )}
+              label="Cantidad mínima"
+              maxDecimals={2}
             />
 
             <Controller
